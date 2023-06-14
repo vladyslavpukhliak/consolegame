@@ -1,0 +1,8 @@
+﻿  Message.cpp
+C:\folders\Development\Software Engineering\VS Projects\ConsoleGame\Message.cpp(33,50): warning C4267: 'argument': conversion from 'size_t' to 'short', possible loss of data
+  Generating code
+  1 of 580 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  ConsoleGame.vcxproj -> C:\folders\Development\Software Engineering\VS Projects\ConsoleGame\x64\Release\ConsoleGame.exe

@@ -1,12 +1,14 @@
 #include <Windows.h>
-
-#include "Player.h"
 #include <random>
 #include <ctime>
 #include <thread>
 #include <chrono>
+#include "Player.h"
+#include "Graphics.h"
 
 using namespace std;
+
+Graphics graphicManager;
 
 Player::Player() {
 	_x = 0;
@@ -47,8 +49,7 @@ void Player::AddExpirience(int xp) {
 		_health += 1;
 		_expirience -= 50;
 
-		printf("Leveled up! Your Level: %d\n", _level);
-		Sleep(600);
+		graphicManager.addMessage("Leveled up! Your Level: " + to_string(_level));
 	}
 }
 

@@ -7,7 +7,7 @@
 class Level
 {
 public:
-	int buttonPlate;
+	int buttonPlate = 0;
 	Level();
 
 	void load(string file, Player &player);

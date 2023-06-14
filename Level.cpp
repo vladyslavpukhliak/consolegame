@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <fstream>
 #include <iostream>
+#include <iostream>
 #include "Level.h"
 #include "Enemy.h"
+#include "Graphics.h"
 using namespace std;
 
-HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-COORD cursor_pos;
+Graphics graphicsManager;
 
 Level::Level() {
 
@@ -68,8 +69,7 @@ void Level::load(string fileName, Player &player) {
 }
 
 void Level::print() {
-	cursor_pos = { 0, 0 };
-	SetConsoleCursorPosition(console, cursor_pos);
+	graphicsManager.setCursorPos(0, 0);
 
 	for (int i = 0; i < _levelData.size(); i++) {
 		printf("%s\n", _levelData[i].c_str());
@@ -126,10 +126,7 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 
 	switch (nextTile) {
 	case '#':
-		cursor_pos = { 40, 1 };
-		SetConsoleCursorPosition(console, cursor_pos);
-		printf("You ran into the wall!");
-		Sleep(600);
+		graphicsManager.addMessage("You ran into the wall!");
 		break;
 	case '.':
 		player.SetPosition(targetX, targetY);
@@ -153,10 +150,7 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 		SetTile(playerX, playerY, '.');
 		SetTile(targetX, targetY, '@');
 
-		cursor_pos = { 40, 1 };
-		SetConsoleCursorPosition(console, cursor_pos);
-		printf("+600 UAH");
-		Sleep(600);
+		graphicsManager.addMessage("+600 UAH");
 		break;
 
 	default:
@@ -198,6 +192,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 	int playerX;
 	int playerY;
 	string enemyName;
+	string attackInfo;
 	int attackRoll;
 	int attackResult;
 
@@ -209,14 +204,15 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 		if (targetX == enemyX && targetY == enemyY) {
 			// Battle !
 			attackRoll = player.attack();
-			printf("Player attacked %s with a roll of: %d\n", enemyName.c_str(), attackRoll);
+			attackInfo = "Player attacked " + enemyName + " with a roll of: " + to_string(attackRoll);
+			graphicsManager.addMessage(attackInfo);
+
 			attackResult = _enemies[i].TakeDamage(attackRoll);
 			if (attackResult != 0) {
 				SetTile(targetX, targetY, '.');
 				print();
-				cursor_pos = { 40, 1 };
-				SetConsoleCursorPosition(console, cursor_pos);
-				printf("Enemy died!\n");
+
+				graphicsManager.addMessage("Enemy died!\n");
 
 				// Removing the enemy
 				_enemies[i] = _enemies.back();
@@ -230,9 +226,9 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 			}
 			// Enemy's turn !
 			attackRoll = _enemies[i].attack();
-			cursor_pos = { 40, 1 };
-			SetConsoleCursorPosition(console, cursor_pos);
-			printf("%s attacked You with a roll of: %d\n", enemyName.c_str(), attackRoll);
+
+			attackInfo = enemyName + " attacked You with a roll of: " + to_string(attackRoll);
+			graphicsManager.addMessage(attackInfo);
 			attackResult = player.TakeDamage(attackRoll);
 
 			if (attackResult != 0) {

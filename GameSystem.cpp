@@ -1,9 +1,12 @@
 #include <Windows.h>
+#pragma comment(lib, "winmm.lib")
 #include <cstdlib>
 #include <conio.h>
 #include <thread>
 #include <chrono>
 #include "GameSystem.h"
+#include "Graphics.h"
+#include "Message.h"
 
 bool isDone = false;
 
@@ -24,6 +27,8 @@ void GameSystem::enemy_thread_func()
 {
 	while (!isDone)
 	{
+		Message messages;
+		messages.checkExpiredMessages();
 		if (_level.buttonPlate == 0) isDone = true;
 		// Оновлення позицій ворогів
 		_level.UpdateEnemies(_player);
@@ -33,30 +38,11 @@ void GameSystem::enemy_thread_func()
 	}
 }
 
-void initialise() {
-	// Відключення курсора
-	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_CURSOR_INFO cursor_info;
-	GetConsoleCursorInfo(console, &cursor_info);
-	cursor_info.bVisible = false;
-	SetConsoleCursorInfo(console, &cursor_info);
-
-	// Отримання розміру консольного вікна
-	CONSOLE_SCREEN_BUFFER_INFO buffer_info;
-	GetConsoleScreenBufferInfo(console, &buffer_info);
-	int console_width = buffer_info.srWindow.Right - buffer_info.srWindow.Left + 1;
-	int console_height = buffer_info.srWindow.Bottom - buffer_info.srWindow.Top + 1;
-
-	// Встановлення режиму буферизованого вводу/виводу
-	DWORD console_mode;
-	GetConsoleMode(console, &console_mode);
-	console_mode &= ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT);
-	console_mode |= ENABLE_EXTENDED_FLAGS;
-	SetConsoleMode(console, console_mode);
-}
 
 void GameSystem::RunGame() {
-	initialise();
+	Graphics graphics;
+	graphics.init();
+	
 	
 	mciSendStringA("open \"Music/moon_crystals.mp3\" type mpegvideo alias level1.mp3", NULL, 0, NULL);
 	mciSendStringA("play level1.mp3", NULL, 0, NULL);
@@ -67,6 +53,7 @@ void GameSystem::RunGame() {
 	{
 		_level.Move(_getch(), _player);		
 		_level.print();
+
 		// Затримка головного потоку на 16 мілісекунд (приблизно 60 кадрів в секунду)
 		std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
