@@ -3,17 +3,13 @@
 #include "Player.h"
 #include <string>
 
-using namespace std;
-
 class GameSystem
 {
 public:
 	GameSystem(string levelFile);
 
 	void RunGame();
-	void PlayerInput();
-private:
-	char get_char(float time_limit);
+	void enemy_thread_func();
 private:
 	Level _level;
 	Player _player;

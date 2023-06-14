@@ -2,7 +2,6 @@
 #include <string>
 #include <random>
 #include <ctime>
-using namespace std;
 
 Enemy::Enemy(string name, char tile, int level, int attack, int health, int expirience) {
 	_name = name;

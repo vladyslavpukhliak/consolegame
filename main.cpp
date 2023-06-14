@@ -1,8 +1,7 @@
 ﻿#include "GameSystem.h"
-using namespace std;
 
 int main() {
-	GameSystem gameSys("level1.txt");
+	GameSystem gameSys("Levels/level1.txt");
 
 	gameSys.RunGame();
 

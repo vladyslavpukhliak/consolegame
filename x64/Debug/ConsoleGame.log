@@ -1,2 +1,5 @@
 ﻿  GameSystem.cpp
-  ConsoleGame.vcxproj -> C:\folders\Development\VS Projects\ConsoleGame\x64\Debug\ConsoleGame.exe
+  Player.cpp
+C:\folders\Development\Software Engineering\VS Projects\ConsoleGame\Player.cpp(24,48): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Generating Code...
+  ConsoleGame.vcxproj -> C:\folders\Development\Software Engineering\VS Projects\ConsoleGame\x64\Debug\ConsoleGame.exe

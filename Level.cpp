@@ -1,11 +1,13 @@
 #include <Windows.h>
-
+#include <stdlib.h>
 #include <fstream>
 #include <iostream>
 #include "Level.h"
 #include "Enemy.h"
-
 using namespace std;
+
+HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+COORD cursor_pos;
 
 Level::Level() {
 
@@ -47,7 +49,7 @@ void Level::load(string fileName, Player &player) {
 				_enemies.back().SetPosition(j, i);
 				break;
 			case 'r': // Rozbiynyk
-				_enemies.push_back(Enemy("Rozbiynyk", tile, 2, 10, 30, 200));
+				_enemies.push_back(Enemy("Rozbiynyk", tile, 2, 10, 40, 200));
 				_enemies.back().SetPosition(j, i);
 				break;
 			case 'O': // Ork
@@ -57,8 +59,8 @@ void Level::load(string fileName, Player &player) {
 			//case '$': // Million Dollar
 			//	enemies.push_back(Enemy("Snake", tile, 1, 5, 10));
 			//	break;
-			case 'B': // Moveable box
-				// move Box
+			case 'X': // Moveable box
+				buttonPlate++;
 				break;
 			}
 		}
@@ -66,8 +68,8 @@ void Level::load(string fileName, Player &player) {
 }
 
 void Level::print() {
-
-	cout << string(100, '\n');
+	cursor_pos = { 0, 0 };
+	SetConsoleCursorPosition(console, cursor_pos);
 
 	for (int i = 0; i < _levelData.size(); i++) {
 		printf("%s\n", _levelData[i].c_str());
@@ -101,7 +103,7 @@ void Level::Move(char input, Player &player) {
 		break;
 
 	default:
-		printf("Invalid input!\n");
+		printf("Invalid input!");
 		Sleep(600);
 		break;
 	}
@@ -116,11 +118,17 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 	int playerY;
 	player.GetPosition(playerX, playerY);
 
+	int horizontal = targetX - playerX;
+	int vertical = targetY - playerY;
+	char tileAhead = GetTile(targetX + horizontal, targetY + vertical);
+
 	char nextTile = GetTile(targetX, targetY);
 
 	switch (nextTile) {
 	case '#':
-		printf("You ran into the wall!\n");
+		cursor_pos = { 40, 1 };
+		SetConsoleCursorPosition(console, cursor_pos);
+		printf("You ran into the wall!");
 		Sleep(600);
 		break;
 	case '.':
@@ -130,6 +138,25 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 		break;
 	case 'B':
 		// Move Box logic
+		
+		if (tileAhead == '.' || tileAhead == 'X') {
+			player.SetPosition(targetX, targetY);
+			SetTile(playerX, playerY, '.');
+			SetTile(targetX, targetY, '@');
+			SetTile(targetX + horizontal, targetY + vertical, 'B');
+		}
+		if (tileAhead == 'X') buttonPlate--;
+
+		break;
+	case '$':
+		player.SetPosition(targetX, targetY);
+		SetTile(playerX, playerY, '.');
+		SetTile(targetX, targetY, '@');
+
+		cursor_pos = { 40, 1 };
+		SetConsoleCursorPosition(console, cursor_pos);
+		printf("+600 UAH");
+		Sleep(600);
 		break;
 
 	default:
@@ -187,6 +214,8 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 			if (attackResult != 0) {
 				SetTile(targetX, targetY, '.');
 				print();
+				cursor_pos = { 40, 1 };
+				SetConsoleCursorPosition(console, cursor_pos);
 				printf("Enemy died!\n");
 
 				// Removing the enemy
@@ -201,6 +230,8 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 			}
 			// Enemy's turn !
 			attackRoll = _enemies[i].attack();
+			cursor_pos = { 40, 1 };
+			SetConsoleCursorPosition(console, cursor_pos);
 			printf("%s attacked You with a roll of: %d\n", enemyName.c_str(), attackRoll);
 			attackResult = player.TakeDamage(attackRoll);
 
@@ -209,10 +240,32 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				print();
 				printf("You died!\n");
 				Sleep(600);
+				system("CLS");
+
+				// Loads the art
+				ifstream artFile;
+
+				artFile.open("Art/Death.txt");
+				if (artFile.fail()) {
+					perror("No such file: \"Art/Death.txt\"");
+					Sleep(600);
+					exit(1);
+				}
+
+				string line;
+				// Метод swap() для повного звільнення пам'яті
+				vector<string>().swap(_levelData); //_levelData.clear();
+
+				while (getline(artFile, line)) {
+					_levelData.push_back(line);
+				}
+				print();
+				Sleep(600);
+				artFile.close();
 
 				exit(0);
 			}
-			Sleep(600);
+
 			return;
 		}
 	}

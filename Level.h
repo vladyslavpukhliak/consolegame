@@ -4,11 +4,10 @@
 #include "Player.h"
 #include "Enemy.h"
 
-using namespace std;
-
 class Level
 {
 public:
+	int buttonPlate;
 	Level();
 
 	void load(string file, Player &player);

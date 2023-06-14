@@ -3,6 +3,8 @@
 #include "Player.h"
 #include <random>
 #include <ctime>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 
