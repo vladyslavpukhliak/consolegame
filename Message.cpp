@@ -6,48 +6,56 @@ Graphics graphics;
 queue<Message> messageQueue;
 
 void Message::addMessage(const string text) {
-    Message newMessage(text);
-    messageQueue.push(newMessage);
-    printMessages();
+	Message newMessage(text);
+	messageQueue.push(newMessage);
+	printMessages();
 }
 
 void Message::checkExpiredMessages() {
-    chrono::time_point<chrono::steady_clock> now = chrono::steady_clock::now();
+	chrono::time_point<chrono::steady_clock> now = chrono::steady_clock::now();
 
-    while (!messageQueue.empty()) {
-        Message frontMessage = messageQueue.front();
+	while (!messageQueue.empty()) {
+		Message frontMessage = messageQueue.front();
 
-        chrono::duration<double> elapsedTime = now - frontMessage.timestamp;
-        if (elapsedTime.count() >= 0.6) {  // Час, через який сповіщення зникає (600 мілісекунд)
-            clearRow(frontMessage.text.c_str());
-        }
-        else {
-            break;  // Вийти з циклу, якщо перше сповіщення ще актуальне
-        }
-    }
+		chrono::duration<double> elapsedTime = now - frontMessage.timestamp;
+		if (elapsedTime.count() >= 1) {  // Час, через який сповіщення зникає (1000 мілісекунд)
+			clearRow();
+			messageQueue.pop();
+			printMessages();
+		}
+		else {
+			break;  // Вийти з циклу, якщо перше сповіщення ще актуальне
+		}
+	}
 }
 
-// Очищуємо попередні повідомлення
-void Message::clearRow(string toClear) {
-    Message frontMessage = messageQueue.front();
-    graphics.setCursorPos(40, messageQueue.size());
-    messageQueue.pop();
 
-    for (int j = 0; j < toClear.size(); j++)
-        printf(" ");
+// Очищуємо попередні повідомлення
+void Message::clearRow() {
+	queue<Message> tempQueue = messageQueue;  // Копіюємо чергу до тимчасового контейнера
+	int i = 1;
+
+	while (!tempQueue.empty()) {
+		size_t messageLength = tempQueue.front().text.size();
+		graphics.setCursorPos(40, i);
+		for (int j = 0; j < messageLength; j++) {
+			printf(" ");
+		}
+		tempQueue.pop();
+		i++;
+	}
 }
 
 void Message::printMessages() {
-    queue<Message> tempQueue = messageQueue;  // Копіюємо чергу до тимчасового контейнера
-    int i = 1;
+	queue<Message> tempQueue = messageQueue;  // Копіюємо чергу до тимчасового контейнера
+	int i = 1;
 
-    while (!tempQueue.empty()) {
-        Message frontMessage = tempQueue.front();
-        graphics.setCursorPos(40, i);
-        printf(frontMessage.text.c_str());
-        tempQueue.pop();
-        i++;
-    }
+	while (!tempQueue.empty()) {
+		string frontMessage = tempQueue.front().text;
+		graphics.setCursorPos(40, i);
+		printf(frontMessage.c_str());
+		tempQueue.pop();
+		i++;
+	}
 }
-
 

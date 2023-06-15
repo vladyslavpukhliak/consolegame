@@ -16,6 +16,6 @@ public:
     void checkExpiredMessages();
 
 private:
-    void clearRow(string toClear);
+    void clearRow();
     void printMessages();
 };
