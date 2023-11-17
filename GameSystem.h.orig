@@ -13,4 +13,9 @@ public:
 private:
 	Level _level;
 	Player _player;
+<<<<<<< HEAD
 };
+
+=======
+};
+>>>>>>> temp

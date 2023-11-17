@@ -2,6 +2,15 @@
 #include <stdlib.h>
 #include <fstream>
 #include <iostream>
+<<<<<<< HEAD
+#include <iostream>
+#include "Level.h"
+#include "Enemy.h"
+#include "Graphics.h"
+using namespace std;
+
+Graphics graphicsManager;
+=======
 #include "Level.h"
 #include "Enemy.h"
 #include "Message.h"
@@ -10,6 +19,8 @@ using namespace std;
 
 Message messages;
 Graphics graphicsManager;
+bool busy = false;
+>>>>>>> temp
 
 Level::Level() {
 
@@ -49,7 +60,10 @@ void Level::load(string fileName, Player &player) {
 			case 'S': // Snake
 				_enemies.push_back(Enemy("Snake", tile, 1, 5, 10, 150));
 				_enemies.back().SetPosition(j, i);
+<<<<<<< HEAD
+=======
 				//_levelData[i, j] = "\e[0;32m S \e[0m";
+>>>>>>> temp
 				break;
 			case 'r': // Rozbiynyk
 				_enemies.push_back(Enemy("Rozbiynyk", tile, 2, 10, 40, 200));
@@ -70,6 +84,15 @@ void Level::load(string fileName, Player &player) {
 	}
 }
 
+<<<<<<< HEAD
+void Level::print() {
+	graphicsManager.setCursorPos(0, 0);
+
+	for (int i = 0; i < _levelData.size(); i++) {
+		printf("%s\n", _levelData[i].c_str());
+	}
+	printf("\n");
+=======
 
 void Level::Draw() {
 	for (int i = 0; i < _levelData.size(); i++) {
@@ -78,6 +101,7 @@ void Level::Draw() {
 
 	}
 		messages.checkExpiredMessages();
+>>>>>>> temp
 }
 
 void Level::Move(char input, Player &player) {
@@ -106,7 +130,12 @@ void Level::Move(char input, Player &player) {
 		break;
 
 	default:
+<<<<<<< HEAD
+		printf("Invalid input!");
+		Sleep(600);
+=======
 		graphicsManager.addMessage("Invalid input!");
+>>>>>>> temp
 		break;
 	}
 }
@@ -122,6 +151,8 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 
 	int horizontal = targetX - playerX;
 	int vertical = targetY - playerY;
+<<<<<<< HEAD
+=======
 
 
 	// Map boundaries
@@ -133,12 +164,17 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 		return;
 	}
 
+>>>>>>> temp
 	char tileAhead = GetTile(targetX + horizontal, targetY + vertical);
 
 	char nextTile = GetTile(targetX, targetY);
 
 	switch (nextTile) {
+<<<<<<< HEAD
+	case '#':
+=======
 	case '#': // Internal walls
+>>>>>>> temp
 		graphicsManager.addMessage("You ran into the wall!");
 		break;
 	case '.':
@@ -223,7 +259,11 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 			attackResult = _enemies[i].TakeDamage(attackRoll);
 			if (attackResult != 0) {
 				SetTile(targetX, targetY, '.');
+<<<<<<< HEAD
+				print();
+=======
 				Draw();
+>>>>>>> temp
 
 				graphicsManager.addMessage("Enemy died!\n");
 
@@ -232,7 +272,11 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				_enemies.pop_back();
 				i--;
 
+<<<<<<< HEAD
+				Sleep(600);
+=======
 				//Sleep(600);
+>>>>>>> temp
 				player.AddExpirience(attackResult);
 				
 				return;
@@ -246,7 +290,11 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 
 			if (attackResult != 0) {
 				SetTile(playerX, playerY, '~');
+<<<<<<< HEAD
+				print();
+=======
 				Draw();
+>>>>>>> temp
 				printf("You died!\n");
 				Sleep(600);
 				system("CLS");
@@ -268,7 +316,11 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				while (getline(artFile, line)) {
 					_levelData.push_back(line);
 				}
+<<<<<<< HEAD
+				print();
+=======
 				Draw();
+>>>>>>> temp
 				Sleep(600);
 				artFile.close();
 

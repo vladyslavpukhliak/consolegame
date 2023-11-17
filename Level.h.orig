@@ -11,8 +11,12 @@ public:
 	Level();
 
 	void load(string file, Player &player);
-
+<<<<<<< HEAD
+	void print();
+=======
+	static bool isBusy();
 	void Draw();
+>>>>>>> temp
 
 	void Move(char input, Player &player);
 	void UpdateEnemies(Player &player);

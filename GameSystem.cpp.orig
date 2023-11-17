@@ -2,12 +2,19 @@
 #pragma comment(lib, "winmm.lib")
 #include <cstdlib>
 #include <conio.h>
+<<<<<<< HEAD
+=======
 #include <string>
 #include <iostream>
+>>>>>>> temp
 #include <thread>
 #include <chrono>
 #include "GameSystem.h"
 #include "Graphics.h"
+<<<<<<< HEAD
+#include "Message.h"
+=======
+>>>>>>> temp
 
 bool isDone = false;
 
@@ -28,12 +35,21 @@ void GameSystem::enemy_thread_func()
 {
 	while (!isDone)
 	{
+<<<<<<< HEAD
+		Message messages;
+		messages.checkExpiredMessages();
+		if (_level.buttonPlate == 0) isDone = true;
+		// Оновлення позицій ворогів
+		_level.UpdateEnemies(_player);
+		_level.print();
+=======
 		
 		if (_level.buttonPlate == 0) isDone = true;
 		// Оновлення позицій ворогів
 		_level.UpdateEnemies(_player);
 		_level.Draw();
 
+>>>>>>> temp
 		// Зупинка потоку на 500 мілісекунд
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
@@ -41,6 +57,8 @@ void GameSystem::enemy_thread_func()
 
 
 void GameSystem::RunGame() {
+<<<<<<< HEAD
+=======
 	/*
 	string name;
 	printf("Enter your nickname: ");
@@ -48,20 +66,31 @@ void GameSystem::RunGame() {
 	system("cls");
 	*/
 
+>>>>>>> temp
 	Graphics graphics;
 	graphics.init();
 	
 	
 	mciSendStringA("open \"Music/moon_crystals.mp3\" type mpegvideo alias level1.mp3", NULL, 0, NULL);
+<<<<<<< HEAD
+	mciSendStringA("play level1.mp3", NULL, 0, NULL);
+=======
 	//mciSendStringA("play level1.mp3", NULL, 0, NULL);
+>>>>>>> temp
 
 	std::thread enemy_thread(enemy_thread_func_wrapper, this);
 
 	while (!isDone)
 	{
+<<<<<<< HEAD
+		_level.Move(_getch(), _player);		
+		_level.print();
+
+=======
 		
 		_level.Move(_getch(), _player);		
 		_level.Draw();
+>>>>>>> temp
 		// Затримка головного потоку на 16 мілісекунд (приблизно 60 кадрів в секунду)
 		std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
