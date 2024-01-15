@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <stdlib.h>
 #include <fstream>
+#include <iostream>
 #include "Level.h"
 #include "Enemy.h"
 #include "Message.h"
@@ -60,9 +61,6 @@ void Level::load(string fileName, Player& player) {
 				_enemies.push_back(Enemy("Ork", tile, 3, 45, 300, 750));
 				_enemies.back().SetPosition(j, i);
 				break;
-				//case '$': // Million Dollar
-				//	enemies.push_back(Enemy("Snake", tile, 1, 5, 10));
-				//	break;
 			case 'X': // Moveable box
 				buttonPlate++;
 				break;
@@ -81,7 +79,7 @@ void Level::Draw() {
 	for (int i = 0; i < _levelData.size(); i++) {
 		//if (message.isBusy()) return;
 		graphicsManager.setCursorPos(0, i);
-		printf(_levelData[i].c_str());
+		std::cout << _levelData[i];
 	}
 	busy = false;
 	if (!GameSystem::isGameOver()) {
@@ -250,7 +248,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				_enemies[i] = _enemies.back();
 				_enemies.pop_back();
 				i--;
-
+				// Add enemy's death sound
 				Sleep(600);
 				player.AddExpirience(attackResult);
 
@@ -265,8 +263,9 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 
 			if (attackResult != 0) {
 				SetTile(playerX, playerY, '~');
+				// Sound of Player death
+				graphicsManager.addMessage("You died!");
 				Draw();
-				printf("You died!\n");
 				GameSystem::BadEnding();
 				Sleep(600);
 				system("CLS");
