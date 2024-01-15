@@ -1,6 +1,7 @@
 #include "Message.h"
 #include "Level.h"
 #include "Graphics.h"
+#include "GameSystem.h"
 using namespace std;
 
 Graphics graphics;
@@ -27,7 +28,7 @@ void Message::checkExpiredMessages() {
 
 		elapsedTime = now - frontMessage.timestamp;
 
-		//if (Level::isBusy()) return;
+		if (GameSystem::isGameOver()) break;
 		if (elapsedTime.count() >= 1 || messageQueue.size() >= 15) {  // Час, через який сповіщення зникає (1000 мілісекунд)
 			clearRow();
 			printMessages();

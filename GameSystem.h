@@ -9,4 +9,6 @@ public:
 	GameSystem(string levelFile);
 
 	void RunGame();
+	static void BadEnding();
+	static bool isGameOver();
 };

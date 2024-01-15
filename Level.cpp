@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "Message.h"
 #include "Graphics.h"
+#include "GameSystem.h"
 #include "Message.h"
 
 //Message messages;
@@ -83,8 +84,10 @@ void Level::Draw() {
 		printf(_levelData[i].c_str());
 	}
 	busy = false;
-	message.checkExpiredMessages();
-	message.printMessages();
+	if (!GameSystem::isGameOver()) {
+		message.checkExpiredMessages();
+		message.printMessages();
+	}
 	printf("\n");
 }
 
@@ -264,6 +267,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				SetTile(playerX, playerY, '~');
 				Draw();
 				printf("You died!\n");
+				GameSystem::BadEnding();
 				Sleep(600);
 				system("CLS");
 
@@ -281,19 +285,53 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				// Метод swap() для повного звільнення пам'яті
 				vector<string>().swap(_levelData); //_levelData.clear();
 
-				
+
 				string wordToReplace = "nickname", tempWord;
-				size_t replacePos, wordSize = wordToReplace.length();
+				size_t lineY = 0, replaceX = 0, replaceY = 0,
+					wordSize = wordToReplace.length(), nameLength = playerName.length();
+
 				while (getline(artFile, line)) {
-					while (replacePos = line.find(wordToReplace) != string::npos) {
+					lineY++;
+
+					if (line.find(wordToReplace) != string::npos) {
+						// Координати для курсора
+						replaceX = line.find(wordToReplace);
+						replaceY = lineY - 1;
+
+						// Заміна nickname на ім'я гравця
+						uint8_t charsToAdd;
+						if (nameLength != wordSize) {
+							if (nameLength % 2)
+								playerName += ' ';
+
+							nameLength = playerName.length(); // оновлюємо дані
+
+							if (nameLength < wordSize) {
+								charsToAdd = wordSize - nameLength;
+								charsToAdd /= 2;
+								for (size_t i = 0; i < charsToAdd; i++)
+									playerName = ' ' + playerName;
+								for (size_t i = 0; i < charsToAdd; i++)
+									playerName = playerName + ' ';
+							}
+							else if (nameLength > wordSize) {
+								charsToAdd = nameLength - wordSize;
+								charsToAdd /= 2;
+								replaceX -= charsToAdd;
+							}
+						}
 						
-						line.replace(replacePos, wordSize-1, playerName);
+						//line.replace(replaceX, wordSize - 1, playerName);
 					}
 					_levelData.push_back(line);
 				}
-				Draw();
-				Sleep(600);
 				artFile.close();
+				Draw();
+				//printf("test: %d, %d, %s.", replaceX, replaceY, playerName.c_str());
+				graphicsManager.setCursorPos(replaceX, replaceY);
+				printf(playerName.c_str());
+				graphicsManager.setCursorPos(0, lineY);
+				Sleep(600);
 
 				exit(0);
 			}

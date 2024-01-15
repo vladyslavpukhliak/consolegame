@@ -14,7 +14,10 @@ Level _level;
 Message messages;
 Player _player;
 bool isDone = false;
+bool isBadEnd = false;
 
+bool GameSystem::isGameOver() { return isBadEnd; }
+void GameSystem::BadEnding() { isBadEnd = true; }
 // Constructor sets up the game
 GameSystem::GameSystem(string levelFile) {
 
@@ -25,7 +28,7 @@ GameSystem::GameSystem(string levelFile) {
 
 void enemy_thread_func()
 {
-	while (!isDone)
+	while (!isDone && !isBadEnd)
 	{
 		//if(!Message::isBusy) 
 		// Оновлення позицій ворогів
@@ -38,7 +41,7 @@ void enemy_thread_func()
 	}
 }
 void draw_thread() {
-	while (!isDone)
+	while (!isDone && !isBadEnd)
 	{
 		if (_level.buttonPlate == 0) isDone = true;
 		messages.checkExpiredMessages();
@@ -67,7 +70,9 @@ void GameSystem::RunGame() {
 	std::thread enemy_thread(enemy_thread_func);
 	std::thread draw(draw_thread);
 
-	while (!isDone)
+
+	// Цей цикл продовжує працювати після смерті ГГ!
+	while (!isDone) // isBadEnd?
 	{
 		//if (!Level::isBusy()) {
 			_level.Move(_getch(), _player);
