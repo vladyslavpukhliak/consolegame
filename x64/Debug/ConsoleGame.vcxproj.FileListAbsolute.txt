@@ -1,2 +1,0 @@
-C:\folders\Development\VS Projects\ConsoleGame\x64\Debug\ConsoleGame.exe
-C:\folders\Development\Software Engineering\VS Projects\ConsoleGame\x64\Debug\ConsoleGame.exe
