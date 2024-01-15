@@ -10,7 +10,7 @@ bool s_busy = false;
 void Message::addMessage(const string text) {
 	Message newMessage(text);
 	messageQueue.push(newMessage);
-	printMessages();
+	//printMessages();
 }
 
 bool Message::isBusy() { return s_busy; };

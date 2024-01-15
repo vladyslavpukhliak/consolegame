@@ -3,7 +3,7 @@
 #include <fstream>
 #include "Level.h"
 #include "Enemy.h"
-//#include "Message.h"
+#include "Message.h"
 #include "Graphics.h"
 #include "Message.h"
 
@@ -83,6 +83,8 @@ void Level::Draw() {
 		printf(_levelData[i].c_str());
 	}
 	busy = false;
+	message.checkExpiredMessages();
+	message.printMessages();
 	printf("\n");
 }
 
