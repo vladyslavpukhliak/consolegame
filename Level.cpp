@@ -1,25 +1,26 @@
 #include <Windows.h>
 #include <stdlib.h>
 #include <fstream>
-#include <iostream>
 #include "Level.h"
 #include "Enemy.h"
-#include "Message.h"
+//#include "Message.h"
 #include "Graphics.h"
-using namespace std;
+#include "Message.h"
 
-Message messages;
+//Message messages;
 Graphics graphicsManager;
+Message message;
+bool busy = false;
 
 Level::Level() {
 
 }
 
-void Level::load(string fileName, Player &player) {
-
-	// Loads the level
+// Loads the level
+void Level::load(string fileName, Player& player) {
 	ifstream file;
 
+	// Перевірка файлу
 	file.open(fileName);
 	if (file.fail()) {
 		perror(fileName.c_str());
@@ -27,16 +28,15 @@ void Level::load(string fileName, Player &player) {
 		exit(1);
 	}
 
+	// Завантажити данні з файлу в масив
 	string line;
-
 	while (getline(file, line)) {
 		_levelData.push_back(line);
 	}
-
 	file.close();
 
 
-	// Process the level
+	// Ініціалізація рівня
 	char tile;
 	for (int i = 0; i < _levelData.size(); i++) {
 		for (int j = 0; j < _levelData[i].size(); j++) {
@@ -59,9 +59,9 @@ void Level::load(string fileName, Player &player) {
 				_enemies.push_back(Enemy("Ork", tile, 3, 45, 300, 750));
 				_enemies.back().SetPosition(j, i);
 				break;
-			//case '$': // Million Dollar
-			//	enemies.push_back(Enemy("Snake", tile, 1, 5, 10));
-			//	break;
+				//case '$': // Million Dollar
+				//	enemies.push_back(Enemy("Snake", tile, 1, 5, 10));
+				//	break;
 			case 'X': // Moveable box
 				buttonPlate++;
 				break;
@@ -70,17 +70,27 @@ void Level::load(string fileName, Player &player) {
 	}
 }
 
+bool Level::isBusy() { return busy; };
 
+// Відобразити кадр
 void Level::Draw() {
+	if (busy) return;
+	busy = true;
+
 	for (int i = 0; i < _levelData.size(); i++) {
+		//if (message.isBusy()) return;
 		graphicsManager.setCursorPos(0, i);
 		printf(_levelData[i].c_str());
-
 	}
-		messages.checkExpiredMessages();
+	busy = false;
+	printf("\n");
 }
 
-void Level::Move(char input, Player &player) {
+void Level::setPlayerName(string nickname) {
+	playerName = nickname;
+}
+
+void Level::Move(char input, Player& player) {
 
 	int playerX;
 	int playerY;
@@ -112,7 +122,7 @@ void Level::Move(char input, Player &player) {
 }
 
 char Level::GetTile(int x, int y) { return _levelData[y][x]; }
-void Level::SetTile(int x, int y, char tile) { _levelData[y][x] = tile;}
+void Level::SetTile(int x, int y, char tile) { _levelData[y][x] = tile; }
 
 void Level::TryGo(Player& player, int targetX, int targetY) {
 
@@ -126,13 +136,14 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 
 	// Map boundaries
 	if (targetX <= 0 || targetY <= 0 ||
-		targetX >= _levelData[targetY].size()-1 ||
+		targetX >= _levelData[targetY].size() - 1 ||
 		targetY >= _levelData.size() - 1) {
 
 		graphicsManager.addMessage("You ran into the wall!");
 		return;
 	}
 
+	// Символ попереду гравця
 	char tileAhead = GetTile(targetX + horizontal, targetY + vertical);
 
 	char nextTile = GetTile(targetX, targetY);
@@ -141,14 +152,15 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 	case '#': // Internal walls
 		graphicsManager.addMessage("You ran into the wall!");
 		break;
+
 	case '.':
 		player.SetPosition(targetX, targetY);
 		SetTile(playerX, playerY, '.');
 		SetTile(targetX, targetY, '@');
 		break;
-	case 'B':
-		// Move Box logic
-		
+
+	case 'B': // Move Box logic
+
 		if (tileAhead == '.' || tileAhead == 'X') {
 			player.SetPosition(targetX, targetY);
 			SetTile(playerX, playerY, '.');
@@ -158,6 +170,7 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 		if (tileAhead == 'X') buttonPlate--;
 
 		break;
+
 	case '$':
 		player.SetPosition(targetX, targetY);
 		SetTile(playerX, playerY, '.');
@@ -186,6 +199,7 @@ void Level::TryEnemyGo(Player& player, int index, int targetX, int targetY) {
 	case '@':
 		BattleEnemy(player, enemyX, enemyY);
 		break;
+
 	case '.':
 		_enemies[index].SetPosition(targetX, targetY);
 		SetTile(enemyX, enemyY, '.');
@@ -232,9 +246,9 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				_enemies.pop_back();
 				i--;
 
-				//Sleep(600);
+				Sleep(600);
 				player.AddExpirience(attackResult);
-				
+
 				return;
 			}
 			// Enemy's turn !
@@ -265,7 +279,14 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				// Метод swap() для повного звільнення пам'яті
 				vector<string>().swap(_levelData); //_levelData.clear();
 
+				
+				string wordToReplace = "nickname", tempWord;
+				size_t replacePos, wordSize = wordToReplace.length();
 				while (getline(artFile, line)) {
+					while (replacePos = line.find(wordToReplace) != string::npos) {
+						
+						line.replace(replacePos, wordSize-1, playerName);
+					}
 					_levelData.push_back(line);
 				}
 				Draw();
@@ -280,7 +301,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 	}
 }
 
-void Level::UpdateEnemies(Player & player) {
+void Level::UpdateEnemies(Player& player) {
 	char aiMove;
 	int playerX;
 	int playerY;

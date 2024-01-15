@@ -14,6 +14,7 @@ public:
 public:
     void addMessage(const string text);
     void checkExpiredMessages();
+    static bool isBusy();
 
 private:
     void clearRow();

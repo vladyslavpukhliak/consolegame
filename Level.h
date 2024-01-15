@@ -11,8 +11,9 @@ public:
 	Level();
 
 	void load(string file, Player &player);
-
+	static bool isBusy();
 	void Draw();
+	void setPlayerName(string nickname);
 
 	void Move(char input, Player &player);
 	void UpdateEnemies(Player &player);
@@ -26,6 +27,7 @@ private:
 	void BattleEnemy(Player& player, int targetX, int targetY);
 
 private:
+	string playerName;
 	vector <string> _levelData;
 	vector <Enemy> _enemies;
 };

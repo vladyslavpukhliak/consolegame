@@ -6,33 +6,33 @@ Message messagesManager;
 HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 COORD cursor_pos;
 
-
-
 void Graphics::setCursorPos(short x, short y) {
 	cursor_pos = { x, y };
 	SetConsoleCursorPosition(console, cursor_pos);
 }
 
+void SetWindowSize(int width, int height) {
+	COORD size = {width, height};
+	SMALL_RECT rmin = {0,0,1,1};
+	SMALL_RECT rect = {0,0,width-1,height-1};
+	SetConsoleWindowInfo(console, TRUE, &rmin);
+	SetConsoleScreenBufferSize(console, size);
+	SetConsoleWindowInfo(console, TRUE, &rect);
+}
+
 void Graphics::init() {
+	SetConsoleTitleA("Demo");
+
 	// Відключення курсора
 	CONSOLE_CURSOR_INFO cursor_info;
 	GetConsoleCursorInfo(console, &cursor_info);
 	cursor_info.bVisible = false;
 	SetConsoleCursorInfo(console, &cursor_info);
 
-	// Отримання розміру консольного вікна
-	CONSOLE_SCREEN_BUFFER_INFO buffer_info;
-	GetConsoleScreenBufferInfo(console, &buffer_info);
-	int console_width = buffer_info.srWindow.Right - buffer_info.srWindow.Left + 1;
-	int console_height = buffer_info.srWindow.Bottom - buffer_info.srWindow.Top + 1;
+	// Задаємо розмір вікна гри
+	SetWindowSize(100, 30); // change digits to json values
 
-	// Встановлення режиму буферизованого вводу/виводу
-	DWORD console_mode;
-	GetConsoleMode(console, &console_mode);
-	console_mode &= ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT);
-	console_mode |= ENABLE_EXTENDED_FLAGS;
-	SetConsoleMode(console, console_mode);
-
+	// Ініціалізуємо фіксований UI
 	setCursorPos(40, 0);
 	printf("-- Information --");
 }

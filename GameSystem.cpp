@@ -8,7 +8,11 @@
 #include <chrono>
 #include "GameSystem.h"
 #include "Graphics.h"
+#include "Message.h"
 
+Level _level;
+Message messages;
+Player _player;
 bool isDone = false;
 
 // Constructor sets up the game
@@ -19,34 +23,39 @@ GameSystem::GameSystem(string levelFile) {
 	_level.load(levelFile, _player);
 }
 
-void enemy_thread_func_wrapper(GameSystem* game_system)
-{
-	game_system->enemy_thread_func();
-}
-
-void GameSystem::enemy_thread_func()
+void enemy_thread_func()
 {
 	while (!isDone)
 	{
-		
-		if (_level.buttonPlate == 0) isDone = true;
+		//if(!Message::isBusy) 
 		// Оновлення позицій ворогів
-		_level.UpdateEnemies(_player);
-		_level.Draw();
+		//if (Level::isBusy) {
+			_level.UpdateEnemies(_player);
+		//}
 
 		// Зупинка потоку на 500 мілісекунд
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 }
+void draw_thread() {
+	while (!isDone)
+	{
+		if (_level.buttonPlate == 0) isDone = true;
+		messages.checkExpiredMessages();
+		_level.Draw();
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+}
 
 
 void GameSystem::RunGame() {
-	/*
+	
 	string name;
 	printf("Enter your nickname: ");
 	getline(cin, name);
+	_level.setPlayerName(name);
 	system("cls");
-	*/
+	
 
 	Graphics graphics;
 	graphics.init();
@@ -55,15 +64,17 @@ void GameSystem::RunGame() {
 	mciSendStringA("open \"Music/moon_crystals.mp3\" type mpegvideo alias level1.mp3", NULL, 0, NULL);
 	//mciSendStringA("play level1.mp3", NULL, 0, NULL);
 
-	std::thread enemy_thread(enemy_thread_func_wrapper, this);
+	std::thread enemy_thread(enemy_thread_func);
+	std::thread draw(draw_thread);
 
 	while (!isDone)
 	{
-		
-		_level.Move(_getch(), _player);		
-		_level.Draw();
+		//if (!Level::isBusy()) {
+			_level.Move(_getch(), _player);
+			//_level.Draw();
+		//}
 		// Затримка головного потоку на 16 мілісекунд (приблизно 60 кадрів в секунду)
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	system("cls");
 	printf("You win!!!");
