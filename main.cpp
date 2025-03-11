@@ -1,7 +1,7 @@
 ﻿#include "GameSystem.h"
 
 int main() {
-	GameSystem gameSys("Levels/level1.txt");
+	GameSystem gameSys("assets/Levels/level1.txt");
 
 	gameSys.RunGame();
 

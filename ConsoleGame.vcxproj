@@ -18,6 +18,26 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="entities.h" />
+    <ClInclude Include="FileSystem.h" />
+    <ClInclude Include="GameSystem.h" />
+    <ClInclude Include="Graphics.h" />
+    <ClInclude Include="Level.h" />
+    <ClInclude Include="Message.h" />
+    <ClInclude Include="Player.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="FileSystem.cpp" />
+    <ClCompile Include="GameSystem.cpp" />
+    <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Message.cpp" />
+    <ClCompile Include="Player.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -128,23 +148,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="GameSystem.cpp" />
-    <ClCompile Include="Graphics.cpp" />
-    <ClCompile Include="Level.cpp" />
-    <ClCompile Include="Message.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="GameSystem.h" />
-    <ClInclude Include="Graphics.h" />
-    <ClInclude Include="Level.h" />
-    <ClInclude Include="Message.h" />
-    <ClInclude Include="Player.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

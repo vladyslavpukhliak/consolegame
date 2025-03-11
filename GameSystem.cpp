@@ -1,4 +1,3 @@
-#include <Windows.h>
 #pragma comment(lib, "winmm.lib")
 #include <cstdlib>
 #include <conio.h>
@@ -9,9 +8,10 @@
 #include "GameSystem.h"
 #include "Graphics.h"
 #include "Message.h"
+#include <windows.h>
 
 Level _level;
-Message messages;
+Message messageList;
 Player _player;
 bool isDone = false;
 bool isBadEnd = false;
@@ -19,7 +19,7 @@ bool isBadEnd = false;
 bool GameSystem::isGameOver() { return isBadEnd; }
 void GameSystem::BadEnding() { isBadEnd = true; }
 // Constructor sets up the game
-GameSystem::GameSystem(string levelFile) {
+GameSystem::GameSystem(std::string levelFile) {
 
 	_player.init(1, 10, 100, 10);
 
@@ -31,12 +31,12 @@ void enemy_thread_func()
 	while (!isDone && !isBadEnd)
 	{
 		//if(!Message::isBusy) 
-		// Оновлення позицій ворогів
+		// РћРЅРѕРІР»РµРЅРЅСЏ РїРѕР·РёС†С–Р№ РІРѕСЂРѕРіС–РІ
 		//if (Level::isBusy) {
 			_level.UpdateEnemies(_player);
 		//}
 
-		// Зупинка потоку на 500 мілісекунд
+		// Р—СѓРїРёРЅРєР° РїРѕС‚РѕРєСѓ РЅР° 500 РјС–Р»С–СЃРµРєСѓРЅРґ
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 }
@@ -44,7 +44,7 @@ void draw_thread() {
 	while (!isDone && !isBadEnd)
 	{
 		if (_level.buttonPlate == 0) isDone = true;
-		messages.checkExpiredMessages();
+		messageList.checkExpiredmessageList();
 		_level.Draw();
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
@@ -53,9 +53,9 @@ void draw_thread() {
 
 void GameSystem::RunGame() {
 	
-	string name;
-	printf("Enter your nickname: ");
-	getline(cin, name);
+	std::string name;
+	printf("Enter your nickname (up to 28 symbols): ");
+	getline(std::cin, name);
 	_level.setPlayerName(name);
 	system("cls");
 	
@@ -65,26 +65,26 @@ void GameSystem::RunGame() {
 	
 	
 	mciSendStringA("open \"Music/moon_crystals.mp3\" type mpegvideo alias level1.mp3", NULL, 0, NULL);
-	//mciSendStringA("play level1.mp3", NULL, 0, NULL);
+	mciSendStringA("play level1.mp3", NULL, 0, NULL);
 
 	std::thread enemy_thread(enemy_thread_func);
 	std::thread draw(draw_thread);
 
 
-	// Цей цикл продовжує працювати після смерті ГГ!
+	// Р¦РµР№ С†РёРєР» РїСЂРѕРґРѕРІР¶СѓС” РїСЂР°С†СЋРІР°С‚Рё РїС–СЃР»СЏ СЃРјРµСЂС‚С– Р“Р“!
 	while (!isDone) // isBadEnd?
 	{
 		//if (!Level::isBusy()) {
 			_level.Move(_getch(), _player);
 			//_level.Draw();
 		//}
-		// Затримка головного потоку на 16 мілісекунд (приблизно 60 кадрів в секунду)
+		// Р—Р°С‚СЂРёРјРєР° РіРѕР»РѕРІРЅРѕРіРѕ РїРѕС‚РѕРєСѓ РЅР° 16 РјС–Р»С–СЃРµРєСѓРЅРґ (РїСЂРёР±Р»РёР·РЅРѕ 60 РєР°РґСЂС–РІ РІ СЃРµРєСѓРЅРґСѓ)
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	system("cls");
 	printf("You win!!!");
 	mciSendStringA("close level1.mp3", NULL, 0, NULL);
 
-	// Очікування завершення потоку з рухом ворогів
+	// РћС‡С–РєСѓРІР°РЅРЅСЏ Р·Р°РІРµСЂС€РµРЅРЅСЏ РїРѕС‚РѕРєСѓ Р· СЂСѓС…РѕРј РІРѕСЂРѕРіС–РІ
 	enemy_thread.join();
 }

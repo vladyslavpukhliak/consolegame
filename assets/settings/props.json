@@ -1,0 +1,11 @@
+{
+  "gun": {
+    "Cannon": {
+      "tile": ["↦", "-"],
+      "projectile": ["0", "0", "0", "0"],
+      "color": "red",
+      "description": "",
+      "playerDeathLine": "dirka"
+    }
+  }
+}

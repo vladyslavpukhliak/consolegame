@@ -1,0 +1,75 @@
+{
+		"default": {
+			"Snake": {
+				"tile": "S", // for movable spikes or arrows tile must be an array. додати смертельну фразу по відношенню до гравця, і по відношенню до ворога (теж можливий масив). health = 9999 - означатиме що ворога не можна вбити. 
+				// також зробити так щоб деяких ворогів не можна було бити в рукопашну а лиш дальнією зброєю.
+				"color":"green",
+				"description": "",
+				"level": 1,
+				"attack": 5,
+				"health": 10,
+				"experience": 150
+			},
+			"Rozbiynyk": {
+				"tile": "r",
+				"color":"orange",
+				"description": "",
+				"level": 2,
+				"attack": 10,
+				"health": 40,
+				"experience": 200
+			},
+			"Ork": {
+				"tile": "O",
+				"color":"white",
+				"description": "",
+				"level": 3,
+				"attack": 45,
+				"health": 300,
+				"experience": 750
+			}
+		},
+		
+		"hound": {
+			"Dog": {
+				"tile": "◊",
+				"color":"yellow",
+				"description": "It is accepted that dogs have a larger field of vision and are better at finding their way. They are fast. Chase prey until they gnaw it to death",
+				"level": 3,
+				"attack": 45,
+				"health": 300,
+				"experience": 750
+			},
+			"Kamikaze": {
+				"tile": "⁕",
+				"color":"red",
+				"description": "Zombie kamikaze with a bomb on his spine",
+				"level": 3,
+				"attack": 999,
+				"health": 300,
+				"experience": 750
+			}
+		},
+		"spike": {
+			"spike": {
+				"tile": "⁕",
+				"color":"red",
+				"description": "Zombie kamikaze with a bomb on his spine",
+				"level": 3,
+				"attack": 999,
+				"health": 300,
+				"experience": 750
+			}
+		},
+		"movable spike": {
+			"movable spike": {
+				"tile": "⁕",
+				"color":"red",
+				"description": "Zombie kamikaze with a bomb on his spine",
+				"level": 3,
+				"attack": 999,
+				"health": 300,
+				"experience": 750
+			}
+		}
+}

@@ -2,26 +2,25 @@
 #include "Level.h"
 #include "Graphics.h"
 #include "GameSystem.h"
-using namespace std;
 
 Graphics graphics;
-queue<Message> messageQueue;
+std::queue<Message> messageQueue;
 bool s_busy = false;
 
-void Message::addMessage(const string text) {
+void Message::addMessage(const std::string text) {
 	Message newMessage(text);
 	messageQueue.push(newMessage);
-	//printMessages();
+	//printmessageList();
 }
 
 bool Message::isBusy() { return s_busy; };
 
-// Шо це за навороти з chrono, які бог зна як працюють?
-void Message::checkExpiredMessages() {
-	chrono::time_point<chrono::steady_clock> now = chrono::steady_clock::now();
+// РЁРѕ С†Рµ Р·Р° РЅР°РІРѕСЂРѕС‚Рё Р· chrono, СЏРєС– Р±РѕРі Р·РЅР° СЏРє РїСЂР°С†СЋСЋС‚СЊ?
+void Message::checkExpiredmessageList() {
+	std::chrono::time_point<std::chrono::steady_clock> now = std::chrono::steady_clock::now();
 
 	Message frontMessage;
-	chrono::duration<double> elapsedTime;
+	std::chrono::duration<double> elapsedTime;
 
 	while (!messageQueue.empty()) {
 		frontMessage = messageQueue.front();
@@ -29,30 +28,30 @@ void Message::checkExpiredMessages() {
 		elapsedTime = now - frontMessage.timestamp;
 
 		if (GameSystem::isGameOver()) break;
-		if (elapsedTime.count() >= 1 || messageQueue.size() >= 15) {  // Час, через який сповіщення зникає (1000 мілісекунд)
+		if (elapsedTime.count() >= 1 || messageQueue.size() >= 15) {  // пїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (1000 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
 			clearRow();
-			printMessages();
+			printmessageList();
 		}
 		else {
-			break;  // Вийти з циклу, якщо перше сповіщення ще актуальне
+			break;  // Р’РёР№С‚Рё Р· С†РёРєР»Сѓ, СЏРєС‰Рѕ РїРµСЂС€Рµ СЃРїРѕРІС–С‰РµРЅРЅСЏ С‰Рµ Р°РєС‚СѓР°Р»СЊРЅРµ
 		}
 	}
 }
 
 
-// Очищуємо попередні повідомлення
+// РћС‡РёС‰СѓС”РјРѕ РїРѕРїРµСЂРµРґРЅС– РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ
 void Message::clearRow() {
 	if (s_busy) return;
 	s_busy = true;
-	queue<Message> tempQueue = messageQueue;  // Копіюємо чергу до тимчасового контейнера
+	std::queue<Message> tempQueue = messageQueue;  // РљРѕРїС–СЋС”РјРѕ С‡РµСЂРіСѓ РґРѕ С‚РёРјС‡Р°СЃРѕРІРѕРіРѕ РєРѕРЅС‚РµР№РЅРµСЂР°
 	int i = 1;
 	size_t messageLength;
 
 
 	while (!tempQueue.empty()) {
-		//if (Level::isBusy()) return; // Якщо друк не зайнятий, то перейти до наступних кроків:
+		//if (Level::isBusy()) return; // РЇРєС‰Рѕ РґСЂСѓРє РЅРµ Р·Р°Р№РЅСЏС‚РёР№, С‚Рѕ РїРµСЂРµР№С‚Рё РґРѕ РЅР°СЃС‚СѓРїРЅРёС… РєСЂРѕРєС–РІ:
 		messageLength = tempQueue.front().text.size();
-		string spaces(messageLength, ' ');
+		std::string spaces(messageLength, ' ');
 
 		graphics.setCursorPos(40, i);
 		printf(spaces.c_str());
@@ -64,12 +63,12 @@ void Message::clearRow() {
 	s_busy = false;
 }
 
-void Message::printMessages() {
+void Message::printmessageList() {
 	if (s_busy) return;
 	s_busy = true;
-	queue<Message> tempQueue = messageQueue;  // Копіюємо чергу до тимчасового контейнера
+	std::queue<Message> tempQueue = messageQueue;  // РљРѕРїС–СЋС”РјРѕ С‡РµСЂРіСѓ РґРѕ С‚РёРјС‡Р°СЃРѕРІРѕРіРѕ РєРѕРЅС‚РµР№РЅРµСЂР°
 	int i = 1;
-	string frontMessage;
+	std::string frontMessage;
 
 	while (!tempQueue.empty()) {
 		frontMessage = tempQueue.front().text;

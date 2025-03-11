@@ -1,8 +1,8 @@
 #include "Graphics.h"
 #include "Message.h"
-#include <Windows.h>
+#include <windows.h>
 
-Message messagesManager;
+Message messageListManager;
 HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 COORD cursor_pos;
 
@@ -23,20 +23,20 @@ void SetWindowSize(int width, int height) {
 void Graphics::init() {
 	SetConsoleTitleA("Demo");
 
-	// Відключення курсора
+	// Р’С–РґРєР»СЋС‡РµРЅРЅСЏ РєСѓСЂСЃРѕСЂР°
 	CONSOLE_CURSOR_INFO cursor_info;
 	GetConsoleCursorInfo(console, &cursor_info);
 	cursor_info.bVisible = false;
 	SetConsoleCursorInfo(console, &cursor_info);
 
-	// Задаємо розмір вікна гри
+	// Р—Р°РґР°С”РјРѕ СЂРѕР·РјС–СЂ РІС–РєРЅР° РіСЂРё
 	SetWindowSize(100, 30); // change digits to json values
 
-	// Ініціалізуємо фіксований UI
+	// Р†РЅС–С†С–Р°Р»С–Р·СѓС”РјРѕ С„С–РєСЃРѕРІР°РЅРёР№ UI
 	setCursorPos(40, 0);
 	printf("-- Information --");
 }
 
-void Graphics::addMessage(string message) {
-	messagesManager.addMessage(message);
+void Graphics::addMessage(std::string message) {
+	messageListManager.addMessage(message);
 }

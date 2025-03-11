@@ -10,10 +10,10 @@ public:
 	int buttonPlate = 0;
 	Level();
 
-	void load(string file, Player &player);
+	void load(std::string file, Player &player);
 	static bool isBusy();
 	void Draw();
-	void setPlayerName(string nickname);
+	void setPlayerName(std::string nickname);
 
 	void Move(char input, Player &player);
 	void UpdateEnemies(Player &player);
@@ -27,8 +27,8 @@ private:
 	void BattleEnemy(Player& player, int targetX, int targetY);
 
 private:
-	string playerName;
-	vector <string> _levelData;
-	vector <Enemy> _enemies;
+	std::string playerName;
+	std::vector <std::string> _levelData;
+	std::vector <Enemy> _enemies;
 };
 

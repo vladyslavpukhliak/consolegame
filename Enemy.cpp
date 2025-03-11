@@ -3,13 +3,13 @@
 #include <random>
 #include <ctime>
 
-Enemy::Enemy(string name, char tile, int level, int attack, int health, int expirience) {
+Enemy::Enemy(std::string name, char tile, int level, int attack, int health, int experience) {
 	_name = name;
 	_tile = tile;
 	_level = level;
 	_attack = attack;
 	_health = health;
-	_expirience = expirience;
+	_experience = experience;
 }
 
 void Enemy::SetPosition(int x, int y) {
@@ -23,22 +23,22 @@ void Enemy::GetPosition(int& x, int& y) {
 }
 
 int Enemy::attack() {
-	static default_random_engine randomEngine(time(NULL));
-	uniform_int_distribution<int> attackRoll(0, _attack);
+	static std::default_random_engine randomEngine(time(NULL));
+	std::uniform_int_distribution<int> attackRoll(0, _attack);
 
 	return attackRoll(randomEngine);
 }
 int Enemy::TakeDamage(int damage) {
 	_health -= damage;
 	if (_health <= 0) {
-		return _expirience;
+		return _experience;
 	}
 	return 0;
 }
 
 char Enemy::GetMove(int playerX, int playerY) {
-	static default_random_engine randomEngine(time(NULL));
-	uniform_int_distribution<int> moveRoll(0, 6);
+	static std::default_random_engine randomEngine(time(NULL));
+	std::uniform_int_distribution<int> moveRoll(0, 6);
 
 	int dx = _x - playerX;
 	int dy = _y - playerY;

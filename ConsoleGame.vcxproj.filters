@@ -1,66 +1,76 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="systems">
+      <UniqueIdentifier>{7e86c545-9cc6-4672-a7d1-6274659ada36}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="logic">
+      <UniqueIdentifier>{17c01515-ab47-4edb-881e-be78ea958a37}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="graphics">
+      <UniqueIdentifier>{c400e817-9426-48c2-902f-fd5e82cecaab}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Graphics">
-      <UniqueIdentifier>{3d02121b-f489-4dfe-afbc-3ef12608d279}</UniqueIdentifier>
+    <Filter Include="headers">
+      <UniqueIdentifier>{a1fd62f0-dd8f-404e-9f75-bfd99009f3e5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Graphics">
-      <UniqueIdentifier>{5a758ab4-9d01-4683-890a-a1fb2a5d1200}</UniqueIdentifier>
+    <Filter Include="headers\graphics">
+      <UniqueIdentifier>{92ce9de5-12a8-4e7c-a06e-5968d419d6d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\systems">
+      <UniqueIdentifier>{413a979c-b770-4af6-b157-b5b4e8810029}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\logic">
+      <UniqueIdentifier>{5bea7127-2a7a-4ec3-9b57-0bc26466e5b0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Level.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Message.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="GameSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Level.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Header Files\Graphics</Filter>
+      <Filter>headers\logic</Filter>
     </ClInclude>
     <ClInclude Include="Message.h">
-      <Filter>Header Files\Graphics</Filter>
+      <Filter>headers\logic</Filter>
     </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>headers\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSystem.h">
+      <Filter>headers\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="FileSystem.h">
+      <Filter>headers\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.h">
+      <Filter>headers\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>headers\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="entities.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="GameSystem.cpp">
+      <Filter>systems</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSystem.cpp">
+      <Filter>systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Message.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

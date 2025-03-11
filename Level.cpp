@@ -1,15 +1,17 @@
-#include <Windows.h>
 #include <stdlib.h>
 #include <fstream>
 #include <iostream>
+#include <conio.h>
 #include "Level.h"
 #include "Enemy.h"
 #include "Message.h"
 #include "Graphics.h"
+#include "FileSystem.h"
 #include "GameSystem.h"
-#include "Message.h"
+#include "entities.h"
+#include <windows.h>
 
-//Message messages;
+//Message messageList;
 Graphics graphicsManager;
 Message message;
 bool busy = false;
@@ -19,10 +21,10 @@ Level::Level() {
 }
 
 // Loads the level
-void Level::load(string fileName, Player& player) {
-	ifstream file;
+void Level::load(std::string fileName, Player& player) {
+	std::ifstream file;
 
-	// Перевірка файлу
+	// РџРµСЂРµРІС–СЂРєР° С„Р°Р№Р»Сѓ
 	file.open(fileName);
 	if (file.fail()) {
 		perror(fileName.c_str());
@@ -30,15 +32,21 @@ void Level::load(string fileName, Player& player) {
 		exit(1);
 	}
 
-	// Завантажити данні з файлу в масив
-	string line;
+	// Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё РґР°РЅРЅС– Р· С„Р°Р№Р»Сѓ РІ РјР°СЃРёРІ
+	std::string line;
 	while (getline(file, line)) {
 		_levelData.push_back(line);
 	}
 	file.close();
 
 
-	// Ініціалізація рівня
+	// РЇ РЎР®Р”Рђ Р’РЎРўРђР’РР’ Р† РўР Р•Р‘Рђ Р—РќРђР™РўР РљР РђР©Р• РњР†РЎР¦Р•
+	system("cls");
+	initCannonParams("assets/settings/props.json");
+	
+	Sleep(6000);
+
+	// Р†РЅС–С†С–Р°Р»С–Р·Р°С†С–СЏ СЂС–РІРЅСЏ
 	char tile;
 	for (int i = 0; i < _levelData.size(); i++) {
 		for (int j = 0; j < _levelData[i].size(); j++) {
@@ -51,7 +59,6 @@ void Level::load(string fileName, Player& player) {
 			case 'S': // Snake
 				_enemies.push_back(Enemy("Snake", tile, 1, 5, 10, 150));
 				_enemies.back().SetPosition(j, i);
-				//_levelData[i, j] = "\e[0;32m S \e[0m";
 				break;
 			case 'r': // Rozbiynyk
 				_enemies.push_back(Enemy("Rozbiynyk", tile, 2, 10, 40, 200));
@@ -71,7 +78,7 @@ void Level::load(string fileName, Player& player) {
 
 bool Level::isBusy() { return busy; };
 
-// Відобразити кадр
+// Р’С–РґРѕР±СЂР°Р·РёС‚Рё РєР°РґСЂ
 void Level::Draw() {
 	if (busy) return;
 	busy = true;
@@ -83,13 +90,13 @@ void Level::Draw() {
 	}
 	busy = false;
 	if (!GameSystem::isGameOver()) {
-		message.checkExpiredMessages();
-		message.printMessages();
+		message.checkExpiredmessageList();
+		message.printmessageList();
 	}
 	printf("\n");
 }
 
-void Level::setPlayerName(string nickname) {
+void Level::setPlayerName(std::string nickname) {
 	playerName = nickname;
 }
 
@@ -146,7 +153,7 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 		return;
 	}
 
-	// Символ попереду гравця
+	// РЎРёРјРІРѕР» РїРѕРїРµСЂРµРґСѓ РіСЂР°РІС†СЏ
 	char tileAhead = GetTile(targetX + horizontal, targetY + vertical);
 
 	char nextTile = GetTile(targetX, targetY);
@@ -221,8 +228,8 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 	int enemyY;
 	int playerX;
 	int playerY;
-	string enemyName;
-	string attackInfo;
+	std::string enemyName;
+	std::string attackInfo;
 	int attackRoll;
 	int attackResult;
 
@@ -234,7 +241,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 		if (targetX == enemyX && targetY == enemyY) {
 			// Battle !
 			attackRoll = player.attack();
-			attackInfo = "Player attacked " + enemyName + " with a roll of: " + to_string(attackRoll);
+			attackInfo = "Player attacked " + enemyName + " with a roll of: " + std::to_string(attackRoll);
 			graphicsManager.addMessage(attackInfo);
 
 			attackResult = _enemies[i].TakeDamage(attackRoll);
@@ -250,14 +257,14 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				i--;
 				// Add enemy's death sound
 				Sleep(600);
-				player.AddExpirience(attackResult);
+				player.AddExperience(attackResult);
 
 				return;
 			}
 			// Enemy's turn !
 			attackRoll = _enemies[i].attack();
 
-			attackInfo = enemyName + " attacked You with a roll of: " + to_string(attackRoll);
+			attackInfo = enemyName + " attacked You with a roll of: " + std::to_string(attackRoll);
 			graphicsManager.addMessage(attackInfo);
 			attackResult = player.TakeDamage(attackRoll);
 
@@ -271,7 +278,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				system("CLS");
 
 				// Loads the art
-				ifstream artFile;
+				std::ifstream artFile;
 
 				artFile.open("Art/Death.txt");
 				if (artFile.fail()) {
@@ -280,30 +287,30 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 					exit(1);
 				}
 
-				string line;
-				// Метод swap() для повного звільнення пам'яті
-				vector<string>().swap(_levelData); //_levelData.clear();
+				std::string line;
+				// РњРµС‚РѕРґ swap() РґР»СЏ РїРѕРІРЅРѕРіРѕ Р·РІС–Р»СЊРЅРµРЅРЅСЏ РїР°Рј'СЏС‚С–
+				std::vector<std::string>().swap(_levelData); //_levelData.clear();
 
 
-				string wordToReplace = "nickname", tempWord;
+				std::string wordToReplace = "nickname", tempWord;
 				size_t lineY = 0, replaceX = 0, replaceY = 0,
 					wordSize = wordToReplace.length(), nameLength = playerName.length();
 
 				while (getline(artFile, line)) {
 					lineY++;
 
-					if (line.find(wordToReplace) != string::npos) {
-						// Координати для курсора
+					if (line.find(wordToReplace) != std::string::npos) {
+						// РљРѕРѕСЂРґРёРЅР°С‚Рё РґР»СЏ РєСѓСЂСЃРѕСЂР°
 						replaceX = line.find(wordToReplace);
 						replaceY = lineY - 1;
 
-						// Заміна nickname на ім'я гравця
+						// Р—Р°РјС–РЅР° nickname РЅР° С–Рј'СЏ РіСЂР°РІС†СЏ
 						uint8_t charsToAdd;
 						if (nameLength != wordSize) {
 							if (nameLength % 2)
 								playerName += ' ';
 
-							nameLength = playerName.length(); // оновлюємо дані
+							nameLength = playerName.length(); // РѕРЅРѕРІР»СЋС”РјРѕ РґР°РЅС–
 
 							if (nameLength < wordSize) {
 								charsToAdd = wordSize - nameLength;
@@ -331,6 +338,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				printf(playerName.c_str());
 				graphicsManager.setCursorPos(0, lineY);
 				Sleep(600);
+				_getch();
 
 				exit(0);
 			}
