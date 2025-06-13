@@ -1,7 +1,11 @@
-﻿#include "GameSystem.h"
+#include "GameSystem.h"
+#include <windows.h>
 
 int main() {
-	GameSystem gameSys("assets/Levels/level1.txt");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	
+	GameSystem gameSys;
 
 	gameSys.RunGame();
 

@@ -24,7 +24,7 @@ Level::Level() {
 void Level::load(std::string fileName, Player& player) {
 	std::ifstream file;
 
-	// РџРµСЂРµРІС–СЂРєР° С„Р°Р№Р»Сѓ
+	// Перевірка файлу
 	file.open(fileName);
 	if (file.fail()) {
 		perror(fileName.c_str());
@@ -32,7 +32,7 @@ void Level::load(std::string fileName, Player& player) {
 		exit(1);
 	}
 
-	// Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё РґР°РЅРЅС– Р· С„Р°Р№Р»Сѓ РІ РјР°СЃРёРІ
+	// Завантажити данні з файлу в масив
 	std::string line;
 	while (getline(file, line)) {
 		_levelData.push_back(line);
@@ -40,13 +40,14 @@ void Level::load(std::string fileName, Player& player) {
 	file.close();
 
 
-	// РЇ РЎР®Р”Рђ Р’РЎРўРђР’РР’ Р† РўР Р•Р‘Рђ Р—РќРђР™РўР РљР РђР©Р• РњР†РЎР¦Р•
-	system("cls");
-	initCannonParams("assets/settings/props.json");
+	// Я СЮДА ВСТАВИВ І ТРЕБА ЗНАЙТИ КРАЩЕ МІСЦЕ
+	/*system("cls");
+	Cannon cannon = loadCannonParams("assets/settings/props.json");
+	printf("Cannon name: %s\n", cannon.tile[0]);
 	
-	Sleep(6000);
+	Sleep(6000);*/
 
-	// Р†РЅС–С†С–Р°Р»С–Р·Р°С†С–СЏ СЂС–РІРЅСЏ
+	// Ініціалізація рівня
 	char tile;
 	for (int i = 0; i < _levelData.size(); i++) {
 		for (int j = 0; j < _levelData[i].size(); j++) {
@@ -78,22 +79,65 @@ void Level::load(std::string fileName, Player& player) {
 
 bool Level::isBusy() { return busy; };
 
-// Р’С–РґРѕР±СЂР°Р·РёС‚Рё РєР°РґСЂ
+// Відобразити кадр
 void Level::Draw() {
 	if (busy) return;
 	busy = true;
 
+	//for (int i = 0; i < _levelData.size(); i++) {
+	//	//if (message.isBusy()) return;
+	//	graphicsManager.setCursorPos(0, i);
+	//	std::cout << _levelData[i];
+	//}
+			std::string line;
+	char tile;
+	graphicsManager.setCursorPos(0, 0);
 	for (int i = 0; i < _levelData.size(); i++) {
-		//if (message.isBusy()) return;
-		graphicsManager.setCursorPos(0, i);
-		std::cout << _levelData[i];
+			//if (message.isBusy()) return;
+			//graphicsManager.setCursorPos(0, i);
+
+			//line.reserve(_levelData[i].size() * 12); // Резервуємо з запасом на ANSI коди ?
+
+			for (int j = 0; j < _levelData[i].size(); j++) {
+				tile = _levelData[i][j];
+
+				switch (tile) {
+				case 'B': // Box
+					line += graphicsManager.colorizeTile(tile, 33);
+					break;
+				case '$': // Money
+					line += graphicsManager.colorizeTile(tile, 32);
+					break;
+				case 'S': // Snake
+					line += graphicsManager.colorizeTile(tile, 32);
+					break;
+				case 'r': // Rozbiynyk
+					line += graphicsManager.colorizeTile(tile, 33);
+					break;
+				case 'O': // Ork
+					line += graphicsManager.colorizeTile(tile, 31);
+					break;
+				case 'X': // Moveable box
+					line += graphicsManager.colorizeTile(tile, 35);
+					break;
+				case '@': // Player
+					line += graphicsManager.colorizeTile(tile, 33);
+					break;
+				default:
+					line += graphicsManager.colorizeTile(tile, 37);
+					break;
+				}
+			}
+
+			line += "\n";
 	}
+	std::cout<<line;
 	busy = false;
 	if (!GameSystem::isGameOver()) {
 		message.checkExpiredmessageList();
 		message.printmessageList();
 	}
-	printf("\n");
+	//printf("\n");
 }
 
 void Level::setPlayerName(std::string nickname) {
@@ -153,7 +197,7 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 		return;
 	}
 
-	// РЎРёРјРІРѕР» РїРѕРїРµСЂРµРґСѓ РіСЂР°РІС†СЏ
+	// Символ попереду гравця
 	char tileAhead = GetTile(targetX + horizontal, targetY + vertical);
 
 	char nextTile = GetTile(targetX, targetY);
@@ -280,7 +324,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				// Loads the art
 				std::ifstream artFile;
 
-				artFile.open("Art/Death.txt");
+				artFile.open("assets/Art/Death.txt");
 				if (artFile.fail()) {
 					perror("No such file: \"Art/Death.txt\"");
 					Sleep(600);
@@ -288,7 +332,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				}
 
 				std::string line;
-				// РњРµС‚РѕРґ swap() РґР»СЏ РїРѕРІРЅРѕРіРѕ Р·РІС–Р»СЊРЅРµРЅРЅСЏ РїР°Рј'СЏС‚С–
+				// Метод swap() для повного звільнення пам'яті
 				std::vector<std::string>().swap(_levelData); //_levelData.clear();
 
 
@@ -300,17 +344,17 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 					lineY++;
 
 					if (line.find(wordToReplace) != std::string::npos) {
-						// РљРѕРѕСЂРґРёРЅР°С‚Рё РґР»СЏ РєСѓСЂСЃРѕСЂР°
+						// Координати для курсора
 						replaceX = line.find(wordToReplace);
 						replaceY = lineY - 1;
 
-						// Р—Р°РјС–РЅР° nickname РЅР° С–Рј'СЏ РіСЂР°РІС†СЏ
+						// Заміна nickname на ім'я гравця
 						uint8_t charsToAdd;
 						if (nameLength != wordSize) {
 							if (nameLength % 2)
 								playerName += ' ';
 
-							nameLength = playerName.length(); // РѕРЅРѕРІР»СЋС”РјРѕ РґР°РЅС–
+							nameLength = playerName.length(); // оновлюємо дані
 
 							if (nameLength < wordSize) {
 								charsToAdd = wordSize - nameLength;

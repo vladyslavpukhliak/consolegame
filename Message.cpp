@@ -15,7 +15,7 @@ void Message::addMessage(const std::string text) {
 
 bool Message::isBusy() { return s_busy; };
 
-// РЁРѕ С†Рµ Р·Р° РЅР°РІРѕСЂРѕС‚Рё Р· chrono, СЏРєС– Р±РѕРі Р·РЅР° СЏРє РїСЂР°С†СЋСЋС‚СЊ?
+// Шо це за навороти з chrono, які бог зна як працюють?
 void Message::checkExpiredmessageList() {
 	std::chrono::time_point<std::chrono::steady_clock> now = std::chrono::steady_clock::now();
 
@@ -28,28 +28,28 @@ void Message::checkExpiredmessageList() {
 		elapsedTime = now - frontMessage.timestamp;
 
 		if (GameSystem::isGameOver()) break;
-		if (elapsedTime.count() >= 1 || messageQueue.size() >= 15) {  // пїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (1000 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+		if (elapsedTime.count() >= 1 || messageQueue.size() >= 15) {  //    ,                            (1000         )
 			clearRow();
 			printmessageList();
 		}
 		else {
-			break;  // Р’РёР№С‚Рё Р· С†РёРєР»Сѓ, СЏРєС‰Рѕ РїРµСЂС€Рµ СЃРїРѕРІС–С‰РµРЅРЅСЏ С‰Рµ Р°РєС‚СѓР°Р»СЊРЅРµ
+			break;  // Вийти з циклу, якщо перше сповіщення ще актуальне
 		}
 	}
 }
 
 
-// РћС‡РёС‰СѓС”РјРѕ РїРѕРїРµСЂРµРґРЅС– РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ
+// Очищуємо попередні повідомлення
 void Message::clearRow() {
 	if (s_busy) return;
 	s_busy = true;
-	std::queue<Message> tempQueue = messageQueue;  // РљРѕРїС–СЋС”РјРѕ С‡РµСЂРіСѓ РґРѕ С‚РёРјС‡Р°СЃРѕРІРѕРіРѕ РєРѕРЅС‚РµР№РЅРµСЂР°
+	std::queue<Message> tempQueue = messageQueue;  // Копіюємо чергу до тимчасового контейнера
 	int i = 1;
 	size_t messageLength;
 
 
 	while (!tempQueue.empty()) {
-		//if (Level::isBusy()) return; // РЇРєС‰Рѕ РґСЂСѓРє РЅРµ Р·Р°Р№РЅСЏС‚РёР№, С‚Рѕ РїРµСЂРµР№С‚Рё РґРѕ РЅР°СЃС‚СѓРїРЅРёС… РєСЂРѕРєС–РІ:
+		//if (Level::isBusy()) return; // Якщо друк не зайнятий, то перейти до наступних кроків:
 		messageLength = tempQueue.front().text.size();
 		std::string spaces(messageLength, ' ');
 
@@ -66,7 +66,7 @@ void Message::clearRow() {
 void Message::printmessageList() {
 	if (s_busy) return;
 	s_busy = true;
-	std::queue<Message> tempQueue = messageQueue;  // РљРѕРїС–СЋС”РјРѕ С‡РµСЂРіСѓ РґРѕ С‚РёРјС‡Р°СЃРѕРІРѕРіРѕ РєРѕРЅС‚РµР№РЅРµСЂР°
+	std::queue<Message> tempQueue = messageQueue;  // Копіюємо чергу до тимчасового контейнера
 	int i = 1;
 	std::string frontMessage;
 
