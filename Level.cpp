@@ -417,10 +417,11 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				system("cls");
 				graphicsManager.init();
 				GameSystem::UnPauseTheGame();
+				return;
 			}
 
 
-			// ќце будь ласка т≥льки п≥сл€ д≥алогу, а воно пр€м перед розпочинаЇтьс€ ≥ п≥сл€.
+			// ќце будь ласка т≥льки п≥сл€ д≥алогу.
 			// Battle !
 			enemyName = enemyEntry.GetName();
 			if (!enemyEntry._isUnbeatable) {

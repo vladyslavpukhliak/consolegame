@@ -100,7 +100,7 @@ int readPlayerDeaths(const std::string& filename) {
 	std::ifstream ifs(filename);
 	if (!ifs.is_open()) {
 		std::cerr << "Failed to open file for reading." << std::endl;
-		return 1;
+		return 0;
 	}
 
 	std::string json((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
@@ -111,7 +111,7 @@ int readPlayerDeaths(const std::string& filename) {
 		return doc["deaths"].GetInt();
 	}
 
-	return 1;
+	return 0;
 }
 int readPlayerMoney(const std::string& filename) {
 	std::ifstream ifs(filename);
@@ -682,7 +682,7 @@ void GameSystem::RunGame() {
 		// можна додати різних фраз в файл і ними оперувати на рандом
 		std::cout << "\x1B[2J\x1B[H";
 
-		// і це Боже, що це за страховисько! виправити так щоб там де крапки їм окрема була пауза в методі.
+		// і це Боже, що це за страховисько!
 		graphicsManager.print("Побачимо що ти собою представляєш, ", 0);
 		graphicsManager.print(name, 1000);
 		graphicsManager.print("...", 1500, 3000);
@@ -744,7 +744,7 @@ void GameSystem::RunGame() {
 
 		// Запис даних у файл!!!!!
 		int playerLevel = readPlayerLevel(filename);
-		writePlayerData(filename, readPlayerName(filename), 0, ++playerLevel, _player.GetAvailableMoney(), readPlayerLevel(filename));
+		writePlayerData(filename, readPlayerName(filename), 0, ++playerLevel, _player.GetAvailableMoney(), readPlayerDeaths(filename));
 		// 0 в кінці що означає "смертей" замінити на справжні смерті.
 
 		mciSendStringA("close leMusic", NULL, 0, NULL);
