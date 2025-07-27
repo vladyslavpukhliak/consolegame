@@ -28,7 +28,7 @@ void Message::checkExpiredmessageList() {
 		elapsedTime = now - frontMessage.timestamp;
 
 		if (GameSystem::isGameOver()) break;
-		if (elapsedTime.count() >= 1 || messageQueue.size() >= 15) {  //    ,                            (1000         )
+		if (elapsedTime.count() >= 3.5 || messageQueue.size() >= 15) {  //    ,                            (1000         )
 			clearRow();
 			printmessageList();
 		}

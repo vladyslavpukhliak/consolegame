@@ -1,49 +1,27 @@
 {
 		"default": {
-			"Вогняний цербер": {
-				"tile": "S",
+			"Р’РѕРіРЅСЏРЅРёР№ С†РµСЂР±РµСЂ": {
+				"tile": "S", // for movable spikes or arrows tile must be an array. РґРѕРґР°С‚Рё СЃРјРµСЂС‚РµР»СЊРЅСѓ С„СЂР°Р·Сѓ РїРѕ РІС–РґРЅРѕС€РµРЅРЅСЋ РґРѕ РіСЂР°РІС†СЏ, С– РїРѕ РІС–РґРЅРѕС€РµРЅРЅСЋ РґРѕ РІРѕСЂРѕРіР° (С‚РµР¶ РјРѕР¶Р»РёРІРёР№ РјР°СЃРёРІ). health = 9999 - РѕР·РЅР°С‡Р°С‚РёРјРµ С‰Рѕ РІРѕСЂРѕРіР° РЅРµ РјРѕР¶РЅР° РІР±РёС‚Рё. 
+				// С‚Р°РєРѕР¶ Р·СЂРѕР±РёС‚Рё С‚Р°Рє С‰РѕР± РґРµСЏРєРёС… РІРѕСЂРѕРіС–РІ РЅРµ РјРѕР¶РЅР° Р±СѓР»Рѕ Р±РёС‚Рё РІ СЂСѓРєРѕРїР°С€РЅСѓ Р° Р»РёС€ РґР°Р»СЊРЅС–С”СЋ Р·Р±СЂРѕС”СЋ.
 				"color":32,
 				"description": "",
 				"level": 1,
 				"attack": 5,
 				"health": 10,
 				"experience": 150,
-				"visibleRange":5,
-				"friendly":0,
-				"fear":1,
-				"unbeatable":0
+				"friendly":0
 			},
-			"Розбійник": {
+			"Р РѕР·Р±С–Р№РЅРёРє": {
 				"tile": "r",
 				"color":33,
 				"description": "",
-				"deathLines": ["Одним виваженим ударом меча Розбійнику розкроїли череп!", "Батогом Розбійнику розсікли обличчя. Він стік кров'ю."],
 				"level": 2,
 				"attack": 10,
 				"health": 40,
 				"experience": 200,
-				"visibleRange":5,
-				"friendly":0,
-				"fear":0,
-				"unbeatable":0
+				"friendly":0
 			},
-			"Розбійник": {
-				"tile": "R",
-				"color":33,
-				"description": "",
-				"art": "assets/Art/Розбійник.txt",
-				"conversation": "assets/settings/Розбійник.json",
-				"level": 2,
-				"attack": 10,
-				"health": 40,
-				"experience": 200,
-				"visibleRange":5,
-				"movable":0,
-				"friendly":0,
-				"fear":0,
-				"unbeatable":0
-			},
-			"Орк": {
+			"РћСЂРє": {
 				"tile": "O",
 				"color":31,
 				"description": "",
@@ -51,36 +29,13 @@
 				"attack": 45,
 				"health": 300,
 				"experience": 750,
-				"visibleRange":4,
-				"friendly":0,
-				"fear":0,
-				"unbeatable":0
-			},
-			"Упир": {
-				"tile": "U",
-				"color":91,
-				"description": "Unbeatable unit",
-				"line": "Упир почув запах вашої крові!",
-				"level": 3,
-				"attack": 45,
-				"health": 300,
-				"experience": 750,
-				"visibleRange":11,
-				"friendly":0,
-				"fear":0,
-				"unbeatable":1
+				"friendly":0
 			}
 		},
 		
-		
-		
-		
-		
-		
-		
-		"hound - WORK IN PROGRESS": {
+		"hound": {
 			"Dog": {
-				"tile": "?",
+				"tile": "в—Љ",
 				"color":"yellow",
 				"description": "It is accepted that dogs have a larger field of vision and are better at finding their way. They are fast. Chase prey until they gnaw it to death",
 				"level": 3,
@@ -90,7 +45,7 @@
 				"friendly":0
 			},
 			"Kamikaze": {
-				"tile": "?",
+				"tile": "вЃ•",
 				"color":"red",
 				"description": "Zombie kamikaze with a bomb on his spine",
 				"level": 3,
@@ -102,7 +57,7 @@
 		},
 		"spike": {
 			"spike": {
-				"tile": "?",
+				"tile": "вЃ•",
 				"color":"red",
 				"description": "Zombie kamikaze with a bomb on his spine",
 				"level": 3,
@@ -114,7 +69,7 @@
 		},
 		"movable spike": {
 			"movable spike": {
-				"tile": "?",
+				"tile": "вЃ•",
 				"color":"red",
 				"description": "Zombie kamikaze with a bomb on his spine",
 				"level": 3,

@@ -48,6 +48,7 @@
     <ClInclude Include="entities.h">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="DialogueSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -72,5 +73,6 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="DialogueSystem.cpp" />
   </ItemGroup>
 </Project>

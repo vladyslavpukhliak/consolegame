@@ -13,11 +13,12 @@ Player::Player() {
 	_y = 0;
 }
 
-void Player::init(int level, int attack, int health, int experience) {
+void Player::init(int level, int attack, int health, int experience, int money) {
 	_level = level;
 	_attack = attack;
 	_health = health;
 	_experience = experience;
+	_money = money;
 }
 
 int Player::attack() {
@@ -57,4 +58,12 @@ int Player::TakeDamage(int damage) {
 		return 1;
 	}
 	return 0;
+}
+
+bool Player::TryCharge(int priceToCharge) {
+	if (_money >= priceToCharge) {
+		_money -= priceToCharge;
+		return true;
+	}
+	return false;
 }

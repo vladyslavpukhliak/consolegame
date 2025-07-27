@@ -28,7 +28,7 @@ void Graphics::setCursorPos(short x, short y) {
 	SetConsoleCursorPosition(console, cursor_pos);
 }
 
-void SetWindowSize(int width, int height) {
+void Graphics::SetWindowSize(int width, int height) {
 	COORD size = { width, height };
 	SMALL_RECT rmin = { 0,0,1,1 };
 	SMALL_RECT rect = { 0,0,width - 1,height - 1 };
@@ -37,8 +37,12 @@ void SetWindowSize(int width, int height) {
 	SetConsoleWindowInfo(console, TRUE, &rect);
 }
 
+void Graphics::SetWindowTitle(std::string title) {
+	SetConsoleTitleA(title.c_str());
+}
+
 void Graphics::init() {
-	SetConsoleTitleA("Demo");
+	SetWindowTitle("Demo	forged by Vladyslav Pukhliak");
 
 	// Відключення курсора
 	CONSOLE_CURSOR_INFO cursor_info;
@@ -47,7 +51,7 @@ void Graphics::init() {
 	SetConsoleCursorInfo(console, &cursor_info);
 
 	// Задаємо розмір вікна гри
-	SetWindowSize(100, 30); // change digits to json values
+	SetWindowSize(120, 60); // change digits to json values
 
 	// Ініціалізуємо фіксований UI
 	setCursorPos(40, 0);
@@ -68,10 +72,6 @@ std::vector<std::string> splitString(const std::string& str) {
 	}
 
 	return words;
-}
-
-std::string Graphics::colorizeTile(const char& tile, const unsigned int& fg, unsigned int bg) {
-	return "\033[" + std::to_string(fg) + ";" + std::to_string(bg) + "m" + tile + "\033[0m";
 }
 
 void Graphics::print(const std::string &str, const unsigned int miliseconds, const unsigned int milisecondsSpeed) {
@@ -99,7 +99,7 @@ void Graphics::unprint(const std::string &str, const unsigned int miliseconds) {
 			std::cout << "\b \b";
 			std::this_thread::sleep_for(std::chrono::milliseconds(80 / word.length()));
 		}
-		//std::cout << " ";
+		std::cout << "\b \b";
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(miliseconds));
 }

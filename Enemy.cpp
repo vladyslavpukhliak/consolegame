@@ -1,15 +1,31 @@
 #include "Enemy.h"
+#include "Graphics.h"
 #include <string>
 #include <random>
 #include <ctime>
 
-Enemy::Enemy(std::string name, char tile, int level, int attack, int health, int experience) {
+Graphics gM;
+
+Enemy::Enemy(std::string name, std::string line, std::string art, std::string conversation,
+	std::vector <std::string> deathLines,
+	char tile, int color, int level, int attack, int health, int experience, int visibleRange,
+	bool isMovable, bool isFriendly, bool fear, bool isUnbeatable) {
 	_name = name;
+	_art = art;
+	_conversation = conversation;
+	_deathLines = deathLines;
 	_tile = tile;
+	_color = color;
+	_line = line;
 	_level = level;
 	_attack = attack;
 	_health = health;
 	_experience = experience;
+	_visibleRange = visibleRange;
+	_isMovable = isMovable;
+	_isFriendly = isFriendly;
+	_fear = fear;
+	_isUnbeatable = isUnbeatable;
 }
 
 void Enemy::SetPosition(int x, int y) {
@@ -37,6 +53,7 @@ int Enemy::TakeDamage(int damage) {
 }
 
 char Enemy::GetMove(int playerX, int playerY) {
+	if (!_isMovable) return ' ';
 	static std::default_random_engine randomEngine(time(NULL));
 	std::uniform_int_distribution<int> moveRoll(0, 6);
 
@@ -46,19 +63,31 @@ char Enemy::GetMove(int playerX, int playerY) {
 	int ady = abs(dy);
 	int distance = adx + ady;
 
-	if (distance <= 5) {
-		// Moving along X axis
-		if (adx > ady) {
-			if (dx > 0) return 'a';
-			else return 'd';
+	if (distance <= _visibleRange && !_isFriendly) {
+		if (!_fear) {
+			if (!isSpotted && _line != "") gM.addMessage(_line);
+			isSpotted = true;
+			// ќриг≥нальна лог≥ка Ч до гравц€
+			// наближенн€ гравц€ до enemy (така лог≥ка залишаЇтьс€ незм≥нною, можна зм≥нити лише w,a,s,d)
+			if (adx > ady) {
+				return (dx > 0) ? 'a' : 'd';
+			}
+			else {
+				return (dy > 0) ? 'w' : 's';
+			}
 		}
-		// Moving along Y axis
 		else {
-			if (dy > 0) return 'w';
-			else return 's';
+			// Ќовий блок Ч в≥д гравц€ (протилежний рух)
+			if (adx > ady) {
+				return (dx > 0) ? 'd' : 'a';  // навпаки
+			}
+			else {
+				return (dy > 0) ? 's' : 'w';  // навпаки
+			}
 		}
 	}
-	
+	else isSpotted = false;
+
 	int randMove = moveRoll(randomEngine);
 	switch (randMove)
 	{
@@ -75,7 +104,7 @@ char Enemy::GetMove(int playerX, int playerY) {
 		return 'd';
 		break;
 	default:
-		return '.';
+		return ' ';
 		break;
 	}
 }
