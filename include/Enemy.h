@@ -7,14 +7,14 @@ class Enemy
 public:
 	Enemy(std::string name, std::string line,std::string art, std::string conversation,
 		std::vector<std::string> deathLines, 
-		char tile, int color, int level, int attack, int health, int experience, int visibleRange,
+		std::string tile, int color, int level, int attack, int health, int experience, int visibleRange,
 		bool isMovable, bool isFriendly, bool fear, bool isUnbeatable);
 
 	void SetPosition(int x, int y);
 	void GetPosition(int& x, int& y);
 	std::string GetName() { return _name; };
 	//bool isFriendly() { return _isFriendly; };
-	char GetTile() { return _tile; };
+	std::string GetTile() { return _tile; };
 
 	int attack();
 	int TakeDamage(int attack);
@@ -28,7 +28,7 @@ public:
 	int _visibleRange, _color;
 
 private:
-	char _tile;
+	std::string _tile;
 
 	int _level;
 	int _attack;

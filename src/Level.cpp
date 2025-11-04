@@ -4,6 +4,7 @@
 #include <conio.h>
 #include "Level.h"
 #include "Enemy.h"
+#include "Cannon.h"
 #include "Message.h"
 #include "Graphics.h"
 #include "FileSystem.h"
@@ -11,6 +12,7 @@
 #include "DialogueSystem.h"
 #include "entities.h"
 #include <windows.h>
+#include <filesystem> 
 
 //Message messageList;
 Graphics graphicsManager;
@@ -39,9 +41,41 @@ void Level::load(std::string fileName, Player& player) {
 	// Завантажити данні з файлу в масив
 	std::string line;
 	while (getline(file, line)) {
-		_levelData.push_back(line);
+		_initialMaze.push_back(line);
 	}
 	file.close();
+
+	// 1. Convert initial string array to 2D vector of strings (for multi-byte UTF-8 chars)
+	for (const auto& rowStr : _initialMaze) {
+		std::vector<std::string> row;
+
+		for (size_t i = 0; i < rowStr.length(); ) {
+			// Check if the current character is a multi-byte UTF-8 character (e.g., starting with 110xxxxxx or 1110xxxx)
+
+			if ((unsigned char)rowStr[i] >= 0x80) { // It's a multi-byte character
+				// Since our arrows are 3 bytes, read 3 bytes and push as one string cell
+				// NOTE: This assumes all multi-byte chars are 3 bytes (like our arrows)
+
+				if (i + 3 <= rowStr.length()) {
+					row.push_back(rowStr.substr(i, 3));
+					i += 3;
+				}
+
+				else {
+					row.push_back(" "); // Fallback
+					i += 1;
+				}
+			}
+
+			else { // It's a single-byte ASCII character (like #, @, or space)
+				row.push_back(std::string(1, rowStr[i]));
+				i++;
+			}
+		}
+		_levelData.push_back(row);
+	}
+
+
 
 
 	// ЧИТАЄМО enemies.json
@@ -62,7 +96,7 @@ void Level::load(std::string fileName, Player& player) {
 	for (auto it = def.MemberBegin(); it != def.MemberEnd(); ++it) {
 		const rapidjson::Value& enemy_json = it->value;
 
-		char tileChar = enemy_json["tile"].GetString()[0];
+		std::string tileChar = enemy_json["tile"].GetString();
 
 		EnemyTemplate tmpl;
 		tmpl.name = it->name.GetString();
@@ -113,6 +147,62 @@ void Level::load(std::string fileName, Player& player) {
 		enemyTemplates[tileChar] = tmpl;
 	}
 
+	const rapidjson::Value& dir = doc["cannon"];
+
+	for (auto it = dir.MemberBegin(); it != dir.MemberEnd(); ++it) {
+		const rapidjson::Value& cannon_json = it->value;
+
+		// Створюємо базовий шаблон CannonTemplate
+		CannonTemplate tmpl;
+		tmpl.name = it->name.GetString();
+
+		// Завантажуємо прості поля
+		tmpl.color = cannon_json.HasMember("color") && cannon_json["color"].IsInt() ?
+			cannon_json["color"].GetInt() : 37;
+
+		tmpl.description = cannon_json.HasMember("description") && cannon_json["description"].IsString() ?
+			cannon_json["description"].GetString() : "";
+
+		/*
+		tmpl.visibleRange = cannon_json.HasMember("visibleRange") && cannon_json["visibleRange"].IsInt() ?
+							cannon_json["visibleRange"].GetInt() : 0;
+		*/
+
+		// --- ЗМІНА №1: Обробка масиву "tile" ---
+		if (cannon_json.HasMember("tile") && cannon_json["tile"].IsArray()) {
+			const rapidjson::Value& tileArray = cannon_json["tile"];
+
+			// Зберігаємо масив плиток (tile) у шаблоні
+			for (rapidjson::SizeType k = 0; k < tileArray.Size(); ++k) {
+				if (tileArray[k].IsString()) {
+					tmpl.tile.push_back(tileArray[k].GetString());
+				}
+			}
+		}
+
+		// --- ЗМІНА №2: Обробка масиву "directions" ---
+		if (cannon_json.HasMember("directions") && cannon_json["directions"].IsArray()) {
+			const rapidjson::Value& directionsArray = cannon_json["directions"];
+
+			for (rapidjson::SizeType k = 0; k < directionsArray.Size(); ++k) {
+				if (directionsArray[k].IsArray() && directionsArray[k].Size() == 2 &&
+					directionsArray[k][0].IsInt() && directionsArray[k][1].IsInt()) {
+
+					// Додаємо пару координат [dx, dy] до шаблону
+					CannonDirection direction = { directionsArray[k][0].GetInt(), directionsArray[k][1].GetInt() };
+					tmpl.directions.push_back(direction);
+				}
+			}
+		}
+
+		// --- ЗМІНА №3: Створення записів для кожного символу ---
+		// На відміну від ворогів, ми створюємо один запис у мапі для КОЖНОГО символу напрямку
+		for (const auto& tileChar : tmpl.tile) {
+			// Ключ мапи - це символ ('^', '<', 'v', '>')
+			// Значення - це повний шаблон tmpl
+			cannonTemplates[tileChar] = tmpl;
+		}
+	}
 
 
 
@@ -126,12 +216,12 @@ void Level::load(std::string fileName, Player& player) {
 	Sleep(6000);*/
 
 	// Ініціалізація рівня
-	char tile;
+	std::string tile;
 	for (int i = 0; i < _levelData.size(); i++) {
 		for (int j = 0; j < _levelData[i].size(); j++) {
 			tile = _levelData[i][j];
 
-			if (tile == '@')
+			if (tile == "@")
 				player.SetPosition(j, i);
 
 				// Check if this tile character corresponds to an enemy template
@@ -147,9 +237,30 @@ void Level::load(std::string fileName, Player& player) {
 				enemiesWereHere = true;
 			}
 
-			else if (tile == 'X') { // Moveable box
+			else if (tile == "X") { // Moveable box
 				buttonPlate++;
 				buttonPlatesWereHere = true;
+			}
+			// Гармата
+			else if (cannonTemplates.count(tile)) {
+				const CannonTemplate& tmpl = cannonTemplates.at(tile);
+
+				int index = -1;
+
+				// Знаходимо індекс символу 'tile' у масиві tmpl.tile
+				// Хоча в даному випадку tmpl.tile, ймовірно, буде містити лише один елемент
+				// якщо ключ мапи – це сам символ, але якщо tmpl.tile містить ["^", "<", "v", ">"] 
+				for (int k = 0; k < tmpl.tile.size(); ++k) {
+					if (tile == tmpl.tile[k]) {
+						index = k;
+						break;
+					}
+				}
+
+				// 3. Створення гармати
+				_cannon.push_back(Cannon(tile));
+				_cannon.back().SetPosition(j, i);
+				_cannon.back().SetDirection(tmpl.directions[index].dx, tmpl.directions[index].dy);
 			}
 		}
 	}
@@ -168,7 +279,7 @@ void Level::Draw() {
 	//	std::cout << _levelData[i];
 	//}
 	std::string line = "";
-	char tile;
+	std::string tile;
 	graphicsManager.setCursorPos(0, 0);
 	for (int i = 0; i < _levelData.size(); i++) {
 		//if (message.isBusy()) return;
@@ -179,25 +290,29 @@ void Level::Draw() {
 		for (int j = 0; j < _levelData[i].size(); j++) {
 			tile = _levelData[i][j];
 
-			if (tile == '@')
+			if (tile == "@")
 				line += graphicsManager.colorize(tile, 33);
 
-			else if (tile == 'B') // Box
+			else if (tile == "B") // Box
 				line += graphicsManager.colorize(tile, 33);
 
-			else if (tile == '$') // Money
+			else if (tile == "$") // Money
 				line += graphicsManager.colorize(tile, 32);
 
-			else if (tile == 'X') // Moveable box
+			else if (tile == "X") // Moveable box
 				line += graphicsManager.colorize(tile, 35);
 
 			else if (enemyTemplates.count(tile)) {
 				const EnemyTemplate& tmpl = enemyTemplates.at(tile);
 				line += graphicsManager.colorize(tile, tmpl.color);
 			}
+			else if (cannonTemplates.count(tile)) {
+				const CannonTemplate& tmpl = cannonTemplates.at(tile);
+				line += graphicsManager.colorize(tile, tmpl.color);
+			}
 
 			else
-				line += graphicsManager.colorize(tile, 37);
+				line += tile;
 
 		}
 
@@ -209,14 +324,13 @@ void Level::Draw() {
 		message.checkExpiredmessageList();
 		message.printmessageList();
 	}
-	//printf("\n");
 }
 
 void Level::setPlayerName(std::string nickname) {
 	playerName = nickname;
 }
 
-void Level::Move(char input, Player& player) {
+char Level::Move(char input, Player& player) {
 
 	int playerX;
 	int playerY;
@@ -240,16 +354,21 @@ void Level::Move(char input, Player& player) {
 	case 'd': case 'D':
 		TryGo(player, playerX + 1, playerY);
 		break;
+	case 'r': case 'R':
+		
+		break;
 
 	default:
 		graphicsManager.addMessage("Invalid input!");
 		break;
 	}
+	return input;
 }
 
-char Level::GetTile(int x, int y) { return _levelData[y][x]; }
-void Level::SetTile(int x, int y, char tile) { _levelData[y][x] = tile; }
+std::string Level::GetTile(int x, int y) { return _levelData[y][x]; }
+void Level::SetTile(int x, int y, std::string tile) { _levelData[y][x] = tile; }
 
+// TODO: Померти якщо наступити на "*"
 void Level::TryGo(Player& player, int targetX, int targetY) {
 
 	int playerX;
@@ -270,47 +389,40 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 	}
 
 	// Символ попереду гравця
-	char tileAhead = GetTile(targetX + horizontal, targetY + vertical);
+	std::string tileAhead = GetTile(targetX + horizontal, targetY + vertical);
 
-	char nextTile = GetTile(targetX, targetY);
+	std::string nextTile = GetTile(targetX, targetY);
 
-	switch (nextTile) {
-	case '#': // Internal walls
+	if (nextTile == "#") { // Internal walls
 		graphicsManager.addMessage("You ran into the wall!");
-		break;
-
-	case ' ':
+	}
+	else if (nextTile == " ") {
 		player.SetPosition(targetX, targetY);
-		SetTile(playerX, playerY, ' ');
-		SetTile(targetX, targetY, '@');
-		break;
+		SetTile(playerX, playerY, " ");
+		SetTile(targetX, targetY, "@");
+	}
+	else if (nextTile == "B") { // Move Box logic
 
-	case 'B': // Move Box logic
-
-		if (tileAhead == ' ' || tileAhead == 'X') {
+		if (tileAhead == " " || tileAhead == "X") {
 			player.SetPosition(targetX, targetY);
-			SetTile(playerX, playerY, ' ');
-			SetTile(targetX, targetY, '@');
-			SetTile(targetX + horizontal, targetY + vertical, 'B');
+			SetTile(playerX, playerY, " ");
+			SetTile(targetX, targetY, "@");
+			SetTile(targetX + horizontal, targetY + vertical, "B");
 		}
-		if (tileAhead == 'X') buttonPlate--;
+		if (tileAhead == "X") buttonPlate--;
 
-		break;
-
-	case '$':
+	}
+	else if (nextTile == "$") {
 		player.SetPosition(targetX, targetY);
-		SetTile(playerX, playerY, ' ');
-		SetTile(targetX, targetY, '@');
+		SetTile(playerX, playerY, " ");
+		SetTile(targetX, targetY, "@");
 
 		graphicsManager.addMessage("+600 UAH");
 		player.TopUp(600);
-		break;
-
-	default:
-		BattleEnemy(player, targetX, targetY);
-		break;
 	}
+	else BattleEnemy(player, targetX, targetY);
 }
+
 void Level::TryEnemyGo(Player& player, int index, int targetX, int targetY) {
 	// Ініціалізація координат
 	int playerX, playerY, enemyX, enemyY;
@@ -318,14 +430,14 @@ void Level::TryEnemyGo(Player& player, int index, int targetX, int targetY) {
 	player.GetPosition(playerX, playerY);
 
 	// Перевіряємо пряму атаку / рух
-	char nextTile = GetTile(targetX, targetY);
-	if (nextTile == '@' && !_enemies[index]._isFriendly) {
+	std::string nextTile = GetTile(targetX, targetY);
+	if (nextTile == "@" && !_enemies[index]._isFriendly) {
 		BattleEnemy(player, enemyX, enemyY);
 		return;
 	}
-	if (nextTile == ' ') {
+	if (nextTile == " ") {
 		_enemies[index].SetPosition(targetX, targetY);
-		SetTile(enemyX, enemyY, ' ');
+		SetTile(enemyX, enemyY, " ");
 		SetTile(targetX, targetY, _enemies[index].GetTile());
 		return;
 	}
@@ -341,9 +453,9 @@ void Level::TryEnemyGo(Player& player, int index, int targetX, int targetY) {
 	// Збираємо тільки ті напрями, де НЕ стіна
 	std::vector<std::pair<int, int>> valid;
 	for (auto [dx, dy] : dirs) {
-		char tile = GetTile(enemyX + dx, enemyY + dy);
-		if (tile == ' ' ||
-			(tile == '@' && !_enemies[index]._isFriendly)) {
+		std::string tile = GetTile(enemyX + dx, enemyY + dy);
+		if (tile == " " ||
+			(tile == "@" && !_enemies[index]._isFriendly)) {
 			valid.emplace_back(dx, dy);
 		}
 	}
@@ -364,6 +476,63 @@ void Level::TryEnemyGo(Player& player, int index, int targetX, int targetY) {
 	// Викликаємо ще раз для обраного напряму
 	TryEnemyGo(player, index, enemyX + dx, enemyY + dy);
 }
+
+void Level::TryCannonShoot(Player& player, int index, int targetX, int targetY) {
+	// Ініціалізація координат
+	int playerX, playerY, missileX, missileY;
+	int directionX, directionY;
+	_cannon[index].GetDirection(directionX, directionY);
+	_cannon[index].GetPosition(missileX, missileY);
+	player.GetPosition(playerX, playerY);
+
+	// Перевіряємо пряму атаку / рух
+	std::string nextTile = GetTile(targetX, targetY);
+	if (nextTile == "@") {
+
+		bool attackResult = player.TakeDamage(999);
+		CheckPlayerDeath(attackResult, playerX, playerY);
+		return;
+	}
+	else if (nextTile == " ") {
+		_missiles.push_back(Cannon("*"));
+		_missiles.back().SetPosition(targetX, targetY);
+		_missiles.back().SetDirection(directionX, directionY);
+		SetTile(targetX, targetY, "*");
+		return;
+	}
+}
+
+void Level::TryMissileGo(Player& player, int index, int targetX, int targetY) {
+	// Ініціалізація координат
+	int playerX, playerY, missileX, missileY;
+	_missiles[index].GetPosition(missileX, missileY);
+	player.GetPosition(playerX, playerY); // мабуть закоментувати
+
+	// Перевіряємо пряму атаку / рух
+	std::string nextTile = GetTile(targetX, targetY);
+	if (nextTile == "@") {
+		_missiles.erase(_missiles.begin() + index);
+		SetTile(missileX, missileY, " ");
+		//graphicsManager.addMessage("Missile exploded!");
+		bool attackResult = player.TakeDamage(999);
+		CheckPlayerDeath(attackResult, playerX, playerY);
+		return;
+	}
+	else if (nextTile == " ") {
+		_missiles[index].SetPosition(targetX, targetY);
+		SetTile(missileX, missileY, " ");
+		SetTile(targetX, targetY, "*");
+		return;
+	}
+	// Інакше вибухає
+	else {
+		_missiles.erase(_missiles.begin() + index);
+		SetTile(missileX, missileY, " ");
+		//graphicsManager.addMessage("Missile exploded!");
+	}
+}
+
+
 
 void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 
@@ -397,6 +566,14 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				std::ifstream artFile;
 				std::string artToPrint = "", line = "";
 
+
+				/*std::u8string artPathU8(reinterpret_cast<const char8_t*>(enemyEntry._art.c_str()));
+				std::u8string convPathU8(reinterpret_cast<const char8_t*>(enemyEntry._conversation.c_str()));
+				std::filesystem::path artPath(artPathU8);
+				std::filesystem::path convPath(convPathU8);*/
+
+
+				//artFile.open(artPath, std::ios::binary);
 				artFile.open(enemyEntry._art);
 				if (artFile.fail()) {
 					perror("No such file (Art of enemy)");
@@ -410,6 +587,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				artFile.close();
 
 				graphicsManager.setCursorPos(0,0);
+				//conversation.initDialogue(convPath, artToPrint, player, enemyEntry);
 				conversation.initDialogue(enemyEntry._conversation, artToPrint, player, enemyEntry);
 
 
@@ -435,7 +613,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 
 				attackResult = enemyEntry.TakeDamage(attackRoll);
 				if (attackResult != 0) {
-					SetTile(targetX, targetY, ' ');
+					SetTile(targetX, targetY, " ");
 					//Draw();
 
 
@@ -445,6 +623,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 					graphicsManager.addMessage(enemyEntry._deathLines[randomDeathLine]);
 					//graphicsManager.addMessage("Enemy трупік!\n");
 
+					// TODO: ЦЕ НОРМАЛЬНО ЩО ВИДАЛЯЄТЬСЯ ОСТАННІЙ ЕНЕМІ А НЕ КОНКРЕТНИЙ?
 					// Removing the enemy
 					enemyEntry = _enemies.back();
 					_enemies.pop_back();
@@ -464,85 +643,96 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 			attackResult = player.TakeDamage(attackRoll);
 
 			// Гравець - мрець.
-			if (attackResult != 0) {
-				SetTile(playerX, playerY, '~');
-				// Sound of Player death
-				graphicsManager.addMessage("Ви трупік!");
-				//Draw();
-				gameSys.saveAfterDeath(playerName);
-				GameSystem::BadEnding();
-				Sleep(600);
-				system("CLS");
-
-				// Loads the art
-				std::ifstream artFile;
-
-				artFile.open("assets/Art/Death.txt");
-				if (artFile.fail()) {
-					perror("No such file: \"Art/Death.txt\"");
-					Sleep(600);
-					exit(1);
-				}
-
-				std::string line;
-				// Метод swap() для повного звільнення пам'яті
-				std::vector<std::string>().swap(_levelData); //_levelData.clear();
-
-
-				std::string wordToReplace = "nickname", tempWord;
-				size_t lineY = 0, replaceX = 0, replaceY = 0,
-					wordSize = wordToReplace.length(), nameLength = playerName.length();
-
-				while (getline(artFile, line)) {
-					lineY++;
-
-					if (line.find(wordToReplace) != std::string::npos) {
-						// Координати для курсора
-						replaceX = line.find(wordToReplace);
-						replaceY = lineY - 1;
-
-						// Заміна nickname на ім'я гравця
-						uint8_t charsToAdd;
-						if (nameLength != wordSize) {
-							if (nameLength % 2)
-								playerName += ' ';
-
-							nameLength = playerName.length(); // оновлюємо дані
-
-							if (nameLength < wordSize) {
-								charsToAdd = wordSize - nameLength;
-								charsToAdd /= 2;
-								for (size_t i = 0; i < charsToAdd; i++)
-									playerName = ' ' + playerName;
-								for (size_t i = 0; i < charsToAdd; i++)
-									playerName = playerName + ' ';
-							}
-							else if (nameLength > wordSize) {
-								charsToAdd = nameLength - wordSize;
-								charsToAdd /= 2;
-								replaceX -= charsToAdd;
-							}
-						}
-
-						//line.replace(replaceX, wordSize - 1, playerName);
-					}
-					_levelData.push_back(line);
-				}
-				artFile.close();
-				Draw();
-				graphicsManager.setCursorPos(replaceX, replaceY);
-				printf(playerName.c_str());
-				graphicsManager.setCursorPos(0, lineY);
-				Sleep(3000);
-				_getch();
-				/*std::cin.ignore();
-				std::cin;*/
-
-				exit(0);
-			}
+			CheckPlayerDeath(attackResult, playerX, playerY);
 
 			return;
 		}
+	}
+}
+
+void Level::CheckPlayerDeath(int attackResult, int playerX, int playerY) {
+	if (attackResult != 0) {
+		SetTile(playerX, playerY, "~");
+		// Sound of Player death
+		graphicsManager.addMessage("Ви трупік!");
+		//Draw();
+		gameSys.saveAfterDeath(playerName);
+		GameSystem::BadEnding();
+		Sleep(600);
+		system("CLS");
+
+		// Loads the art
+		std::ifstream artFile;
+
+		artFile.open("assets/Art/Death.txt");
+		if (artFile.fail()) {
+			perror("No such file: \"Art/Death.txt\"");
+			Sleep(600);
+			exit(1);
+		}
+
+		std::string line;
+		//// Метод swap() для повного звільнення пам'яті
+		//std::vector<std::string>().swap(_levelData); //_levelData.clear();
+		_levelData.clear();        // Видаляє всі елементи (розмір = 0).
+		_levelData.shrink_to_fit(); // Просить систему звільнити зайняту пам'ять.
+
+
+		std::string wordToReplace = "nickname", tempWord;
+		size_t lineY = 0, replaceX = 0, replaceY = 0,
+			wordSize = wordToReplace.length(), nameLength = playerName.length();
+
+		while (getline(artFile, line)) {
+			lineY++;
+
+			if (line.find(wordToReplace) != std::string::npos) {
+				// Координати для курсора
+				replaceX = line.find(wordToReplace);
+				replaceY = lineY - 1;
+
+				// Заміна nickname на ім'я гравця
+				uint8_t charsToAdd;
+				if (nameLength != wordSize) {
+					if (nameLength % 2)
+						playerName += ' ';
+
+					nameLength = playerName.length(); // оновлюємо дані
+
+					if (nameLength < wordSize) {
+						charsToAdd = wordSize - nameLength;
+						charsToAdd /= 2;
+						for (size_t i = 0; i < charsToAdd; i++)
+							playerName = ' ' + playerName;
+						for (size_t i = 0; i < charsToAdd; i++)
+							playerName = playerName + ' ';
+					}
+					else if (nameLength > wordSize) {
+						charsToAdd = nameLength - wordSize;
+						charsToAdd /= 2;
+						replaceX -= charsToAdd;
+					}
+				}
+
+				//line.replace(replaceX, wordSize - 1, playerName);
+			}
+			std::vector<std::string> row;
+			for (char c : line) {
+				row.push_back(std::string(1, c));
+			}
+			_levelData.push_back(row);
+			/*_levelData.push_back(line);*/
+		}
+		artFile.close();
+		Draw();
+		graphicsManager.setCursorPos(replaceX, replaceY);
+		printf(playerName.c_str());
+		graphicsManager.setCursorPos(0, lineY);
+		Sleep(3000);
+		_getch();
+		/*std::cin.ignore();
+		std::cin;*/
+
+		exit(0);
 	}
 }
 
@@ -578,12 +768,54 @@ void Level::UpdateEnemies(Player& player) {
 	}
 }
 
+void Level::UpdateCannon(Player& player) {
+	int playerX;
+	int playerY;
+	int cannonX;
+	int cannonY;
+	int directionX, directionY;
+
+	player.GetPosition(playerX, playerY);
+	for (int i = 0; i < _cannon.size(); i++) {
+		_cannon[i].GetPosition(cannonX, cannonY);
+		_cannon[i].GetDirection(directionX, directionY);
+
+		int targetX = cannonX + directionX;
+		int targetY = cannonY + directionY;
+		TryCannonShoot(player, i, targetX, targetY);
+	}
+}
+
+void Level::UpdateMissiles(Player& player) {
+	int playerX;
+	int playerY;
+	int missileX;
+	int missileY;
+	int directionX, directionY;
+
+
+	player.GetPosition(playerX, playerY);
+	for (int i = 0; i < _missiles.size(); i++) {
+		_missiles[i].GetPosition(missileX, missileY);
+		_missiles[i].GetDirection(directionX, directionY);
+
+		int targetX = missileX + directionX;
+		int targetY = missileY + directionY;
+		TryMissileGo(player, i, targetX, targetY);
+	}
+}
+
 void Level::clear() {
 	// Очищаємо дані рівня
 	_levelData.clear();
 
 	// Очищаємо ворогів
 	_enemies.clear();
+	_cannon.clear();
+	_missiles.clear();
+	enemyTemplates.clear();
+	cannonTemplates.clear();
+	_initialMaze.clear();
 
 	// Скидаємо лічильник кнопок
 	buttonPlate = 0;

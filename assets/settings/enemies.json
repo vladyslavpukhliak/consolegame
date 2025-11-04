@@ -27,11 +27,11 @@
 				"fear":0,
 				"unbeatable":0
 			},
-			"Розбійник": {
-				"tile": "R",
-				"color":33,
+			"Диявол": {
+				"tile": "D",
+				"color":91,
 				"description": "",
-				"art": "assets/Art/Розбійник.txt",
+				"art": "assets/Art/смееерть.txt",
 				"conversation": "assets/settings/Розбійник.json",
 				"level": 2,
 				"attack": 10,
@@ -72,10 +72,15 @@
 			}
 		},
 		
-		
-		
-		
-		
+		"cannon": {
+			"Гармата": {
+				"tile": ["^","<","v",">"],
+				"directions":[ [0,-1], [-1,0], [0,1], [1,0] ],
+				"color":91,
+				"description": "Unbeatable unit",
+				"visibleRange":11
+			}
+		},
 		
 		
 		"hound - WORK IN PROGRESS": {

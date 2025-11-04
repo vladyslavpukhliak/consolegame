@@ -16,9 +16,9 @@ public:
 	std::string colorize(const std::string& tile, const unsigned int& fg, unsigned int bg = 40) {
 		return "\033[" + std::to_string(fg) + ";" + std::to_string(bg) + "m" + tile + "\033[0m";
 	};
-	std::string colorize(char tile, const unsigned int& fg, unsigned int bg = 40) {
+	/*std::string colorize(std::string tile, const unsigned int& fg, unsigned int bg = 40) {
 		return colorize(std::string(1, tile), fg, bg);
-	};
+	};*/
 
 	void setCursorPos(short x, short y);
 	void addMessage(std::string message);

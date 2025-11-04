@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>See more content</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .left,
+        .right {
+            width: 48%;
+            box-sizing: border-box;
+        }
+
+        .left img {
+            width: 70%;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .right img {
+            width: 100%;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+        }
+
+       .header-flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+.header-flex h1 {
+    margin: 0;
+    white-space: nowrap;
+    text-align: center;
+}
+
+        .header-flex .subtitle {
+    align-self: flex-end;
+    font-size: 1.2em;
+    color: #444;
+    white-space: nowrap;
+    margin-bottom: 8px;
+}
+
+        a {
+            color: #1a0dab;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .left,
+            .right {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="left">
+            <p>
+                Більше контенту на
+                <a href="https://github.com/vladyslavpukhliak"
+                    target="_blank">https://github.com/vladyslavpukhliak</a><br>
+                або <a href="https://t.me/adariukov_pukhliak" target="_blank">https://t.me/adariukov_pukhliak</a>
+            </p>
+            <p>
+                Пригостити розробника кавою<br>
+                <a href="https://send.monobank.ua/jar/7faVeeX92q"
+                    target="_blank">https://send.monobank.ua/jar/7faVeeX92q</a>
+            </p>
+            <p>
+                Збір «Чисте небо» благодійного фонду Сергія Притули:<br>
+                <a href="https://send.monobank.ua/jar/9eLrpTbe4Z" target="_blank">send.monobank.ua/jar/9eLrpTbe4Z</a>
+            </p>
+
+        </div>
+        <div class="right">
+            <div class="header-flex">
+                <h1>By Vladyslav Pukhliak</h1>
+                <div class="subtitle">Архітекторам світів</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="left">
+            Інші продукти:<br>
+            <a href="https://github.com/vladyslavpukhliak/LessMess?tab=readme-ov-file#%D0%B7%D0%B0%D0%B2%D0%B0%D0%BD%D1%82%D0%B0%D0%B6%D0%B8%D1%82%D0%B8" target="_blank">Less Mess</a> — це сортувальник файлів за їхнім розширенням у відповідні папки.
+            </p>
+            <img src="lessmess.gif" alt="Less Mess Screenshot 1">
+        </div>
+        <div class="right">
+            <p>
+                Налаштуйте роботу програми під себе в один клік!<br>
+                У конфігурацію попередньо вже записані найпопулярніші розширення файлів котрі будуть відсортовані по
+                відповідним папкам: ~/Documents, ~/Music, ~/Videos, ~/Pictures, ~/Downloads/Archives,
+                ~/Downloads/Presentations.
+            </p>
+            <img src="edit_config.gif" alt="Less Mess Screenshot 2">
+        </div>
+    </div>
+</body>
+
+</html>

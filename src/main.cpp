@@ -1,5 +1,6 @@
 #include "GameSystem.h"
 #include <windows.h>
+#include <iostream>
 
 void enableANSI() {
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -12,7 +13,9 @@ void enableANSI() {
 int main() {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
-	
+	/*SetConsoleCP(CP_UTF8);
+	SetConsoleOutputCP(CP_UTF8);*/
+
 	enableANSI();
 	GameSystem gameSys;
 

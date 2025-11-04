@@ -26,6 +26,8 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, P
     printf(art.c_str());
     printf("\n%s:\n", gMngr.colorize(enemyEntry._name, enemyEntry._color).c_str());
 
+#pragma region HandleBufs
+
     if(firstLine == "bufs"){
         const rapidjson::Value& bufs_json = npcLine->value;
 
@@ -58,6 +60,7 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, P
         isEndOfConversation = true;
         return;
     }
+#pragma endregion
 
     gMngr.print(firstLine, 1000);
 
@@ -115,6 +118,11 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, P
     }
 }
 
+/*
+void DialogueSystem::initDialogue(const std::filesystem::path& path, const std::string& art, Player& player, Enemy& enemyEntry) {
+
+    std::ifstream ifs(path, std::ios::binary);
+*/
 void DialogueSystem::initDialogue(const std::string& path, const std::string& art, Player& player, Enemy& enemyEntry) {
 
     std::ifstream ifs(path);

@@ -1,5 +1,6 @@
 #include "Graphics.h"
 #include "Message.h"
+#include "constants.h"
 #include <thread>
 #include <chrono>
 #include <iostream>
@@ -42,7 +43,7 @@ void Graphics::SetWindowTitle(std::string title) {
 }
 
 void Graphics::init() {
-	SetWindowTitle("Demo	forged by Vladyslav Pukhliak");
+	SetWindowTitle(TITLE + " | Demo");
 
 	// Відключення курсора
 	CONSOLE_CURSOR_INFO cursor_info;

@@ -11,7 +11,7 @@ const int CANNON_PROJECTILE_COUNT = 4;
 #ifndef ENEMY_INFO_DEFINED
 #define ENEMY_INFO_DEFINED
 struct EnemyInfo {
-    char tile;
+    std::string tile;
     std::string name;
     std::string color;
     std::string description;
@@ -24,12 +24,15 @@ struct EnemyInfo {
 
 #ifndef CANNON_DEFINED
 #define CANNON_DEFINED
-struct Cannon {
-    char tile[CANNON_TILE_COUNT];
-    char projectile[CANNON_PROJECTILE_COUNT];
+struct coords {
+    int x, y;
+};
+struct CannonInfo {
+    std::vector<std::string> tile;
+    std::vector<coords> shootingCoords;
     std::string name;
     std::string color;
-    std::string description;
-    std::string playerDeathLine;
+    std::string description;/*
+    std::string playerDeathLine;*/
 };
 #endif

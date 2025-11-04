@@ -8,7 +8,7 @@ Graphics gM;
 
 Enemy::Enemy(std::string name, std::string line, std::string art, std::string conversation,
 	std::vector <std::string> deathLines,
-	char tile, int color, int level, int attack, int health, int experience, int visibleRange,
+	std::string tile, int color, int level, int attack, int health, int experience, int visibleRange,
 	bool isMovable, bool isFriendly, bool fear, bool isUnbeatable) {
 	_name = name;
 	_art = art;
@@ -67,8 +67,8 @@ char Enemy::GetMove(int playerX, int playerY) {
 		if (!_fear) {
 			if (!isSpotted && _line != "") gM.addMessage(_line);
 			isSpotted = true;
-			// ќриг≥нальна лог≥ка Ч до гравц€
-			// наближенн€ гравц€ до enemy (така лог≥ка залишаЇтьс€ незм≥нною, можна зм≥нити лише w,a,s,d)
+			// Эриг?нальна лог?ка „ до гравц§
+			// наближенн§ гравц§ до enemy (така лог?ка залишаѓтьс§ незм?нною, можна зм?нити лише w,a,s,d)
 			if (adx > ady) {
 				return (dx > 0) ? 'a' : 'd';
 			}
@@ -77,7 +77,7 @@ char Enemy::GetMove(int playerX, int playerY) {
 			}
 		}
 		else {
-			// Ќовий блок Ч в≥д гравц€ (протилежний рух)
+			// Новий блок „ в?д гравц§ (протилежний рух)
 			if (adx > ady) {
 				return (dx > 0) ? 'd' : 'a';  // навпаки
 			}

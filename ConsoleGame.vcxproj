@@ -19,26 +19,31 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DialogueSystem.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="entities.h" />
-    <ClInclude Include="FileSystem.h" />
-    <ClInclude Include="GameSystem.h" />
-    <ClInclude Include="Graphics.h" />
-    <ClInclude Include="Level.h" />
-    <ClInclude Include="Message.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="include\Cannon.h" />
+    <ClInclude Include="include\DialogueSystem.h" />
+    <ClInclude Include="include\Enemy.h" />
+    <ClInclude Include="include\entities.h" />
+    <ClInclude Include="include\FileSystem.h" />
+    <ClInclude Include="include\GameSystem.h" />
+    <ClInclude Include="include\Graphics.h" />
+    <ClInclude Include="include\constants.h" />
+    <ClInclude Include="include\Level.h" />
+    <ClInclude Include="include\Message.h" />
+    <ClInclude Include="include\Player.h" />
+    <ClInclude Include="Missile.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DialogueSystem.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="FileSystem.cpp" />
-    <ClCompile Include="GameSystem.cpp" />
-    <ClCompile Include="Graphics.cpp" />
-    <ClCompile Include="Level.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Message.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Missile.cpp" />
+    <ClCompile Include="src\Cannon.cpp" />
+    <ClCompile Include="src\DialogueSystem.cpp" />
+    <ClCompile Include="src\Enemy.cpp" />
+    <ClCompile Include="src\FileSystem.cpp" />
+    <ClCompile Include="src\GameSystem.cpp" />
+    <ClCompile Include="src\Graphics.cpp" />
+    <ClCompile Include="src\Level.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Message.cpp" />
+    <ClCompile Include="src\Player.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -146,6 +151,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(ProjectDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

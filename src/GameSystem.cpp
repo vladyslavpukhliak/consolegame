@@ -1,4 +1,4 @@
-п»ї#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "winmm.lib")
 #pragma warning(disable : 4996) //_CRT_SECURE_NO_WARNINGS
 // Standard library headers
 #include <conio.h>
@@ -15,12 +15,14 @@
 #include "GameSystem.h"
 #include "Graphics.h"
 #include "Message.h"
+#include "constants.h"
+
 
 // RapidJSON
-#include "include/rapidjson/document.h"
-#include "include/rapidjson/writer.h"
-#include "include/rapidjson/stringbuffer.h"
-#include "include/rapidjson/prettywriter.h"
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
 
 // Windows header
 #include <windows.h>
@@ -29,7 +31,7 @@
 
 using namespace rapidjson;
 
-// Р‘СѓРґСЊ Р»Р°СЃРєР° РІРёРЅРµСЃС–С‚СЊ С†Рµ РІ РѕРєСЂРµРјРёР№ РєР»Р°СЃ. РЇРљРћР“Рћ Р‘Р†РЎРђ Р’РћРќРћ РўРЈРў Р РћР‘Р•
+// Будь ласка винесіть це в окремий клас. ЯКОГО БІСА ВОНО ТУТ РОБЕ
 // Function to write player info into a JSON file
 void GameSystem::writePlayerData(const std::string& filename,
 	const std::string& nickname, int exp, int level, int money, int deaths) {
@@ -78,7 +80,7 @@ std::string readPlayerName(const std::string& filename) {
 	return "";
 }
 
-// РўРРњР§РђРЎРћР’Р† Р Р†РЁР•РќРќРЇ
+// ТИМЧАСОВІ РІШЕННЯ
 int readPlayerLevel(const std::string& filename) {
 	std::ifstream ifs(filename);
 	if (!ifs.is_open()) {
@@ -133,10 +135,10 @@ int readPlayerMoney(const std::string& filename) {
 
 #pragma endregion
 
-// TODO: Р·Р°РїРёСЃ С–РјРµРЅС– Р· json
+// TODO: запис імені з json
 
-// TODO: СЂР°РЅРґРѕРјРЅРµ РїСЂС–Р·РІРёСЃСЊРєРѕ РЅР°РґРѕРґР°С‡Сѓ РґРѕ С–РјРµРЅС–, РЅР°РїСЂРёРєР»Р°Рґ Р’Р°СЃСЏ РќРµРїРёР№РїРёРІРѕ YES
-// TODO: РІС–РґРѕРєСЂРµРјРёС‚Рё Р»РѕРіС–РєСѓ С‡РёС‚Р°РЅРЅСЏ С„Р°Р№Р»Р° РІ РѕРєСЂРµРјРёР№ РєР»Р°СЃ С€РѕР± РЅРµ СЃРѕСЂРёС‚Рё
+// TODO: рандомне прізвисько надодачу до імені, наприклад Вася Непийпиво YES
+// TODO: відокремити логіку читання файла в окремий клас шоб не сорити
 
 Level _level;
 Message messageList;
@@ -157,6 +159,46 @@ void GameSystem::UnPauseTheGame() { isPaused = false; };
 //	_level.load(levelFile, _player);
 //}
 
+void cannon_thread_func()
+{
+	while (!isDone && !isBadEnd)
+	{
+		if (isPaused) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			continue;
+		}
+
+		//if(!Message::isBusy) 
+		// Оновлення позицій ворогів
+		//if (Level::isBusy) {
+		_level.UpdateCannon(_player);
+		//}
+
+		// Зупинка потоку на 500 мілісекунд
+		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	}
+}
+
+void missile_thread_func()
+{
+	while (!isDone && !isBadEnd)
+	{
+		if (isPaused) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			continue;
+		}
+
+		//if(!Message::isBusy) 
+		// Оновлення позицій ворогів
+		//if (Level::isBusy) {
+		_level.UpdateMissiles(_player);
+		//}
+
+		// Зупинка потоку на 500 мілісекунд
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+}
+
 void enemy_thread_func()
 {
 	while (!isDone && !isBadEnd)
@@ -167,17 +209,17 @@ void enemy_thread_func()
 		}
 
 		//if(!Message::isBusy) 
-		// РћРЅРѕРІР»РµРЅРЅСЏ РїРѕР·РёС†С–Р№ РІРѕСЂРѕРіС–РІ
+		// Оновлення позицій ворогів
 		//if (Level::isBusy) {
 		_level.UpdateEnemies(_player);
 		//}
 
-		// Р—СѓРїРёРЅРєР° РїРѕС‚РѕРєСѓ РЅР° 500 РјС–Р»С–СЃРµРєСѓРЅРґ
+		// Зупинка потоку на 500 мілісекунд
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 }
 
-// С€Рѕ С†Рµ Р·Р° РґС–С‡? РґР°РІР°Р№С‚Рµ Р·СЂРѕР±РёРјРѕ information С– РІС–РґРјР°Р»СЊРѕРІРєСѓ СЂС–РІРЅСЏ РІ РѕРґРЅРѕРјСѓ РєР°РґСЂС–. (TODO)
+// шо це за діч? давайте зробимо information і відмальовку рівня в одному кадрі. (TODO)
 void draw_thread() {
 	while (!isDone && !isBadEnd)
 	{
@@ -196,18 +238,19 @@ void draw_thread() {
 
 std::string getFileName(const fs::directory_entry& file) { return file.path().stem().string(); }
 
-#pragma region Р’РёР±С–СЂ РїСЂС–Р·РІРёСЃСЊРєР°
+#pragma region ChoosingNickname
+
 void GameSystem::displayPrompt() {
 	std::cout << "\x1B[2J\x1B[H";
-	printf("РќР°СЃС‚РёСЃРЅС–С‚СЊ ESC, С‰РѕР± РїРѕРІРµСЂРЅСѓС‚РёСЃСЏ РґРѕ РіРѕР»РѕРІРЅРѕРіРѕ РјРµРЅСЋ.\n");
-	printf("РќР°СЃС‚РёСЃРєР°СЋС‡Рё Р›С–РІРёР№ Р°Р±Рѕ РџСЂР°РІРёР№ Alt РЅР° РєР»Р°РІС–Р°С‚СѓСЂС–, РѕР±РµСЂС–С‚СЊ РїСЂС–Р·РІРёСЃСЊРєРѕ СЃРІРѕС”РјСѓ РіРµСЂРѕСЋ.\n");
-	printf("Р’Рё РјРѕР¶РµС‚Рµ РѕР±СЂР°С‚Рё С‚С–Р»СЊРєРё РїСЂС–Р·РІРёСЃСЊРєРѕ РЅР°С‚РёСЃРЅСѓРІС€Рё Enter, Р°Р±Рѕ С‰Рµ РґРѕРїРёСЃР°С‚Рё РїРѕРІРЅРµ С–Рј'СЏ.\n");
-	printf("Р—Р°РїРёС€С–С‚СЊ СЃРІРѕС” С–Рј'СЏ (Р·Р°Р»РёС€Р°С”С‚СЊСЃСЏ %d Р· 28 СЃРёРјРІРѕР»С–РІ): ", 28 - nameLength);
+	printf("Настисніть ESC, щоб повернутися до головного меню.\n");
+	printf("Настискаючи Лівий або Правий Alt на клавіатурі, оберіть прізвисько своєму герою.\n");
+	printf("Ви можете обрати тільки прізвисько натиснувши Enter, або ще дописати повне ім'я.\n");
+	printf("Запишіть своє ім'я (залишається %d з 28 символів): ", 28 - nameLength);
 	std::cout << (randomNickname) << " " << (name);
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
-// РІСЃС‚Р°РЅРѕРІР»СЋС”РјРѕ РјРµР¶С– РґР»СЏ Index РґР»СЏ РјР°СЃРёРІСѓ
+// встановлюємо межі для Index для масиву
 void GameSystem::updateIndex(int& currentIndex, const unsigned int lastIndex) {
 	if (currentIndex < 0) currentIndex = lastIndex;
 	else if (currentIndex > lastIndex) currentIndex = 0;
@@ -221,7 +264,7 @@ void GameSystem::updateNickname() {
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
-// РІРёР±С–СЂ РЅС–РєРЅРµР№РјСѓ РєР»Р°РІС–С€Р°РјРё Alt РїРѕРєРё РЅРµ РЅР°С‚РёСЃРЅСѓС‚Рѕ РµРЅС‚РµСЂ
+// вибір нікнейму клавішами Alt поки не натиснуто ентер
 bool GameSystem::nicknamePicked() {
 	while (true) {
 		// Left Alt
@@ -252,7 +295,7 @@ bool GameSystem::nicknamePicked() {
 					nameLength = name.length() + randomNickname.length();
 				}
 			}
-			else {  // Р”СЂСѓРєРѕРІР°РЅС– СЃРёРјРІРѕР»Рё
+			else {  // Друковані символи
 				if (nameLength < 28) {
 					name += (char)key;
 					nameLength = name.length() + randomNickname.length() + 1;
@@ -267,24 +310,24 @@ bool GameSystem::nicknamePicked() {
 
 #pragma region SAVINGS Operations
 
-// Р‘СѓРґСЊ Р»Р°СЃРєР° РІРёРЅРµСЃС–С‚СЊ С†Рµ РІ РѕРєСЂРµРјРёР№ РєР»Р°СЃ. РЇРљРћР“Рћ Р‘Р†РЎРђ Р’РћРќРћ РўРЈРў Р РћР‘Р•
+// Будь ласка винесіть це в окремий клас. ЯКОГО БІСА ВОНО ТУТ РОБЕ
 
-// Р’РёРІС–Рґ Р·Р±РµСЂРµР¶РµРЅСЊ С‚Р° С‡Р°СЃСѓ Р·РјС–РЅ Р· РјР°СЃРёРІСѓ
+// Вивід збережень та часу змін з масиву
 void GameSystem::printRangeOfSavings(const std::vector<SaveFile>& savingFiles) {
 	unsigned int i = 0, j = 0, k = 0;
 	std::string savingName;
 	size_t lastSaving;
 	std::vector<std::vector<Saving>> tenSavingsArray;
 
-	// Р РѕР·РґС–Р»РµРЅРЅСЏ РЅР° РіСЂСѓРїРё РїРѕ 10 (С–РЅС–С†С–Р°Р»С–Р·Р°С†С–СЏ РјР°СЃРёРІСѓ)
+	// Розділення на групи по 10 (ініціалізація масиву)
 	size_t groupCount = (savingFiles.size() + 9) / 10;
 	tenSavingsArray.resize(groupCount);
 
-	// Р—Р°Р±РѕСЂРѕРЅСЏС”РјРѕ РІРёС…С–Рґ С–РЅРґРµРєСЃСѓ Р·Р° РјРµР¶С– СѓСЃС–С… СЃС‚РѕСЂС–РЅРѕРє
+	// Забороняємо вихід індексу за межі усіх сторінок
 	updateIndex(savingsIndex, tenSavingsArray.size() - 1);
 
 
-	// Р·Р°РїРёСЃ РґРѕ РјР°СЃРёРІСѓ РµР»РµРјРµРЅС‚С–РІ С‚Р° СЂРѕР·РґС–Р»РµРЅРЅСЏ С—С… РІ РіСЂСѓРїРё РїРѕ 10 
+	// запис до масиву елементів та розділення їх в групи по 10 
 	for (const auto& saveFile : savingFiles) {
 
 		savingName = getFileName(saveFile.entry);
@@ -304,30 +347,30 @@ void GameSystem::printRangeOfSavings(const std::vector<SaveFile>& savingFiles) {
 		}
 	}
 
-	// РЁР°РїРєР°
+	// Шапка
 	std::cout << "\x1B[2J\x1B[H";
-	printf("РќР°СЃС‚РёСЃРЅС–С‚СЊ ESC, С‰РѕР± РїРѕРІРµСЂРЅСѓС‚РёСЃСЏ РґРѕ РіРѕР»РѕРІРЅРѕРіРѕ РјРµРЅСЋ.\n");
-	printf("РќР°СЃС‚РёСЃРєР°СЋС‡Рё Р›С–РІРёР№ Р°Р±Рѕ РџСЂР°РІРёР№ Alt РЅР° РєР»Р°РІС–Р°С‚СѓСЂС–, РіРѕСЂС‚Р°Р№С‚Рµ СЃС‚РѕСЂС–РЅРєСѓ Р·С– Р·Р±РµСЂРµР¶РµРЅРЅСЏРјРё.\n");
+	printf("Настисніть ESC, щоб повернутися до головного меню.\n");
+	printf("Настискаючи Лівий або Правий Alt на клавіатурі, гортайте сторінку зі збереженнями.\n");
 
 	lastSaving = tenSavingsArray[savingsIndex].size()-1;
 
-	printf("Р’С–РґРѕР±СЂР°Р¶РµРЅРЅСЏ Р·Р±РµСЂРµР¶РµРЅСЊ %d - %d Р· %d:\n\n", tenSavingsArray[savingsIndex][0].count,
+	printf("Відображення збережень %d - %d з %d:\n\n", tenSavingsArray[savingsIndex][0].count,
 		tenSavingsArray[savingsIndex][lastSaving].count, savingFiles.size());
 
-	printf("\t%-35s%s\n\n", "Р—Р±РµСЂРµР¶РµРЅРЅСЏ РіСЂР°РІС†СЏ", "Р”Р°С‚Р° Р·Р±РµСЂРµР¶РµРЅРЅСЏ");
+	printf("\t%-35s%s\n\n", "Збереження гравця", "Дата збереження");
 
 
-	// Р’РёРІС–Рґ Р·Р±РµСЂРµР¶РµРЅСЊ РїРѕС‚РѕС‡РЅРѕС— СЃС‚РѕСЂС–РЅРєРё
+	// Вивід збережень поточної сторінки
 	for (const auto& saving : tenSavingsArray[savingsIndex]) {
 		std::ostringstream oss;
 		oss << '\t' << saving.count << ". " << std::left << std::setw(32) << saving.savingName
 			<< std::put_time(std::localtime(&saving.time_t), "%Y-%m-%d %H:%M") << std::endl;
 
-		// РЅРµ РїР°СЂРЅС– СЂСЏРґРєРё РїРѕР·РЅР°С‡Р°С”РјРѕ С–РЅС€РёРј РєРѕР»СЊРѕСЂРѕРј РґР»СЏ Р»РµРіРєРѕРіРѕ СЃРїСЂРёР№РЅСЏС‚С‚СЏ РІРµР»РёРєРѕРіРѕ РїРѕС‚РѕРєСѓ С–РЅС„РѕСЂРјР°С†С–С—
+		// не парні рядки позначаємо іншим кольором для легкого сприйняття великого потоку інформації
 		std::cout << ((saving.count % 2) ? graphicsManager.colorize(oss.str(), 30, 47) : oss.str());
 		//std::cout << oss.str();
 	}
-	printf("\n\nРћР±РµСЂС–С‚СЊ Р·Р±РµСЂРµР¶РµРЅРЅСЏ: ");
+	printf("\n\nОберіть збереження: ");
 }
 
 
@@ -335,7 +378,7 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 	unsigned int i = 0;
 	std::vector<SaveFile> savingFiles;
 
-	// Р—Р°РїРёСЃ Р·Р±РµСЂРµР¶РµРЅСЊ Сѓ РјР°СЃРёРІ
+	// Запис збережень у масив
 	for (const auto& entry : fs::directory_iterator(folderPath)) {
 		if (entry.is_regular_file() && entry.path().extension() == extension
 			&& getFileName(entry).size() <= 28) {
@@ -344,7 +387,7 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 		}
 	}
 
-	// РЎРѕСЂС‚СѓРІР°РЅРЅСЏ РјР°СЃРёРІСѓ Р·Р° РґР°С‚РѕСЋ BUBBLE SORT
+	// Сортування масиву за датою BUBBLE SORT
 	for (int i = 0; i < savingFiles.size() - 1; i++) {
 		for (int j = 0; j < savingFiles.size() - i - 1; j++) {
 			if (savingFiles[j].time < savingFiles[j + 1].time) {
@@ -353,7 +396,7 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 		}
 	}
 
-	// Р‘РµР·РїРѕСЃРµСЂРµРґРЅСЊРѕ РІРёРІС–Рґ Р·Р±РµСЂРµР¶РµРЅСЊ
+	// Безпосередньо вивід збережень
 	printRangeOfSavings(savingFiles);
 
 
@@ -363,7 +406,7 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 		choice = 0;
 		input = "";		
 
-		// Р§РёС‚Р°С”РјРѕ РІРІРµРґРµРЅРЅСЏ РїРѕСЃРёРјРІРѕР»СЊРЅРѕ
+		// Читаємо введення посимвольно
 		while (true) {
 			// Left Alt
 			if (GetAsyncKeyState(VK_LMENU) & 0x8000) {
@@ -382,27 +425,27 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 
 				
 				if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { // ESC 
-					return false; // РїРѕРІРµСЂРЅСѓС‚РёСЃСЏ РЅР° РіРѕР»РѕРІРЅРµ РјРµРЅСЋ.
+					return false; // повернутися на головне меню.
 				}
 				else if (key == '\r') { // Enter
 					if (!input.empty()) {
 						try {
 							choice = std::stoi(input);
-							break; // Р’РёС…С–Рґ Р· С†РёРєР»Сѓ РІРІРµРґРµРЅРЅСЏ
+							break; // Вихід з циклу введення
 						}
 						catch (const std::exception&) {
-							std::cout << "\nРќРµРїСЂР°РІРёР»СЊРЅРёР№ С„РѕСЂРјР°С‚ С‡РёСЃР»Р°. РЎРїСЂРѕР±СѓР№С‚Рµ Р·РЅРѕРІСѓ: ";
+							std::cout << "\nНеправильний формат числа. Спробуйте знову: ";
 							input = "";
 						}
 					}
 				}
 				else if (key == '\b' && !input.empty()) { // Backspace
 					input.pop_back();
-					std::cout << "\b \b"; // РЎС‚РёСЂР°С”РјРѕ СЃРёРјРІРѕР» РЅР° РµРєСЂР°РЅС–
+					std::cout << "\b \b"; // Стираємо символ на екрані
 				}
-				else if (key >= '0' && key <= '9') { // Р¦РёС„СЂРё
+				else if (key >= '0' && key <= '9') { // Цифри
 					input += key;
-					std::cout << (char)key; // РџРѕРєР°Р·СѓС”РјРѕ РІРІРµРґРµРЅСѓ С†РёС„СЂСѓ
+					std::cout << (char)key; // Показуємо введену цифру
 				}
 			}
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -412,7 +455,7 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 		if (choice < 0 || choice > savingFiles.size()-1)
 		{
 			std::cout << "\x1B[2J\x1B[H";
-			printf("Р’Рё РІРІРµР»Рё РЅРµРїСЂР°РІРёР»СЊРЅРёР№ РЅРѕРјРµСЂ Р·Р±РµСЂРµР¶РµРЅРЅСЏ. Р©РѕР± СЃРїСЂРѕР±СѓРІР°С‚Рё Р·РЅРѕРІСѓ РЅР°С‚РёСЃРЅС–С‚СЊ Enter...\n");
+			printf("Ви ввели неправильний номер збереження. Щоб спробувати знову натисніть Enter...\n");
 			_getch();
 			printRangeOfSavings(savingFiles);
 		}
@@ -425,7 +468,7 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 }
 
 bool hasFilesWithExtension(const std::string& folderPath, const std::string& extension, const std::string& filename = "") {
-	// РџРµСЂРµРІС–СЂРєР° РЅР° С–СЃРЅСѓРІР°РЅРЅСЏ РїР°РїРєРё
+	// Перевірка на існування папки
 	fs::path dirPath(folderPath);
 	if (!fs::exists(dirPath) || !fs::is_directory(dirPath)) {
 		return false;
@@ -455,25 +498,25 @@ bool hasFilesWithExtension(const std::string& folderPath, const std::string& ext
 void GameSystem::getPlayerNicknames() {
 	std::ifstream namesFile("assets/settings/names.json");
 	if (!namesFile) {
-		std::cerr << "РќРµ РІРґР°Р»РѕСЃСЏ РІС–РґРєСЂРёС‚Рё С„Р°Р№Р» names.json" << std::endl;
+		std::cerr << "Не вдалося відкрити файл names.json" << std::endl;
 	}
 
 	std::stringstream buffer;
 	buffer << namesFile.rdbuf();
 	std::string jsonContent = buffer.str();
 
-	// РџР°СЂСЃРёРјРѕ JSON
+	// Парсимо JSON
 	rapidjson::Document document;
 	if (document.Parse(jsonContent.c_str()).HasParseError()) {
-		std::cerr << "РџРѕРјРёР»РєР° РїР°СЂСЃРёРЅРіСѓ JSON" << std::endl;
+		std::cerr << "Помилка парсингу JSON" << std::endl;
 	}
 
-	// РџРµСЂРµРІС–СЂСЏС”РјРѕ, С‰Рѕ С†Рµ РјР°СЃРёРІ
+	// Перевіряємо, що це масив
 	if (!document.IsArray()) {
-		std::cerr << "JSON РЅРµ С” РјР°СЃРёРІРѕРј" << std::endl;
+		std::cerr << "JSON не є масивом" << std::endl;
 	}
 
-	// Р’РёРІРѕРґРёРјРѕ РІСЃС– РµР»РµРјРµРЅС‚Рё РјР°СЃРёРІСѓ
+	// Виводимо всі елементи масиву
 
 	for (const auto& item : document.GetArray()) {
 		if (item.IsString() && item.GetStringLength() <= 28) {
@@ -496,7 +539,7 @@ void GameSystem::getPlayerNicknames() {
 
 
 bool GameSystem::newGame() {
-	// Р‘РѕР¶Рµ, С‰Рѕ С†Рµ Р·Р° СЃС‚СЂР°С…РѕРІРёСЃСЊРєРѕ
+	// Боже, що це за страховисько
 	getPlayerNicknames();
 
 	while (true) {
@@ -504,50 +547,50 @@ bool GameSystem::newGame() {
 		srand(static_cast<unsigned>(time(nullptr)));
 
 		nicknameIndex = rand() % nicknames.size();
-		randomNickname = nicknames[nicknameIndex]; // РіСЂР°РІС†СЋ РїСЂРѕРїРѕРЅСѓС”С‚СЊСЃСЏ СЂР°РЅРґРѕРјРЅРµ РїСЂС–Р·РІРёСЃСЊРєРѕ РЅР° РїРѕС‡Р°С‚РєСѓ РіСЂРё
+		randomNickname = nicknames[nicknameIndex]; // гравцю пропонується рандомне прізвисько на початку гри
 		nameLength = name.length() + randomNickname.length() + 1;
 
 		displayPrompt();
 		if (!nicknamePicked()) return false;
 
 		std::cout << "\n";
-		graphicsManager.print("Р’Р°С€Рµ С–Рј'СЏ: ", 500);
+		graphicsManager.print("Ваше ім'я: ", 500);
 
-		// СЏРєС‰Рѕ С–Рј'СЏ РЅРµ Р±СѓР»Рѕ РІРІРµРґРµРЅРѕ - РІРёРєРѕСЂРёСЃС‚Р°С‚Рё Р»РёС€ РїСЂС–Р·РІРёСЃСЊРєРѕ.
+		// якщо ім'я не було введено - використати лиш прізвисько.
 		name += (!name.empty() ? " " + randomNickname : randomNickname);
 
 		graphicsManager.print(name, 500);
 
 		std::cout << "\n\n";
-		graphicsManager.print("РџС–РґС‚РІРµСЂРґРёС‚Рё РІРёР±С–СЂ? ", 100);
+		graphicsManager.print("Підтвердити вибір? ", 100);
 		std::cout << "(Enter/ESC)";
 
-		// РћС‡РёС‰Р°С”РјРѕ Р±СѓС„РµСЂ
+		// Очищаємо буфер
 		while (_kbhit()) {
 			_getch();
 		}
-		// РћС‡С–РєСѓС”РјРѕ РЅР°С‚РёСЃРєР°РЅРЅСЏ РєР»Р°РІС–С€С–
+		// Очікуємо натискання клавіші
 		int key = _getch();
 
 		if (key == '\r') { // Enter
 			if (!hasFilesWithExtension("./assets/savings/", ".json", name)) {
 				std::string filename = "./assets/savings/" + name + ".json";
 
-				// Р—Р°РїРёСЃ РґР°РЅРёС… Сѓ С„Р°Р№Р»!!!!!
+				// Запис даних у файл!!!!!
 				writePlayerData(filename, randomNickname, 0, 1, 0, 0);
 				return true;
 			}
 			else {
 				std::cout << "\x1B[2J\x1B[H";
-				printf("РўР°РєРµ Р·Р±РµСЂРµР¶РµРЅРЅСЏ РІР¶Рµ С–СЃРЅСѓС”. Р©РѕР± СЃРїСЂРѕР±СѓРІР°С‚Рё Р·РЅРѕРІСѓ РЅР°С‚РёСЃРЅС–С‚СЊ Enter...\n");
+				printf("Таке збереження вже існує. Щоб спробувати знову натисніть Enter...\n");
 				_getch();
-				// РџРµСЂРµР·Р°РїРёСЃР°С‚Рё? РїРѕРґСѓРјР°С‚Рё С‡Рё С‚СЂРµР±Р° СЂРµР°Р»С–Р·СѓРІР°С‚Рё
+				// Перезаписати? подумати чи треба реалізувати
 				name.clear();
 			}
 		}
 		else if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { // ESC
 			name.clear();
-			// РїСЂРѕРґРѕРІР¶СѓС”РјРѕ С†РёРєР»
+			// продовжуємо цикл
 		}
 	}
 }
@@ -582,14 +625,18 @@ std::vector<std::string> splitByNewline(const std::string& input) {
 	return lines;
 }
 
-// Р’РёРІС–Рґ РіРѕР»РѕРІРЅРѕРіРѕ РјРµРЅСЋ
+// Вивід головного меню
 void GameSystem::printMainMenu() {
-	// РџРѕРєР°Р·СѓС”РјРѕ РјРµРЅСЋ
+	// Показуємо меню
 	std::cout << "\x1B[2J\x1B[H";
-	printf("1. РџСЂРѕРґРѕРІР¶РёС‚Рё Р±Р°РІРёС‚РёСЃСЊ\n");
-	printf("2. РќРѕРІР° РіСЂР°\n");
-	printf("3. РџРѕРєРёРЅСѓС‚Рё Р±Р°РІРєСѓ\n");
+	printf("1. Продовжити бавитись\n");
+	printf("2. Нова гра\n");
+	printf("3. Як бавитись?\n");
+	printf("4. Більше контенту\n");
+	printf("0. Покинути бавку\n");
 
+	SetConsoleCP(CP_UTF8);
+	SetConsoleOutputCP(CP_UTF8);
 	std::cout << artToPrint;
 	std::vector<std::string> lines = splitByNewline(qrToPrint);
 	for (size_t i = 0; i < lines.size(); i++)
@@ -597,9 +644,11 @@ void GameSystem::printMainMenu() {
 		graphicsManager.setCursorPos(75, i);
 		printf(lines[i].c_str());
 	}
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
 }
 
-// Р›РѕРіС–РєР° РіРѕР»РѕРІРЅРѕРіРѕ РјРµРЅСЋ
+// Логіка головного меню
 void GameSystem::mainMenuLogic() {
 	graphicsManager.SetWindowSize(145, 40);
 	printMainMenu();
@@ -611,30 +660,78 @@ void GameSystem::mainMenuLogic() {
 			switch (key) {
 
 			case '\r':
-			case '1':   // РєР»Р°РІС–С€Р° В«1В»
+			case '1':   // клавіша «1»
 				if (!hasFilesWithExtension("./assets/savings", ".json"))
 				{
 					std::cout << "\x1B[2J\x1B[H";
-					std::cout << "Р—Р±РµСЂРµР¶РµРЅСЊ РЅРµ Р·РЅР°Р№РґРµРЅРѕ. Р©РѕР± РїРѕРІРµСЂРЅСѓС‚РёСЃСЏ РґРѕ РіРѕР»РѕРІРЅРѕРіРѕ РјРµРЅСЋ РЅР°С‚РёСЃРЅС–С‚СЊ Р±СѓРґСЊ-СЏРєСѓ РєР»Р°РІС–С€Сѓ...\n";
+					std::cout << "Збережень не знайдено. Щоб повернутися до головного меню натисніть будь-яку клавішу...\n";
 					_getch();
 					printMainMenu();
 				}
 
 				else if (savingHasBeenSelected("./assets/savings", ".json"))
-					return; // Р’РёС…С–Рґ РїС–СЃР»СЏ РІРёР±РѕСЂСѓ Р·Р±РµСЂРµР¶РµРЅРЅСЏ
+					return; // Вихід після вибору збереження
 				else printMainMenu();
 
 				break;
 
-			case '2':   // РєР»Р°РІС–С€Р° В«2В»
-				// Р’РёС…С–Рґ Р· С„СѓРЅРєС†С–С—, СЏРєС‰Рѕ newGame() РїРѕРІРµСЂРЅСѓР»Р° true
+			case '2':   // клавіша «2»
+				// Вихід з функції, якщо newGame() повернула true
 				if (newGame())
 					return;
 				else printMainMenu();
 
 				break;
 
-			case '3':   // РєР»Р°РІС–С€Р° В«3В»
+			case '3':   // клавіша «3»
+				std::cout << "\x1B[2J\x1B[H";
+				std::cout << "Розділ знаходиться в розробці...\n";
+				std::cout << "Підтримай розробника кавою =)\n\n";
+				std::cout << "Щоб продовжити натисніть Enter...\n";
+				_getch();
+				printMainMenu();
+				break;
+
+			case '4':{   // клавіша «4»
+				std::string cmd = "start \"\" \"assets/settings/See more content webpage/more.html\"";
+				int ret = std::system(cmd.c_str());
+
+				if (ret != 0) {
+					std::cerr << "Не вдалося відкрити документ, код: " << ret << "\n";
+					std::exit(1);
+				}
+			}
+				break;
+
+			case '0':   // клавіша «0»
+				std::string playThis = "open \"assets/Music/Menu/MyFirstLetterToYou.mp3\" type mpegvideo alias leMusic";
+				mciSendStringA(playThis.c_str(), NULL, 0, NULL);
+				mciSendStringA("play leMusic", NULL, 0, NULL);
+				system("cls");
+				std::string kiss = R"(
+                    .:+!++:::.  .:u+::.
+                 !!!X:!X<!!!<!#%?!!~XX!!!!:
+             :<!!X!!!!:!!>?~!~:<!~!!!?!!!X!!!:
+           <!!!%!!!!!~!!!!!!<!!!!!!!!!!!!!!!X!!:
+         <!!!!!!!!!!:<<<~~~!~~~~!~~~~!~!<!:!!!!!!:
+       :!!!!!!!!!~~~~~~~~~~~~~~~~~~~~~~~~~~<!~!!!!!.
+     .!\!!!!!~~~~~~~~~.io@$$$$N$$$bou. `~~~~~~~~:!!!:
+    <~~~~~~~~~~~~   ~*?******"#R$$$$$R"$Mx ~~~~~~~~!~~
+   '`~~~~~~          M#?#"?#**!@**?""??*MX     `~~~~~~~
+    `~~:::::::::~:~~:<:H!!:~<:~:<~::>:<:!::::::::::<<~~
+       ~!!!!!?!!MMXHM@$5@HM%8kdNh!HNRZ7$@MR$N!!?!<"~~
+         ~!!!!!!!!!?!!R?MMM!#$T*M!RMSMXM7!!!!!!!\~~
+           ~~~!!!!!~!!!!!!!!!<!!!!:!!!!!!!!<!~!~~
+              ~~~~!!!!~!~!~~~!>!:~!!!!!!!!!~~~
+                 `~~~~~~!<!~~!<!!~~!::~~~~~
+                         ~~~~~~~~~~~~
+
+				)";
+				
+				std::cout << kiss;
+				std::cout << "Au revoir, архітекторе світів!\n";
+
+				Sleep(12000);
 				std::exit(0);
 				return;
 				break;
@@ -647,7 +744,7 @@ void GameSystem::mainMenuLogic() {
 std::string getMusicFiles(const std::string& folderPath, const std::string& extension) {
 	std::vector<std::string> arrayOfFiles;
 
-	// Р—Р°РїРёСЃ Р·РЅР°Р№РґРµРЅРёС… С„Р°Р№Р»С–РІ Сѓ РјР°СЃРёРІ
+	// Запис знайдених файлів у масив
 	for (const auto& entry : fs::directory_iterator(folderPath)) {
 		if (entry.is_regular_file() && entry.path().extension() == extension) {
 			arrayOfFiles.push_back(entry.path().string());
@@ -666,6 +763,21 @@ void GameSystem::saveAfterDeath(std::string& savingName) {
 		_player.GetAvailableMoney(), readPlayerDeaths(filename) + 1);
 }
 
+void loadLevel(const std::string& filename, Level& _level, Player& _player)
+{
+	std::string levelName = "level" + std::to_string(readPlayerLevel(filename));
+
+	if (hasFilesWithExtension("./assets/Levels/", ".txt", levelName))
+	{
+		_level.load("./assets/Levels/" + levelName + ".txt", _player);
+	}
+	else {
+		printf("Такого збереження не існує або ж ви пройшли усі рівні (Enter щоб продовжити)...\n");
+		_getch();
+		return;
+	}
+}
+
 void GameSystem::RunGame() {
 	while (true) {
 
@@ -673,30 +785,31 @@ void GameSystem::RunGame() {
 		isBadEnd = false;
 		name = "";
 		_level.clear();
-		graphicsManager.SetWindowTitle("ConsoleGame		forged by Vladyslav Pukhliak");
+		graphicsManager.SetWindowTitle(TITLE + " | Main menu");
 
-		// Р†РЅС‚РµСЂР°РєС‚РёРІ Р· РіСЂР°РІС†РµРј. Р†РЅС‚РµСЂС„РµР№СЃ РіРѕР»РѕРІРЅРѕРіРѕ РјРµРЅСЋ. Frontend
+		// Інтерактив з гравцем. Інтерфейс головного меню. Frontend
 		mainMenuLogic();
 
 
-		// РјРѕР¶РЅР° РґРѕРґР°С‚Рё СЂС–Р·РЅРёС… С„СЂР°Р· РІ С„Р°Р№Р» С– РЅРёРјРё РѕРїРµСЂСѓРІР°С‚Рё РЅР° СЂР°РЅРґРѕРј
+		// можна додати різних фраз в файл і ними оперувати на рандом
 		std::cout << "\x1B[2J\x1B[H";
 
-		// С– С†Рµ Р‘РѕР¶Рµ, С‰Рѕ С†Рµ Р·Р° СЃС‚СЂР°С…РѕРІРёСЃСЊРєРѕ!
-		graphicsManager.print("РџРѕР±Р°С‡РёРјРѕ С‰Рѕ С‚Рё СЃРѕР±РѕСЋ РїСЂРµРґСЃС‚Р°РІР»СЏС”С€, ", 0);
+		// і це Боже, що це за страховисько!
+		graphicsManager.print("Побачимо що ти собою представляєш, ", 0);
 		graphicsManager.print(name, 1000);
 		graphicsManager.print("...", 1500, 3000);
 
-		graphicsManager.unprint("РџРѕР±Р°С‡РёРјРѕ С‰Рѕ С‚Рё СЃРѕР±РѕСЋ РїСЂРµРґСЃС‚Р°РІР»СЏС”С€, " + name + "...\b", 100);
+		graphicsManager.unprint("Побачимо що ти собою представляєш, " + name + "...\b", 100);
 		std::string filename = "./assets/savings/" + name + ".json";
-		printf("%d Р·Р°С„С–РєСЃРѕРІР°РЅРёС… СЃРјРµСЂС‚РµР№ РЅР° С†Рµ С–Рј'СЏ.", readPlayerDeaths(filename));
+		printf("%d зафіксованих смертей на це ім'я.", readPlayerDeaths(filename));
 		Sleep(3000);
 
-		// Р—Р°РІРµСЂС€Р°Р»СЊРЅР° Р»РѕРіС–РєР°, РїРѕС‡РёРЅР°С”РјРѕ РІРІРѕРґРёС‚Рё С–РіСЂРѕРІС– РґР°РЅС– Р±РµР·РїРѕСЃРµСЂРµРґРЅСЊРѕ Сѓ РіСЂСѓ. Backend
+		// Завершальна логіка, починаємо вводити ігрові дані безпосередньо у гру. Backend
 
-		// Р’С–РґРєСЂРёС‚С‚СЏ РІР¶Рµ С–СЃРЅСѓСЋС‡РѕРіРѕ С„Р°Р№Р»Р° (С‚СѓС‚ СЃСѓС†С–Р»СЊРЅР° РєР°С€Р°)
+		// Відкриття вже існуючого файла (тут суцільна каша)
+
 		_level.setPlayerName(name);
-		_player.init(1, 10, 100, 10, readPlayerMoney(filename)); // Р·Р°РґР°РЅРЅСЏ РїРѕС‡Р°С‚РєРѕРІРёС… РїР°СЂР°РјРµС‚СЂС–РІ РіСЂР°РІС†РµРІС–!
+		_player.init(1, 10, 100, 10, readPlayerMoney(filename)); // задання початкових параметрів гравцеві!
 
 
 		system("cls");
@@ -707,7 +820,7 @@ void GameSystem::RunGame() {
 			_level.load("./assets/Levels/" + levelName + ".txt", _player);
 		}
 		else {
-			printf("РўР°РєРѕРіРѕ Р·Р±РµСЂРµР¶РµРЅРЅСЏ РЅРµ С–СЃРЅСѓС” Р°Р±Рѕ Р¶ РІРё РїСЂРѕР№С€Р»Рё СѓСЃС– СЂС–РІРЅС– (Enter С‰РѕР± РїСЂРѕРґРѕРІР¶РёС‚Рё)...");
+			printf("Такого збереження не існує або ж ви пройшли усі рівні (Enter щоб продовжити)...");
 			_getch();
 			continue;
 		}
@@ -724,38 +837,54 @@ void GameSystem::RunGame() {
 		mciSendStringA(playThis.c_str(), NULL, 0, NULL);
 		mciSendStringA("play leMusic", NULL, 0, NULL);
 
+		std::thread missile_thread(missile_thread_func);
+		std::thread cannon_thread(cannon_thread_func);
 		std::thread enemy_thread(enemy_thread_func);
 		std::thread draw(draw_thread);
 
 
-		// Р¦РµР№ С†РёРєР» РїСЂРѕРґРѕРІР¶СѓС” РїСЂР°С†СЋРІР°С‚Рё РїС–СЃР»СЏ СЃРјРµСЂС‚С– Р“Р“!
+		// Цей цикл продовжує працювати після смерті ГГ!
 		while (!isDone) // isBadEnd?
 		{
-			//if (!Level::isBusy()) {
-			_level.Move(_getch(), _player);
-			//_level.Draw();
-		//}
-		// Р—Р°С‚СЂРёРјРєР° РіРѕР»РѕРІРЅРѕРіРѕ РїРѕС‚РѕРєСѓ РЅР° 16 РјС–Р»С–СЃРµРєСѓРЅРґ (РїСЂРёР±Р»РёР·РЅРѕ 60 РєР°РґСЂС–РІ РІ СЃРµРєСѓРЅРґСѓ)
+			char key = _level.Move(_getch(), _player);
+
+			if (key == 'r' || key == 'R') {
+				// --- Рестарт рівня ---
+				system("cls");
+				printf("Перезапуск рівня...\n");
+				_level.clear();
+				graphics.setCursorPos(0, 0);
+				graphics.init();
+
+				_level.setPlayerName(name);
+				_player.init(1, 10, 100, 10, readPlayerMoney(filename)); // задання початкових параметрів гравцеві!
+				loadLevel(filename, _level, _player);
+				continue;
+			}
+
+			// Затримка для зменшення навантаження на CPU
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
 
 		system("cls");
-		printf("You win!!! РџРµСЂРµС…С–Рґ РґРѕ РіРѕР»РѕРІРЅРѕРіРѕ РјРµРЅСЋ (4s)...");
+		printf("You win!!! Перехід до головного меню (4s)...");
 
-		// Р—Р°РїРёСЃ РґР°РЅРёС… Сѓ С„Р°Р№Р»!!!!!
+		// Запис даних у файл!!!!!
 		int playerLevel = readPlayerLevel(filename);
 		writePlayerData(filename, readPlayerName(filename), 0, ++playerLevel, _player.GetAvailableMoney(), readPlayerDeaths(filename));
-		// 0 РІ РєС–РЅС†С– С‰Рѕ РѕР·РЅР°С‡Р°С” "СЃРјРµСЂС‚РµР№" Р·Р°РјС–РЅРёС‚Рё РЅР° СЃРїСЂР°РІР¶РЅС– СЃРјРµСЂС‚С–.
+		// 0 в кінці що означає "смертей" замінити на справжні смерті.
 
 		mciSendStringA("close leMusic", NULL, 0, NULL);
 		// 
-		// РћС‡С–РєСѓРІР°РЅРЅСЏ Р·Р°РІРµСЂС€РµРЅРЅСЏ РїРѕС‚РѕРєСѓ Р· СЂСѓС…РѕРј РІРѕСЂРѕРіС–РІ
+		// Очікування завершення потоку з рухом ворогів
+		missile_thread.join();
+		cannon_thread.join();
 		enemy_thread.join();
 		draw.join();
 
-		// РљР РРўРР§РќРћ: Р’СЃС‚Р°РЅРѕРІР»СЋС”РјРѕ РїСЂР°РїРѕСЂС†С– РґР»СЏ Р·Р°РІРµСЂС€РµРЅРЅСЏ РїРѕС‚РѕРєС–РІ
+		// КРИТИЧНО: Встановлюємо прапорці для завершення потоків
 		isDone = true;
-		isBadEnd = true; // Р©РѕР± С‚РѕС‡РЅРѕ Р·Р°РІРµСЂС€РёР»РёСЃСЏ
+		isBadEnd = true; // Щоб точно завершилися
 
 
 
