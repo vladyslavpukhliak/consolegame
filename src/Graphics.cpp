@@ -1,4 +1,4 @@
-#include "Graphics.h"
+﻿#include "Graphics.h"
 #include "Message.h"
 #include "constants.h"
 #include <thread>
@@ -45,18 +45,41 @@ void Graphics::SetWindowTitle(std::string title) {
 void Graphics::init() {
 	SetWindowTitle(TITLE + " | Demo");
 
-	// ³��������� �������
+	// Відключення курсора
 	CONSOLE_CURSOR_INFO cursor_info;
 	GetConsoleCursorInfo(console, &cursor_info);
 	cursor_info.bVisible = false;
 	SetConsoleCursorInfo(console, &cursor_info);
 
-	// ������ ����� ���� ���
+	// Задаємо розмір вікна гри
 	SetWindowSize(120, 60); // change digits to json values
 
-	// ����������� ���������� UI
+	// Ініціалізуємо фіксований UI
 	setCursorPos(40, 0);
 	printf("-- Information --");
+}
+
+// Жорстка допомога ШІ з конвертацією зроз, я втомився
+// Конвертація UTF-8 рядка в ANSI
+std::string Graphics::Utf8ToAnsi(const std::string& utf8)
+{
+	if (utf8.empty()) return {};
+
+	// UTF-8 → UTF-16
+	int wlen = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, nullptr, 0);
+	if (wlen == 0) return {};
+	std::wstring wstr(wlen, L'\0');
+	MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, &wstr[0], wlen);
+	if (!wstr.empty() && wstr.back() == L'\0') wstr.pop_back();
+
+	// UTF-16 → ANSI (системна кодова сторінка)
+	int alen = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), -1, nullptr, 0, nullptr, nullptr);
+	if (alen == 0) return {};
+	std::string ansi(alen, '\0');
+	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), -1, &ansi[0], alen, nullptr, nullptr);
+	if (!ansi.empty() && ansi.back() == '\0') ansi.pop_back();
+
+	return ansi;
 }
 
 void Graphics::addMessage(std::string message) {
@@ -90,7 +113,7 @@ void Graphics::print(const std::string &str, const unsigned int miliseconds, con
 }
 
 
-// ���� ���� �� ��� �����. ������
+// шось воно не все стирає. виправ
 void Graphics::unprint(const std::string &str, const unsigned int miliseconds) {
 	std::vector<std::string> words = splitString(str);
 

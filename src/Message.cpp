@@ -2,6 +2,7 @@
 #include "Level.h"
 #include "Graphics.h"
 #include "GameSystem.h"
+#include <iostream>
 
 Graphics graphics;
 std::queue<Message> messageQueue;
@@ -73,7 +74,8 @@ void Message::printmessageList() {
 	while (!tempQueue.empty()) {
 		frontMessage = tempQueue.front().text;
 		graphics.setCursorPos(40, i);
-		printf(frontMessage.c_str());
+		std::cout << frontMessage;
+		//printf(frontMessage.c_str());
 		graphics.setCursorPos(0, 0);
 		tempQueue.pop();
 		i++;

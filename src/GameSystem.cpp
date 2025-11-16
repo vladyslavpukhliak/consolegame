@@ -151,13 +151,7 @@ bool GameSystem::isGameOver() { return isBadEnd; }
 void GameSystem::BadEnding() { isBadEnd = true;  }
 void GameSystem::PauseTheGame() { isPaused = true; };
 void GameSystem::UnPauseTheGame() { isPaused = false; };
-// Constructor sets up the game
-//GameSystem::GameSystem(std::string levelFile) {
-//
-//	_player.init(1, 10, 100, 10);
-//
-//	_level.load(levelFile, _player);
-//}
+
 
 void cannon_thread_func()
 {
@@ -174,7 +168,7 @@ void cannon_thread_func()
 		_level.UpdateCannon(_player);
 		//}
 
-		// Зупинка потоку на 500 мілісекунд
+		// Зупинка потоку на 2 секунди
 		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 	}
 }
@@ -833,9 +827,33 @@ void GameSystem::RunGame() {
 		/*std::cout << "\n\n" << getMusicFiles("assets/Music/", ".mp3");
 		Sleep(10000);*/
 
-		std::string playThis = "open \"" + getMusicFiles("assets/Music/", ".mp3") + "\" type mpegvideo alias leMusic";
-		mciSendStringA(playThis.c_str(), NULL, 0, NULL);
-		mciSendStringA("play leMusic", NULL, 0, NULL);
+		// Read Settings json
+		std::ifstream ifs("assets/settings/settings.json");
+		if (!ifs.is_open()) {
+			std::cerr << "Не вдалося відкрити settings.json\n";
+		}
+		rapidjson::IStreamWrapper isw(ifs);
+		rapidjson::Document doc;
+		doc.ParseStream(isw);
+		if (doc.HasParseError() || !doc.IsObject()) {
+			std::cerr << "Невірний формат settings.json\n";
+		}
+
+		bool canPlayMusic = false;
+		const char* playMusicKey = "playMusic";
+
+		if (doc.HasMember(playMusicKey) && doc[playMusicKey].IsInt()) {
+			canPlayMusic = (doc[playMusicKey].GetInt() != 0);
+		}
+		ifs.close();
+
+		if (canPlayMusic) {
+			std::string playThis = "open \"" + getMusicFiles("assets/Music/", ".mp3") + "\" type mpegvideo alias leMusic";
+			mciSendStringA(playThis.c_str(), NULL, 0, NULL);
+			mciSendStringA("play leMusic", NULL, 0, NULL);
+		}
+
+		
 
 		std::thread missile_thread(missile_thread_func);
 		std::thread cannon_thread(cannon_thread_func);
@@ -851,7 +869,7 @@ void GameSystem::RunGame() {
 			if (key == 'r' || key == 'R') {
 				// --- Рестарт рівня ---
 				system("cls");
-				printf("Перезапуск рівня...\n");
+				//printf("Перезапуск рівня...\n");
 				_level.clear();
 				graphics.setCursorPos(0, 0);
 				graphics.init();

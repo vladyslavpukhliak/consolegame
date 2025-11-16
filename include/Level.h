@@ -59,16 +59,16 @@ private:
 		bool unbeatable;
 	};
 
-	struct CannonDirection {
+	struct coordinates {
 		int dx;
 		int dy;
 	};
 
 	struct CannonTemplate {
 		std::vector<std::string> tile;
-		std::vector<CannonDirection> directions;
+		std::vector<coordinates> directions;
 		std::string name;
-		int color;
+		int color, cannonCooldown, projectileCooldown;
 		std::string description;/*
 		std::string playerDeathLine;*/
 	};
@@ -78,6 +78,7 @@ private:
 	std::vector <std::string> _initialMaze;
 	std::vector<std::vector<std::string>> _levelData;
 	std::vector <Enemy> _enemies;
+	std::vector<coordinates> _buttonPlates;
 	std::vector <Cannon> _cannon;
 	std::vector <Cannon> _missiles;
 	std::unordered_map<std::string, CannonTemplate> cannonTemplates;

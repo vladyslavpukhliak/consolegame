@@ -13,6 +13,8 @@
 #include "entities.h"
 #include <windows.h>
 #include <filesystem> 
+#include <thread>
+
 
 //Message messageList;
 Graphics graphicsManager;
@@ -25,6 +27,7 @@ Level::Level() {
 }
 
 unsigned int Level::getEnemiesCount() { return _enemies.size(); }
+
 
 // Loads the level
 void Level::load(std::string fileName, Player& player) {
@@ -50,26 +53,42 @@ void Level::load(std::string fileName, Player& player) {
 		std::vector<std::string> row;
 
 		for (size_t i = 0; i < rowStr.length(); ) {
-			// Check if the current character is a multi-byte UTF-8 character (e.g., starting with 110xxxxxx or 1110xxxx)
 
-			if ((unsigned char)rowStr[i] >= 0x80) { // It's a multi-byte character
-				// Since our arrows are 3 bytes, read 3 bytes and push as one string cell
-				// NOTE: This assumes all multi-byte chars are 3 bytes (like our arrows)
+			unsigned char c = static_cast<unsigned char>(rowStr[i]);
 
-				if (i + 3 <= rowStr.length()) {
-					row.push_back(rowStr.substr(i, 3));
-					i += 3;
-				}
-
-				else {
-					row.push_back(" "); // Fallback
-					i += 1;
-				}
-			}
-
-			else { // It's a single-byte ASCII character (like #, @, or space)
+			if (c < 0x80) {
+				// 1-byte (ASCII)
 				row.push_back(std::string(1, rowStr[i]));
-				i++;
+				i += 1;
+			}
+			else if ((c >> 5) == 0x6) {
+				// 2-byte UTF-8 character (110xxxxx)
+				if (i + 2 <= rowStr.length())
+					row.push_back(rowStr.substr(i, 2));
+				else
+					row.push_back(" ");
+				i += 2;
+			}
+			else if ((c >> 4) == 0xE) {
+				// 3-byte UTF-8 character (1110xxxx)
+				if (i + 3 <= rowStr.length())
+					row.push_back(rowStr.substr(i, 3));
+				else
+					row.push_back(" ");
+				i += 3;
+			}
+			else if ((c >> 3) == 0x1E) {
+				// 4-byte UTF-8 character (11110xxx)
+				if (i + 4 <= rowStr.length())
+					row.push_back(rowStr.substr(i, 4));
+				else
+					row.push_back(" ");
+				i += 4;
+			}
+			else {
+				// Некоректний байт — заміна на пробіл
+				row.push_back(" ");
+				i += 1;
 			}
 		}
 		_levelData.push_back(row);
@@ -86,7 +105,7 @@ void Level::load(std::string fileName, Player& player) {
 	rapidjson::IStreamWrapper isw(ifs);
 	rapidjson::Document doc;
 	doc.ParseStream(isw);
-	if (doc.HasParseError() || !doc.IsObject() || !doc["default"].IsObject()) {
+	if (doc.HasParseError() || !doc.IsObject() || !doc["default"].IsObject() || !doc["cannon"].IsObject()) {
 		std::cerr << "Невірний формат enemies.json\n";
 	}
 
@@ -159,6 +178,10 @@ void Level::load(std::string fileName, Player& player) {
 		// Завантажуємо прості поля
 		tmpl.color = cannon_json.HasMember("color") && cannon_json["color"].IsInt() ?
 			cannon_json["color"].GetInt() : 37;
+		tmpl.cannonCooldown = cannon_json.HasMember("cannonCooldown") && cannon_json["cannonCooldown"].IsInt() ?
+			cannon_json["cannonCooldown"].GetInt() : 2000;
+		tmpl.projectileCooldown = cannon_json.HasMember("projectileCooldown") && cannon_json["projectileCooldown"].IsInt() ?
+			cannon_json["projectileCooldown"].GetInt() : 200;
 
 		tmpl.description = cannon_json.HasMember("description") && cannon_json["description"].IsString() ?
 			cannon_json["description"].GetString() : "";
@@ -189,7 +212,7 @@ void Level::load(std::string fileName, Player& player) {
 					directionsArray[k][0].IsInt() && directionsArray[k][1].IsInt()) {
 
 					// Додаємо пару координат [dx, dy] до шаблону
-					CannonDirection direction = { directionsArray[k][0].GetInt(), directionsArray[k][1].GetInt() };
+					coordinates direction = { directionsArray[k][0].GetInt(), directionsArray[k][1].GetInt() };
 					tmpl.directions.push_back(direction);
 				}
 			}
@@ -203,6 +226,8 @@ void Level::load(std::string fileName, Player& player) {
 			cannonTemplates[tileChar] = tmpl;
 		}
 	}
+
+	ifs.close();
 
 
 
@@ -238,6 +263,7 @@ void Level::load(std::string fileName, Player& player) {
 			}
 
 			else if (tile == "X") { // Moveable box
+				_buttonPlates.push_back({ j, i });
 				buttonPlate++;
 				buttonPlatesWereHere = true;
 			}
@@ -318,11 +344,18 @@ void Level::Draw() {
 
 		line += "\n";
 	}
-	std::cout << line;
+	SetConsoleCP(CP_UTF8);
+	SetConsoleOutputCP(CP_UTF8);
+	std::cout << line << "\nbuttonPlate: " << buttonPlate;
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	
 	busy = false;
 	if (!GameSystem::isGameOver()) {
+
 		message.checkExpiredmessageList();
 		message.printmessageList();
+		
 	}
 }
 
@@ -396,20 +429,90 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 	if (nextTile == "#") { // Internal walls
 		graphicsManager.addMessage("You ran into the wall!");
 	}
-	else if (nextTile == " ") {
-		player.SetPosition(targetX, targetY);
+	else if (nextTile == " " || nextTile == "X") {
+
+		// Залишити X якщо був X і закінчити логіку
+		for (size_t i = 0; i < _buttonPlates.size(); i++)
+		{
+			if (_buttonPlates[i].dx == playerX && _buttonPlates[i].dy == playerY)
+			{
+				SetTile(playerX, playerY, "X");
+				player.SetPosition(targetX, targetY);
+				SetTile(targetX, targetY, "@");
+				return;
+			}
+
+		}
+
+		// Ігнорувати. Залишити порожнечу якщо була порожнеча
 		SetTile(playerX, playerY, " ");
+		player.SetPosition(targetX, targetY);
 		SetTile(targetX, targetY, "@");
 	}
 	else if (nextTile == "B") { // Move Box logic
 
 		if (tileAhead == " " || tileAhead == "X") {
+
+			// Залишити X якщо був X і закінчити логіку
+			for (size_t i = 0; i < _buttonPlates.size(); i++)
+			{
+				if (_buttonPlates[i].dx == playerX && _buttonPlates[i].dy == playerY)
+				{
+					player.SetPosition(targetX, targetY);
+					SetTile(playerX, playerY, "X");
+					SetTile(targetX, targetY, "@");
+					SetTile(targetX + horizontal, targetY + vertical, "B");
+
+					// Це вирішує XX але не X X
+					for (size_t i = 0; i < _buttonPlates.size(); i++)
+					{
+						if (_buttonPlates[i].dx == targetX && _buttonPlates[i].dy == targetY)
+						{
+							buttonPlate++;
+						}
+					}
+					// Це вирішує X X
+					for (size_t i = 0; i < _buttonPlates.size(); i++)
+					{
+						if (_buttonPlates[i].dx == targetX + horizontal && _buttonPlates[i].dy == targetY + vertical)
+						{
+							buttonPlate--;
+						}
+					}
+					return;
+				}
+
+			}
+
+			// Ігнорувати. Залишити порожнечу якщо була порожнеча
 			player.SetPosition(targetX, targetY);
 			SetTile(playerX, playerY, " ");
 			SetTile(targetX, targetY, "@");
 			SetTile(targetX + horizontal, targetY + vertical, "B");
 		}
-		if (tileAhead == "X") buttonPlate--;
+
+		if (tileAhead == " ") {
+			for (size_t i = 0; i < _buttonPlates.size(); ++i)
+			{
+				if (_buttonPlates[i].dx == targetX && _buttonPlates[i].dy == targetY)
+				{
+					buttonPlate++;
+					return;
+				}
+			}
+		}
+
+		// Обробити випадок коли натискається плита
+		if (tileAhead == "X") {
+			for (size_t i = 0; i < _buttonPlates.size(); ++i)
+			{
+				if (_buttonPlates[i].dx == targetX && _buttonPlates[i].dy == targetY)
+				{
+					return;
+				}
+			}
+			buttonPlate--;
+		}
 
 	}
 	else if (nextTile == "$") {
@@ -488,9 +591,14 @@ void Level::TryCannonShoot(Player& player, int index, int targetX, int targetY) 
 	// Перевіряємо пряму атаку / рух
 	std::string nextTile = GetTile(targetX, targetY);
 	if (nextTile == "@") {
+		SetTile(targetX, targetY, "~");
 
 		bool attackResult = player.TakeDamage(999);
 		CheckPlayerDeath(attackResult, playerX, playerY);
+		return;
+	}
+	else if (nextTile == "+") {
+		SetTile(targetX, targetY, " ");
 		return;
 	}
 	else if (nextTile == " ") {
@@ -513,9 +621,17 @@ void Level::TryMissileGo(Player& player, int index, int targetX, int targetY) {
 	if (nextTile == "@") {
 		_missiles.erase(_missiles.begin() + index);
 		SetTile(missileX, missileY, " ");
+		SetTile(targetX, targetY, "~");
+
 		//graphicsManager.addMessage("Missile exploded!");
 		bool attackResult = player.TakeDamage(999);
 		CheckPlayerDeath(attackResult, playerX, playerY);
+		return;
+	}
+	else if (nextTile == "+") {
+		_missiles.erase(_missiles.begin() + index);
+		SetTile(missileX, missileY, " ");
+		SetTile(targetX, targetY, " ");
 		return;
 	}
 	else if (nextTile == " ") {
@@ -567,14 +683,14 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				std::string artToPrint = "", line = "";
 
 
-				/*std::u8string artPathU8(reinterpret_cast<const char8_t*>(enemyEntry._art.c_str()));
+				std::u8string artPathU8(reinterpret_cast<const char8_t*>(enemyEntry._art.c_str()));
 				std::u8string convPathU8(reinterpret_cast<const char8_t*>(enemyEntry._conversation.c_str()));
 				std::filesystem::path artPath(artPathU8);
-				std::filesystem::path convPath(convPathU8);*/
+				std::filesystem::path convPath(convPathU8);
 
 
-				//artFile.open(artPath, std::ios::binary);
-				artFile.open(enemyEntry._art);
+				artFile.open(artPath, std::ios::binary);
+				//artFile.open(enemyEntry._art);
 				if (artFile.fail()) {
 					perror("No such file (Art of enemy)");
 					Sleep(600);
@@ -587,8 +703,8 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				artFile.close();
 
 				graphicsManager.setCursorPos(0,0);
-				//conversation.initDialogue(convPath, artToPrint, player, enemyEntry);
-				conversation.initDialogue(enemyEntry._conversation, artToPrint, player, enemyEntry);
+				conversation.initDialogue(convPath, artToPrint, player, enemyEntry);
+				//conversation.initDialogue(enemyEntry._conversation, artToPrint, player, enemyEntry);
 
 
 				Sleep(2000);
@@ -601,7 +717,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 
 			// Оце будь ласка тільки після діалогу.
 			// Battle !
-			enemyName = enemyEntry.GetName();
+			enemyName = graphicsManager.Utf8ToAnsi(enemyEntry.GetName());
 			if (!enemyEntry._isUnbeatable) {
 				enemyEntry._isFriendly = false;
 				attackRoll = player.attack();
@@ -620,7 +736,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 					// TODO: deathLines rand string
 
 					size_t randomDeathLine = rand() % enemyEntry._deathLines.size();
-					graphicsManager.addMessage(enemyEntry._deathLines[randomDeathLine]);
+					graphicsManager.addMessage(graphicsManager.Utf8ToAnsi(enemyEntry._deathLines[randomDeathLine]));
 					//graphicsManager.addMessage("Enemy трупік!\n");
 
 					// TODO: ЦЕ НОРМАЛЬНО ЩО ВИДАЛЯЄТЬСЯ ОСТАННІЙ ЕНЕМІ А НЕ КОНКРЕТНИЙ?
@@ -811,6 +927,7 @@ void Level::clear() {
 
 	// Очищаємо ворогів
 	_enemies.clear();
+	_buttonPlates.clear();
 	_cannon.clear();
 	_missiles.clear();
 	enemyTemplates.clear();

@@ -5,6 +5,7 @@ class Graphics
 {
 public:
 	void init();
+	std::string Utf8ToAnsi(const std::string& utf8);
 
 /// <summary>
 /// Анімований вивід тексту абзацу

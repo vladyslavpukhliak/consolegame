@@ -65,7 +65,7 @@ char Enemy::GetMove(int playerX, int playerY) {
 
 	if (distance <= _visibleRange && !_isFriendly) {
 		if (!_fear) {
-			if (!isSpotted && _line != "") gM.addMessage(_line);
+			if (!isSpotted && _line != "") gM.addMessage(gM.Utf8ToAnsi(_line));
 			isSpotted = true;
 			// ќриг?нальна лог?ка Ч до гравц¤
 			// наближенн¤ гравц¤ до enemy (така лог?ка залишаЇтьс¤ незм?нною, можна зм?нити лише w,a,s,d)

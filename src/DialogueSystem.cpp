@@ -24,7 +24,7 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, P
 
     std::cout << "\x1B[2J\x1B[H";
     printf(art.c_str());
-    printf("\n%s:\n", gMngr.colorize(enemyEntry._name, enemyEntry._color).c_str());
+    printf("\n%s:\n", gMngr.colorize(gMngr.Utf8ToAnsi(enemyEntry._name), enemyEntry._color).c_str());
 
 #pragma region HandleBufs
 
@@ -106,7 +106,7 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, P
             // Відобразити текст на що ГГ відповідає.
             std::cout << "\x1B[2J\x1B[H";
             printf(art.c_str());
-            printf("\n%s:\n", gMngr.colorize(enemyEntry._name, enemyEntry._color).c_str());
+            printf("\n%s:\n", gMngr.colorize(gMngr.Utf8ToAnsi(enemyEntry._name), enemyEntry._color).c_str());
             printf("%s\n", firstLine.c_str());
 
             // Анімована відповідь:
@@ -118,14 +118,14 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, P
     }
 }
 
-/*
+
 void DialogueSystem::initDialogue(const std::filesystem::path& path, const std::string& art, Player& player, Enemy& enemyEntry) {
 
     std::ifstream ifs(path, std::ios::binary);
-*/
-void DialogueSystem::initDialogue(const std::string& path, const std::string& art, Player& player, Enemy& enemyEntry) {
 
-    std::ifstream ifs(path);
+//void DialogueSystem::initDialogue(const std::string& path, const std::string& art, Player& player, Enemy& enemyEntry) {
+//
+//    std::ifstream ifs(path);
     if (!ifs.is_open()) {
         std::cerr << "Не вдалося відкрити файл dialogue.json\n";
     }
