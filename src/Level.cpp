@@ -429,92 +429,62 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 	if (nextTile == "#") { // Internal walls
 		graphicsManager.addMessage("You ran into the wall!");
 	}
-	else if (nextTile == " " || nextTile == "X") {
+	// Допоміжний предикат: чи є кнопкова плита в координатах (x,y)
+	auto isButtonAt = [&](int x, int y) -> bool {
+		for (const auto& bp : _buttonPlates)
+			if (bp.dx == x && bp.dy == y) return true;
+		return false;
+		};
 
-		// Залишити X якщо був X і закінчити логіку
-		for (size_t i = 0; i < _buttonPlates.size(); i++)
-		{
-			if (_buttonPlates[i].dx == playerX && _buttonPlates[i].dy == playerY)
-			{
-				SetTile(playerX, playerY, "X");
-				player.SetPosition(targetX, targetY);
-				SetTile(targetX, targetY, "@");
-				return;
-			}
+	// Зручна операція: змінити плиту гравця залежно від того, була плита під ним чи ні
+	auto leavePlayerTile = [&](int px, int py) {
+		SetTile(px, py, isButtonAt(px, py) ? "X" : " ");
+		};
 
-		}
-
-		// Ігнорувати. Залишити порожнечу якщо була порожнеча
-		SetTile(playerX, playerY, " ");
+	if (nextTile == " " || nextTile == "X") {
+		// Простий хід гравця
+		leavePlayerTile(playerX, playerY);
 		player.SetPosition(targetX, targetY);
 		SetTile(targetX, targetY, "@");
+		return;
 	}
-	else if (nextTile == "B") { // Move Box logic
 
-		if (tileAhead == " " || tileAhead == "X") {
+	if (nextTile == "B") { // Рух коробки
+		// Рух коробки можливий тільки якщо tileAhead порожня або кнопкова плита
+		if (tileAhead != " " && tileAhead != "X") return;
 
-			// Залишити X якщо був X і закінчити логіку
-			for (size_t i = 0; i < _buttonPlates.size(); i++)
-			{
-				if (_buttonPlates[i].dx == playerX && _buttonPlates[i].dy == playerY)
-				{
-					player.SetPosition(targetX, targetY);
-					SetTile(playerX, playerY, "X");
-					SetTile(targetX, targetY, "@");
-					SetTile(targetX + horizontal, targetY + vertical, "B");
+		bool playerFromButton = isButtonAt(playerX, playerY);
+		bool boxOnButton = isButtonAt(targetX, targetY);
+		bool boxDestOnButton = isButtonAt(targetX + horizontal, targetY + vertical);
 
-					// Це вирішує XX але не X X
-					for (size_t i = 0; i < _buttonPlates.size(); i++)
-					{
-						if (_buttonPlates[i].dx == targetX && _buttonPlates[i].dy == targetY)
-						{
-							buttonPlate++;
-						}
-					}
-					// Це вирішує X X
-					for (size_t i = 0; i < _buttonPlates.size(); i++)
-					{
-						if (_buttonPlates[i].dx == targetX + horizontal && _buttonPlates[i].dy == targetY + vertical)
-						{
-							buttonPlate--;
-						}
-					}
-					return;
-				}
+		// Перемістити гравця і коробку
+		leavePlayerTile(playerX, playerY);
+		player.SetPosition(targetX, targetY);
+		SetTile(targetX, targetY, "@");
+		SetTile(targetX + horizontal, targetY + vertical, "B");
 
-			}
-
-			// Ігнорувати. Залишити порожнечу якщо була порожнеча
-			player.SetPosition(targetX, targetY);
-			SetTile(playerX, playerY, " ");
-			SetTile(targetX, targetY, "@");
-			SetTile(targetX + horizontal, targetY + vertical, "B");
+		// Оновити лічильник buttonPlate згідно з початковою логікою:
+		// випадок: гравець виходив з плити — тоді враховуємо і джерело коробки, і місце призначення коробки
+		if (playerFromButton) {
+			if (boxOnButton)  buttonPlate++;
+			if (boxDestOnButton) buttonPlate--;
+			return;
 		}
 
+		// випадок: коробка рухається на порожнє місце
 		if (tileAhead == " ") {
-			for (size_t i = 0; i < _buttonPlates.size(); ++i)
-			{
-				if (_buttonPlates[i].dx == targetX && _buttonPlates[i].dy == targetY)
-				{
-					buttonPlate++;
-					return;
-				}
-			}
+			if (boxOnButton) { buttonPlate++; return; }
 		}
 
-		// Обробити випадок коли натискається плита
+		// випадок: коробка рухається на плиту "X"
 		if (tileAhead == "X") {
-			for (size_t i = 0; i < _buttonPlates.size(); ++i)
-			{
-				if (_buttonPlates[i].dx == targetX && _buttonPlates[i].dy == targetY)
-				{
-					return;
-				}
-			}
+			if (boxOnButton) return;
 			buttonPlate--;
 		}
 
+		return;
 	}
+
 	else if (nextTile == "$") {
 		player.SetPosition(targetX, targetY);
 		SetTile(playerX, playerY, " ");
