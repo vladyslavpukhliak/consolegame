@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Arrow.h" />
     <ClInclude Include="include\Cannon.h" />
     <ClInclude Include="include\DialogueSystem.h" />
     <ClInclude Include="include\Enemy.h" />

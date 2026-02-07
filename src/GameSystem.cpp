@@ -146,11 +146,14 @@ Player _player;
 bool isDone = false;
 bool isBadEnd = false;
 bool isPaused = false;
+bool DrawThreadIsPaused = false;
 
 bool GameSystem::isGameOver() { return isBadEnd; }
 void GameSystem::BadEnding() { isBadEnd = true;  }
 void GameSystem::PauseTheGame() { isPaused = true; };
 void GameSystem::UnPauseTheGame() { isPaused = false; };
+void GameSystem::PauseDrawThread() { DrawThreadIsPaused = true; };
+void GameSystem::UnPauseDrawThread() { DrawThreadIsPaused = false; };
 
 
 void cannon_thread_func()
@@ -182,13 +185,19 @@ void missile_thread_func()
 			continue;
 		}
 
+		// Ці закоментовані рядки - це спроба уникнути накладання потоків один на одного,
+		// тоді я не розумів чому виникають конфлікти, тепер розумію що це через те що в кожному класі
+		// я створюю окрему копію об'єкта Message і GraphicsManager
+		// В принципі це не страшно якщо використовувати якісь окремі їхні функції
+		// Але загалом такий підхід відстійний і треба робити через посилання або вказівники
+		// 
 		//if(!Message::isBusy) 
 		// Оновлення позицій ворогів
 		//if (Level::isBusy) {
 		_level.UpdateMissiles(_player);
 		//}
 
-		// Зупинка потоку на 500 мілісекунд
+		// Пауза потоку
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 }
@@ -217,15 +226,15 @@ void enemy_thread_func()
 void draw_thread() {
 	while (!isDone && !isBadEnd)
 	{
-		if (isPaused) {
+		if (DrawThreadIsPaused) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			continue;
 		}
 
 		// add check if enemies ever was initialy
-		if ((_level.buttonPlatesWereHere && _level.buttonPlate == 0) || (_level.enemiesWereHere && _level.getEnemiesCount() == 0)) isDone = true;
-		messageList.checkExpiredmessageList();
-		_level.Draw();
+		if ((_level.buttonPlatesWereHere && _level.buttonPlate == 0) ||
+			(_level.enemiesWereHere && _level.getEnemiesCount() == 0)) isDone = true;
+		_level.Draw(_player);
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 }
@@ -608,6 +617,25 @@ std::string GameSystem::initMainArt(const std::string& path) {
 	artFile.close();
 	return lines;
 }
+//std::string GameSystem::initMainArt(const std::filesystem::path& path) {
+//	std::ifstream artFile;
+//
+//	artFile.open(path);
+//	if (artFile.fail()) {
+//		std::cout << "\x1B[2J\x1B[H";
+//		std::cerr<< "No such file: \""+ path +"\"\n";
+//		Sleep(600);
+//		exit(1);
+//	}
+//	
+//	std::string lines, line;
+//	while (getline(artFile, line))
+//	{
+//		lines += line + '\n';
+//	}
+//	artFile.close();
+//	return lines;
+//}
 
 std::vector<std::string> splitByNewline(const std::string& input) {
 	std::vector<std::string> lines;
@@ -735,14 +763,21 @@ void GameSystem::mainMenuLogic() {
 	}
 }
 
-std::string getMusicFiles(const std::string& folderPath, const std::string& extension) {
+
+// TODO: Перевірка чи існує шлях чи є в ньому файли
+std::string GameSystem::getMusicFiles(const std::string& folderPath, const std::string& extension) {
 	std::vector<std::string> arrayOfFiles;
 
 	// Запис знайдених файлів у масив
 	for (const auto& entry : fs::directory_iterator(folderPath)) {
 		if (entry.is_regular_file() && entry.path().extension() == extension) {
-			arrayOfFiles.push_back(entry.path().string());
+			arrayOfFiles.push_back(entry.path().stem().string());
 		}
+	}
+
+	// If no files found, return empty string (caller should handle this)
+	if (arrayOfFiles.empty()) {
+		return std::string();
 	}
 
 	srand(static_cast<unsigned>(time(nullptr)));
@@ -757,13 +792,13 @@ void GameSystem::saveAfterDeath(std::string& savingName) {
 		_player.GetAvailableMoney(), readPlayerDeaths(filename) + 1);
 }
 
-void loadLevel(const std::string& filename, Level& _level, Player& _player)
+void loadLevel(const std::string& filename, std::string musicName, Player& _player)
 {
 	std::string levelName = "level" + std::to_string(readPlayerLevel(filename));
 
 	if (hasFilesWithExtension("./assets/Levels/", ".txt", levelName))
 	{
-		_level.load("./assets/Levels/" + levelName + ".txt", _player);
+		_level.load("./assets/Levels/" + levelName + ".txt", musicName, _player);
 	}
 	else {
 		printf("Такого збереження не існує або ж ви пройшли усі рівні (Enter щоб продовжити)...\n");
@@ -791,43 +826,18 @@ void GameSystem::RunGame() {
 		// і це Боже, що це за страховисько!
 		graphicsManager.print("Побачимо що ти собою представляєш, ", 0);
 		graphicsManager.print(name, 1000);
-		graphicsManager.print("...", 1500, 3000);
+		//graphicsManager.print("...", 1500, 3000);
 
 		graphicsManager.unprint("Побачимо що ти собою представляєш, " + name + "...\b", 100);
 		std::string filename = "./assets/savings/" + name + ".json";
 		printf("%d зафіксованих смертей на це ім'я.", readPlayerDeaths(filename));
-		Sleep(3000);
+		//Sleep(3000);
 
 		// Завершальна логіка, починаємо вводити ігрові дані безпосередньо у гру. Backend
 
 		// Відкриття вже існуючого файла (тут суцільна каша)
 
-		_level.setPlayerName(name);
-		_player.init(1, 10, 100, 10, readPlayerMoney(filename)); // задання початкових параметрів гравцеві!
-
-
-		system("cls");
-		std::string levelName = "level" + std::to_string(readPlayerLevel(filename));
-
-		if (hasFilesWithExtension("./assets/Levels/", ".txt", levelName))
-		{
-			_level.load("./assets/Levels/" + levelName + ".txt", _player);
-		}
-		else {
-			printf("Такого збереження не існує або ж ви пройшли усі рівні (Enter щоб продовжити)...");
-			_getch();
-			continue;
-		}
-
-
-
-		Graphics graphics;
-		graphics.init();
-
-		/*std::cout << "\n\n" << getMusicFiles("assets/Music/", ".mp3");
-		Sleep(10000);*/
-
-		// Read Settings json
+		// Відкриття Settings json, увімкнення музики
 		std::ifstream ifs("assets/settings/settings.json");
 		if (!ifs.is_open()) {
 			std::cerr << "Не вдалося відкрити settings.json\n";
@@ -838,7 +848,6 @@ void GameSystem::RunGame() {
 		if (doc.HasParseError() || !doc.IsObject()) {
 			std::cerr << "Невірний формат settings.json\n";
 		}
-
 		bool canPlayMusic = false;
 		const char* playMusicKey = "playMusic";
 
@@ -847,13 +856,26 @@ void GameSystem::RunGame() {
 		}
 		ifs.close();
 
+		std::string musicPath = "assets/Music/";
+		std::string musicName = getMusicFiles(musicPath, ".mp3");
 		if (canPlayMusic) {
-			std::string playThis = "open \"" + getMusicFiles("assets/Music/", ".mp3") + "\" type mpegvideo alias leMusic";
+			std::string playThis = "open \""+ musicPath + musicName + ".mp3\" type mpegvideo alias leMusic";
 			mciSendStringA(playThis.c_str(), NULL, 0, NULL);
 			mciSendStringA("play leMusic", NULL, 0, NULL);
 		}
 
-		
+		_level.setPlayerName(name);
+		_player.init(1, 10, 100, 10, readPlayerMoney(filename)); // задання початкових параметрів гравцеві!
+
+
+		std::cout << "\x1B[2J\x1B[H";
+		loadLevel(filename, musicName, _player);
+
+
+		Graphics graphics;
+		graphics.init();
+
+		//Sleep(10000);
 
 		std::thread missile_thread(missile_thread_func);
 		std::thread cannon_thread(cannon_thread_func);
@@ -868,7 +890,10 @@ void GameSystem::RunGame() {
 
 			if (key == 'r' || key == 'R') {
 				// --- Рестарт рівня ---
-				system("cls");
+				PauseTheGame();
+				PauseDrawThread();
+				messageList.clearMessageList();
+				std::cout << "\x1B[2J\x1B[H";
 				//printf("Перезапуск рівня...\n");
 				_level.clear();
 				graphics.setCursorPos(0, 0);
@@ -876,7 +901,9 @@ void GameSystem::RunGame() {
 
 				_level.setPlayerName(name);
 				_player.init(1, 10, 100, 10, readPlayerMoney(filename)); // задання початкових параметрів гравцеві!
-				loadLevel(filename, _level, _player);
+				loadLevel(filename, musicName, _player);
+				UnPauseDrawThread();
+				UnPauseTheGame();
 				continue;
 			}
 

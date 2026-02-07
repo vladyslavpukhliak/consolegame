@@ -17,7 +17,11 @@ public:
 	static bool isGameOver();
 	static void PauseTheGame();
 	static void UnPauseTheGame();
+	static void PauseDrawThread();
+	static void UnPauseDrawThread();
 	void saveAfterDeath(std::string& savingName);
+	std::string getMusicFiles(const std::string& folderPath, const std::string& extension);
+	std::string initMainArt(const std::string& path);
 
 private:
 	Graphics graphicsManager;
@@ -45,7 +49,6 @@ private:
 	void updateIndex(int& currentIndex, const unsigned int lastIndex);
 	void updateNickname();
 
-	std::string initMainArt(const std::string& path);
 	void printMainMenu();
 
 	void printRangeOfSavings(const std::vector<SaveFile>& savingFiles);

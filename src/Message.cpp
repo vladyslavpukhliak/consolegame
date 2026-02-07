@@ -2,15 +2,35 @@
 #include "Level.h"
 #include "Graphics.h"
 #include "GameSystem.h"
+#include "constants.h"
 #include <iostream>
 
 Graphics graphics;
 std::queue<Message> messageQueue;
 bool s_busy = false;
+size_t currentMessagePos = 0;
+void Message::clearMessageList() {
+	messageQueue = {};
+}
 
 void Message::addMessage(const std::string text) {
-	Message newMessage(text);
-	messageQueue.push(newMessage);
+
+	if (text.length() > MAX_MESSAGE_LENGTH)
+	{
+		currentMessagePos = 0;
+		while (currentMessagePos < text.length())
+		{
+			std::string segment = text.substr(currentMessagePos, MAX_MESSAGE_LENGTH);
+			currentMessagePos += MAX_MESSAGE_LENGTH;
+			
+			Message newMessage(segment);
+			messageQueue.push(newMessage);
+		}
+	}
+	else {
+		Message newMessage(text);
+		messageQueue.push(newMessage);
+	}
 	//printmessageList();
 }
 
@@ -54,7 +74,7 @@ void Message::clearRow() {
 		messageLength = tempQueue.front().text.size();
 		std::string spaces(messageLength, ' ');
 
-		graphics.setCursorPos(40, i);
+		graphics.setCursorPos(MESSAGES_INIT_POS, i);
 		printf(spaces.c_str());
 		graphics.setCursorPos(0, 0);
 		tempQueue.pop();
@@ -73,7 +93,7 @@ void Message::printmessageList() {
 
 	while (!tempQueue.empty()) {
 		frontMessage = tempQueue.front().text;
-		graphics.setCursorPos(40, i);
+		graphics.setCursorPos(MESSAGES_INIT_POS, i);
 		std::cout << frontMessage;
 		//printf(frontMessage.c_str());
 		graphics.setCursorPos(0, 0);

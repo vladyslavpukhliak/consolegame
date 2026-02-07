@@ -11,8 +11,11 @@
 	"Плюнути в обличчя і почати двобій.": {
       "bufs": {
         "movable": 1,
-		"friendly":0,
-		"line": "Ліпше тікай що є сили..."
+        "fear": 1,
+		"line": "Ліпше тікай що є сили...",
+		"bossfight":"assets/Levels/bossfight/bossfight1.txt",
+		"fightArt":"assets/Art/смееерть.txt",
+		"fightMusic":"assets/Music/Не треба - Скрябін (Instrumental by Vladyslav Pukhliak).mp3"
       }
     },
 	"Хто ти?": {

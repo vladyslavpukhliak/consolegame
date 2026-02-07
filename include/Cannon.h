@@ -9,6 +9,7 @@ public:
 	void SetDirection(int x, int y);
 	void GetPosition(int& x, int& y);
 	void GetDirection(int& x, int& y);
+	std::string GetTile() { return _tile; };
 
 
 private:

@@ -14,6 +14,7 @@ public:
     void addMessage(const std::string text);
     void checkExpiredmessageList();
     void printmessageList();
+    void clearMessageList();
     static bool isBusy();
 
 private:

@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <limits>
+#include <filesystem> 
 
 
 #include "rapidjson/document.h"
@@ -12,7 +13,9 @@
 
 #include "Player.h"
 #include "Cannon.h"
+#include "Arrow.h"
 #include "Enemy.h"
+#include "constants.h"
 
 class Level
 {
@@ -20,9 +23,12 @@ public:
 	int buttonPlate = 0;
 	Level();
 
-	void load(std::string file, Player &player);
+	void load(std::string file, std::string musicName, Player &player);
+	//void loadBossfight(const std::filesystem::path& path, const std::string& art, Player& player);
+	void loadBossfight(const std::filesystem::path& path, const std::string& art,
+		const std::string& music, Player& player);
 	static bool isBusy();
-	void Draw();
+	void Draw(Player& player);
 	void setPlayerName(std::string nickname);
 
 	char Move(char input, Player &player);
@@ -42,10 +48,13 @@ private:
 	void BattleEnemy(Player& player, int targetX, int targetY);
 	void TryCannonShoot(Player& player, int index, int targetX, int targetY);
 	void TryMissileGo(Player& player, int index, int targetX, int targetY);
-	void CheckPlayerDeath(int attackResult, int playerX, int playerY);
+	void CheckPlayerDeath(int attackResult, int playerX, int playerY, Player& player);
+	void arrows_thread_func(int cooldown, Player& player);
+	void UpdateArrows(Player& player);
+	void TryArrowGo(Player& player, int index, int targetX, int targetY);
 
 	struct EnemyTemplate {
-		std::string name, line, art, conversation;
+		std::string name, line, art, conversation, description;
 		std::vector <std::string> deathLines;
 		int color;
 		int level;
@@ -74,14 +83,20 @@ private:
 	};
 
 private:
-	std::string playerName;
+	bool isLevelHuge = false;
+	bool isBossfightNow = false;
+	int legendLineNumber = 0, oldPlayerX, oldPlayerY;
+	std::string fightArt, fightMusic, playerName, bossArt = "";
 	std::vector <std::string> _initialMaze;
 	std::vector<std::vector<std::string>> _levelData;
+	std::vector<std::vector<std::string>> _oldLevelData;
 	std::vector <Enemy> _enemies;
 	std::vector<coordinates> _buttonPlates;
 	std::vector <Cannon> _cannon;
+	std::vector <Arrow> _arrows;
 	std::vector <Cannon> _missiles;
 	std::unordered_map<std::string, CannonTemplate> cannonTemplates;
+	std::unordered_map<std::string, CannonTemplate> arrowsTemplates;
 	std::unordered_map<std::string, EnemyTemplate> enemyTemplates;
 };
 

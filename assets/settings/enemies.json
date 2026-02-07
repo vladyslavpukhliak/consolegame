@@ -16,7 +16,7 @@
 			"Розбійник": {
 				"tile": "r",
 				"color":33,
-				"description": "",
+				"description": "Розбійник",
 				"deathLines": ["Одним виваженим ударом меча Розбійнику розкроїли череп!", "Батогом Розбійнику розсікли обличчя. Він стік кров'ю."],
 				"level": 2,
 				"attack": 10,
@@ -30,7 +30,7 @@
 			"Диявол": {
 				"tile": "♥",
 				"color":91,
-				"description": "",
+				"description": "Інтерактивний персонаж.",
 				"art": "assets/Art/смееерть.txt",
 				"conversation": "assets/settings/Розбійник.json",
 				"level": 2,
@@ -59,7 +59,7 @@
 			"Упир": {
 				"tile": "U",
 				"color":91,
-				"description": "Unbeatable unit",
+				"description": "Упир, непереможний персонаж.",
 				"line": "Упир почув запах вашої крові!",
 				"level": 3,
 				"attack": 45,
@@ -77,10 +77,21 @@
 				"tile": ["↑","←","↓","→"],
 				"directions":[ [0,-1], [-1,0], [0,1], [1,0] ],
 				"color":91,
-				"description": "Unbeatable unit",
+				"description": "Гармата, непереможна одиниця. Здатна пробивати своїм ядром деякі стіни.",
 				"cannonCooldown":2000,
 				"projectileCooldown":200,
 				"visibleRange":11
+			}
+		},
+		
+		"arrows": {
+			"Вогняна куля": {
+				"tile": ["↑","←","↓","→","↖","↘","↗","↙"],
+				"directions":[ [0,-1], [-1,0], [0,1], [1,0], [-1,-1], [1,1],  [1,-1], [-1,1]  ],
+				"color":32,
+				"description": "Вогняна куля, непереможна одиниця. Здатна пробивати своїм ядром.",
+				"cannonCooldown":2000,
+				"projectileCooldown":200
 			}
 		},
 		

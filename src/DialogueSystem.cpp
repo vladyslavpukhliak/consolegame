@@ -4,13 +4,16 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <conio.h>
+#include <chrono>
+#include <thread>
 
 Graphics gMngr;
 
 using namespace rapidjson;
 
 // Рекурсивна функція для діалогу з персонажем
-void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, Player& player, Enemy& enemyEntry, const std::string& art, const std::string& path) {
+void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, Level& level, Player& player, Enemy& enemyEntry, const std::string& art, const std::string& path) {
     if (!node.IsObject()) return;
 
     // Має бути лише один ключ: фраза NPC, а значення — варіанти відповіді
@@ -57,6 +60,29 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, P
             bufs_json["line"].GetString() : "Розмову закінчено.");
 
         gMngr.print("\n"+lineToSay+"\n", 1000);
+
+        // Чи буде босфайт?
+        fightArt = "",fightMusic="";
+        std::string desc = "";
+        if (bufs_json.HasMember("bossfight") && bufs_json["bossfight"].IsString()
+            && bufs_json["bossfight"].GetStringLength() > 0) {
+            desc = gMngr.Utf8ToAnsi(bufs_json["bossfight"].GetString());
+            // fallback to raw UTF-8 if conversion produced empty
+            if (desc.empty()) desc = bufs_json["bossfight"].GetString();
+        }
+        if (bufs_json.HasMember("fightArt") && bufs_json["fightArt"].IsString()
+            && bufs_json["fightArt"].GetStringLength() > 0) {
+            fightArt = bufs_json["fightArt"].GetString();
+        }
+        if (bufs_json.HasMember("fightMusic") && bufs_json["fightMusic"].IsString()
+            && bufs_json["fightMusic"].GetStringLength() > 0) {
+            fightMusic = bufs_json["fightMusic"].GetString();
+        }
+
+        if (!desc.empty()) {
+            std::u8string bossfightPathU8(reinterpret_cast<const char8_t*>(desc.c_str()));
+            bossfightPath = bossfightPathU8;
+        }
         isEndOfConversation = true;
         return;
     }
@@ -100,7 +126,7 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, P
         const Value& next = responses[selected.c_str()];
 
         if (next.IsObject() && next.MemberCount() > 0) {
-            processDialogue(mainNode, next, player, enemyEntry, art, path + " -> " + selected);
+            processDialogue(mainNode, next, level, player, enemyEntry, art, path + " -> " + selected);
         }
         else {
             // Відобразити текст на що ГГ відповідає.
@@ -119,13 +145,10 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, P
 }
 
 
-void DialogueSystem::initDialogue(const std::filesystem::path& path, const std::string& art, Player& player, Enemy& enemyEntry) {
+void DialogueSystem::initDialogue(const std::filesystem::path& path, const std::string& art, Level& level, Player& player, Enemy& enemyEntry) {
 
     std::ifstream ifs(path, std::ios::binary);
 
-//void DialogueSystem::initDialogue(const std::string& path, const std::string& art, Player& player, Enemy& enemyEntry) {
-//
-//    std::ifstream ifs(path);
     if (!ifs.is_open()) {
         std::cerr << "Не вдалося відкрити файл dialogue.json\n";
     }
@@ -137,7 +160,16 @@ void DialogueSystem::initDialogue(const std::filesystem::path& path, const std::
         std::cerr << "Помилка парсингу JSON або неправильний формат.\n";
     }
 
-    processDialogue(doc, doc, player, enemyEntry, art, "");
+    processDialogue(doc, doc, level, player, enemyEntry, art, "");
     std::cout << "Кінець взаємодії.\n";
+    if (!bossfightPath.empty()) {
+        level.loadBossfight(bossfightPath, fightArt, fightMusic, player);
+		bossfightPath.clear();
+    }
+    else {
+        GameSystem::UnPauseTheGame();
+        gMngr.init();
+    }
+
     isEndOfConversation = false;
 }

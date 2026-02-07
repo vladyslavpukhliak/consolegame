@@ -52,11 +52,13 @@ void Graphics::init() {
 	SetConsoleCursorInfo(console, &cursor_info);
 
 	// Задаємо розмір вікна гри
-	SetWindowSize(120, 60); // change digits to json values
+	SetWindowSize(180, 63); // change digits to json values
 
 	// Ініціалізуємо фіксований UI
-	setCursorPos(40, 0);
+	setCursorPos(MESSAGES_INIT_POS, 0);
 	printf("-- Information --");
+	setCursorPos(LEGEND_INIT_POS, 0);
+	printf("-- Legend --");
 }
 
 // Жорстка допомога ШІ з конвертацією зроз, я втомився
