@@ -5,16 +5,16 @@
 class Enemy
 {
 public:
-	Enemy(std::string name, std::string line,std::string art, std::string conversation,
-		std::vector<std::string> deathLines, 
-		std::string tile, int color, int level, int attack, int health, int experience, int visibleRange,
-		bool isMovable, bool isFriendly, bool fear, bool isUnbeatable);
+	Enemy(const std::string& name, const std::string& line, const std::string& art, 
+		const std::string& conversation, const std::vector<std::string>& deathLines, 
+		const std::string& tile, int color, int level, int attack, int health, 
+		int experience, int visibleRange, bool isMovable, bool isFriendly, 
+		bool fear, bool isUnbeatable);
 
 	void SetPosition(int x, int y);
-	void GetPosition(int& x, int& y);
-	std::string GetName() { return _name; };
-	//bool isFriendly() { return _isFriendly; };
-	std::string GetTile() { return _tile; };
+	void GetPosition(int& x, int& y) const;
+	std::string GetName() const { return _name; };
+	std::string GetTile() const { return _tile; };
 
 	int attack();
 	int TakeDamage(int attack);
@@ -32,7 +32,6 @@ private:
 
 	int _level;
 	int _attack;
-	// int _attackRange;
 	int _health;
 	int _experience;
 

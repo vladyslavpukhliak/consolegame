@@ -8,25 +8,22 @@ public:
 	std::string Utf8ToAnsi(const std::string& utf8);
 
 /// <summary>
-/// Анімований вивід тексту абзацу
+/// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 /// </summary>
-/// <param name="str">Текст абзацу</param>
-/// <param name="miliseconds">Скільки мілісекунд триває пауза після абзацу</param>
+/// <param name="str">пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ</param>
+/// <param name="miliseconds">пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ</param>
 	void print(const std::string& str, const unsigned int miliseconds, const unsigned int milisecondsSpeed = 80);
 	void unprint(const std::string& str, const unsigned int miliseconds);
-	std::string colorize(const std::string& tile, const unsigned int& fg, unsigned int bg = 40) {
+	std::string colorize(const std::string& tile, unsigned int fg, unsigned int bg = 40) const {
 		return "\033[" + std::to_string(fg) + ";" + std::to_string(bg) + "m" + tile + "\033[0m";
 	};
-	/*std::string colorize(std::string tile, const unsigned int& fg, unsigned int bg = 40) {
-		return colorize(std::string(1, tile), fg, bg);
-	};*/
 
 	void setCursorPos(short x, short y);
-	void addMessage(std::string message);
-	short GetCurX();
-	short GetCurY();
+	void addMessage(const std::string& message);
+	short GetCurX() const;
+	short GetCurY() const;
 
 	void SetWindowSize(int width, int height);
-	void SetWindowTitle(std::string title);
+	void SetWindowTitle(const std::string& title);
 };
 
