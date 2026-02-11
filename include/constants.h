@@ -1,7 +1,10 @@
 #pragma once
 #include <string>
 
+// Application metadata
 const std::string TITLE = "������ forged by Vladyslav Pukhliak";
+
+// UI positioning constants
 const size_t MAX_LEGEND_LENGTH = 36;
 const size_t MESSAGES_INIT_POS = 60;
 const size_t LEGEND_INIT_POS = 107;
