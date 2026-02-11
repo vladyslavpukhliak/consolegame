@@ -1,16 +1,2 @@
-//#include "lib/nlohmann/json.hpp"
-//#include <iostream>
-//#include <string>
-//#include <fstream>
-//#include <vector>
-//#include "entities.h"
-////using namespace std;
-//using namespace nlohmann;
-//
-//
-//
-//void checkFile(ifstream& file);
-//// /*vector<EnemyInfo> getVectorOfenemiesVector();*/
-//Cannon loadCannonParams(string filePath);
-////Cannon& getCannonParams();
-//void clearVector();
+// This file is currently unused and kept for historical reference.
+// All functionality has been migrated to other modules.

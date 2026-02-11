@@ -23,23 +23,22 @@ public:
 	int buttonPlate = 0;
 	Level();
 
-	void load(std::string file, std::string musicName, Player &player);
-	//void loadBossfight(const std::filesystem::path& path, const std::string& art, Player& player);
+	void load(const std::string& file, const std::string& musicName, Player &player);
 	void loadBossfight(const std::filesystem::path& path, const std::string& art,
 		const std::string& music, Player& player);
 	static bool isBusy();
 	void Draw(Player& player);
-	void setPlayerName(std::string nickname);
+	void setPlayerName(const std::string& nickname);
 
 	char Move(char input, Player &player);
 	void UpdateEnemies(Player &player);
 	void UpdateCannon(Player &player);
 	void UpdateMissiles(Player &player);
 
-	std::string GetTile(int x, int y);
-	void SetTile(int x, int y, std::string tile);
+	std::string GetTile(int x, int y) const;
+	void SetTile(int x, int y, const std::string& tile);
 	void clear();
-	unsigned int getEnemiesCount();
+	unsigned int getEnemiesCount() const;
 	bool buttonPlatesWereHere = false, enemiesWereHere = false;
 
 private:

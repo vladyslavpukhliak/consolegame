@@ -1,5 +1,4 @@
 #pragma comment(lib, "winmm.lib")
-#pragma warning(disable : 4996) //_CRT_SECURE_NO_WARNINGS
 // Standard library headers
 #include <conio.h>
 #include <string>
@@ -32,7 +31,7 @@
 
 using namespace rapidjson;
 
-// Будь ласка винесіть це в окремий клас. ЯКОГО БІСА ВОНО ТУТ РОБЕ
+// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 // Function to write player info into a JSON file
 void GameSystem::writePlayerData(const std::string& filename,
 	const std::string& nickname, int exp, int level, int money, int deaths) {
@@ -81,7 +80,7 @@ std::string readPlayerName(const std::string& filename) {
 	return "";
 }
 
-// ТИМЧАСОВІ РІШЕННЯ
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅВІ РІпїЅпїЅпїЅпїЅпїЅ
 int readPlayerLevel(const std::string& filename) {
 	std::ifstream ifs(filename);
 	if (!ifs.is_open()) {
@@ -136,10 +135,10 @@ int readPlayerMoney(const std::string& filename) {
 
 #pragma endregion
 
-// TODO: запис імені з json
+// TODO: пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ json
 
-// TODO: рандомне прізвисько надодачу до імені, наприклад Вася Непийпиво YES
-// TODO: відокремити логіку читання файла в окремий клас шоб не сорити
+// TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ YES
+// TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
 Level _level;
 Player _player;
@@ -166,12 +165,12 @@ void cannon_thread_func()
 		}
 
 		//if(!Message::isBusy) 
-		// Оновлення позицій ворогів
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 		//if (Level::isBusy) {
 		_level.UpdateCannon(_player);
 		//}
 
-		// Зупинка потоку на 2 секунди
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 2 пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 	}
 }
@@ -185,19 +184,19 @@ void missile_thread_func()
 			continue;
 		}
 
-		// Ці закоментовані рядки - це спроба уникнути накладання потоків один на одного,
-		// тоді я не розумів чому виникають конфлікти, тепер розумію що це через те що в кожному класі
-		// я створюю окрему копію об'єкта Message і GraphicsManager
-		// В принципі це не страшно якщо використовувати якісь окремі їхні функції
-		// Але загалом такий підхід відстійний і треба робити через посилання або вказівники
+		// Ці пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ - пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ,
+		// пїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+		// пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ'пїЅпїЅпїЅпїЅ Message пїЅ GraphicsManager
+		// пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		// пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		// 
 		//if(!Message::isBusy) 
-		// Оновлення позицій ворогів
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 		//if (Level::isBusy) {
 		_level.UpdateMissiles(_player);
 		//}
 
-		// Пауза потоку
+		// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 }
@@ -212,17 +211,17 @@ void enemy_thread_func()
 		}
 
 		//if(!Message::isBusy) 
-		// Оновлення позицій ворогів
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 		//if (Level::isBusy) {
 		_level.UpdateEnemies(_player);
 		//}
 
-		// Зупинка потоку на 500 мілісекунд
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 500 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 }
 
-// шо це за діч? давайте зробимо information і відмальовку рівня в одному кадрі. (TODO)
+// пїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅ? пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ information пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ. (TODO)
 void draw_thread() {
 	while (!isDone && !isBadEnd)
 	{
@@ -245,15 +244,15 @@ std::string getFileName(const fs::directory_entry& file) { return file.path().st
 
 void GameSystem::displayPrompt() {
 	std::cout << "\x1B[2J\x1B[H";
-	printf("Настисніть ESC, щоб повернутися до головного меню.\n");
-	printf("Настискаючи Лівий або Правий Alt на клавіатурі, оберіть прізвисько своєму герою.\n");
-	printf("Ви можете обрати тільки прізвисько натиснувши Enter, або ще дописати повне ім'я.\n");
-	printf("Запишіть своє ім'я (залишається %d з 28 символів): ", 28 - nameLength);
+	printf("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ESC, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.\n");
+	printf("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ЛіпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ Alt пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.\n");
+	printf("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Enter, пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ'пїЅ.\n");
+	printf("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ'пїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ %d пїЅ 28 пїЅпїЅпїЅпїЅпїЅпїЅпїЅ): ", 28 - nameLength);
 	std::cout << (randomNickname) << " " << (name);
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
-// встановлюємо межі для Index для масиву
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ Index пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 void GameSystem::updateIndex(int& currentIndex, const unsigned int lastIndex) {
 	if (currentIndex < 0) currentIndex = lastIndex;
 	else if (currentIndex > lastIndex) currentIndex = 0;
@@ -267,7 +266,7 @@ void GameSystem::updateNickname() {
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
-// вибір нікнейму клавішами Alt поки не натиснуто ентер
+// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Alt пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 bool GameSystem::nicknamePicked() {
 	while (true) {
 		// Left Alt
@@ -298,7 +297,7 @@ bool GameSystem::nicknamePicked() {
 					nameLength = name.length() + randomNickname.length();
 				}
 			}
-			else {  // Друковані символи
+			else {  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 				if (nameLength < 28) {
 					name += (char)key;
 					nameLength = name.length() + randomNickname.length() + 1;
@@ -313,24 +312,24 @@ bool GameSystem::nicknamePicked() {
 
 #pragma region SAVINGS Operations
 
-// Будь ласка винесіть це в окремий клас. ЯКОГО БІСА ВОНО ТУТ РОБЕ
+// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 
-// Вивід збережень та часу змін з масиву
+// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 void GameSystem::printRangeOfSavings(const std::vector<SaveFile>& savingFiles) {
 	unsigned int i = 0, j = 0, k = 0;
 	std::string savingName;
 	size_t lastSaving;
 	std::vector<std::vector<Saving>> tenSavingsArray;
 
-	// Розділення на групи по 10 (ініціалізація масиву)
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 10 (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ)
 	size_t groupCount = (savingFiles.size() + 9) / 10;
 	tenSavingsArray.resize(groupCount);
 
-	// Забороняємо вихід індексу за межі усіх сторінок
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	updateIndex(savingsIndex, tenSavingsArray.size() - 1);
 
 
-	// запис до масиву елементів та розділення їх в групи по 10 
+	// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 10 
 	for (const auto& saveFile : savingFiles) {
 
 		savingName = getFileName(saveFile.entry);
@@ -350,30 +349,30 @@ void GameSystem::printRangeOfSavings(const std::vector<SaveFile>& savingFiles) {
 		}
 	}
 
-	// Шапка
+	// пїЅпїЅпїЅпїЅпїЅ
 	std::cout << "\x1B[2J\x1B[H";
-	printf("Настисніть ESC, щоб повернутися до головного меню.\n");
-	printf("Настискаючи Лівий або Правий Alt на клавіатурі, гортайте сторінку зі збереженнями.\n");
+	printf("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ESC, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.\n");
+	printf("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ЛіпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ Alt пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.\n");
 
 	lastSaving = tenSavingsArray[savingsIndex].size()-1;
 
-	printf("Відображення збережень %d - %d з %d:\n\n", tenSavingsArray[savingsIndex][0].count,
+	printf("ВіпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ %d - %d пїЅ %d:\n\n", tenSavingsArray[savingsIndex][0].count,
 		tenSavingsArray[savingsIndex][lastSaving].count, savingFiles.size());
 
-	printf("\t%-35s%s\n\n", "Збереження гравця", "Дата збереження");
+	printf("\t%-35s%s\n\n", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ", "пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
 
 
-	// Вивід збережень поточної сторінки
+	// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	for (const auto& saving : tenSavingsArray[savingsIndex]) {
 		std::ostringstream oss;
 		oss << '\t' << saving.count << ". " << std::left << std::setw(32) << saving.savingName
 			<< std::put_time(std::localtime(&saving.time_t), "%Y-%m-%d %H:%M") << std::endl;
 
-		// не парні рядки позначаємо іншим кольором для легкого сприйняття великого потоку інформації
+		// пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		std::cout << ((saving.count % 2) ? Services::graphics().colorize(oss.str(), 30, 47) : oss.str());
 		//std::cout << oss.str();
 	}
-	printf("\n\nОберіть збереження: ");
+	printf("\n\nпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: ");
 }
 
 
@@ -381,7 +380,7 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 	unsigned int i = 0;
 	std::vector<SaveFile> savingFiles;
 
-	// Запис збережень у масив
+	// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
 	for (const auto& entry : fs::directory_iterator(folderPath)) {
 		if (entry.is_regular_file() && entry.path().extension() == extension
 			&& getFileName(entry).size() <= 28) {
@@ -390,7 +389,7 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 		}
 	}
 
-	// Сортування масиву за датою BUBBLE SORT
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ BUBBLE SORT
 	for (int i = 0; i < savingFiles.size() - 1; i++) {
 		for (int j = 0; j < savingFiles.size() - i - 1; j++) {
 			if (savingFiles[j].time < savingFiles[j + 1].time) {
@@ -399,7 +398,7 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 		}
 	}
 
-	// Безпосередньо вивід збережень
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	printRangeOfSavings(savingFiles);
 
 
@@ -409,7 +408,7 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 		choice = 0;
 		input = "";		
 
-		// Читаємо введення посимвольно
+		// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		while (true) {
 			// Left Alt
 			if (GetAsyncKeyState(VK_LMENU) & 0x8000) {
@@ -428,27 +427,27 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 
 				
 				if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { // ESC 
-					return false; // повернутися на головне меню.
+					return false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.
 				}
 				else if (key == '\r') { // Enter
 					if (!input.empty()) {
 						try {
 							choice = std::stoi(input);
-							break; // Вихід з циклу введення
+							break; // пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 						}
 						catch (const std::exception&) {
-							std::cout << "\nНеправильний формат числа. Спробуйте знову: ";
+							std::cout << "\nпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ: ";
 							input = "";
 						}
 					}
 				}
 				else if (key == '\b' && !input.empty()) { // Backspace
 					input.pop_back();
-					std::cout << "\b \b"; // Стираємо символ на екрані
+					std::cout << "\b \b"; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 				}
-				else if (key >= '0' && key <= '9') { // Цифри
+				else if (key >= '0' && key <= '9') { // пїЅпїЅпїЅпїЅпїЅ
 					input += key;
-					std::cout << (char)key; // Показуємо введену цифру
+					std::cout << (char)key; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 				}
 			}
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -458,7 +457,7 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 		if (choice < 0 || choice > savingFiles.size()-1)
 		{
 			std::cout << "\x1B[2J\x1B[H";
-			printf("Ви ввели неправильний номер збереження. Щоб спробувати знову натисніть Enter...\n");
+			printf("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Enter...\n");
 			_getch();
 			printRangeOfSavings(savingFiles);
 		}
@@ -471,7 +470,7 @@ bool GameSystem::savingHasBeenSelected(const std::string& folderPath, const std:
 }
 
 bool hasFilesWithExtension(const std::string& folderPath, const std::string& extension, const std::string& filename = "") {
-	// Перевірка на існування папки
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	fs::path dirPath(folderPath);
 	if (!fs::exists(dirPath) || !fs::is_directory(dirPath)) {
 		return false;
@@ -501,25 +500,25 @@ bool hasFilesWithExtension(const std::string& folderPath, const std::string& ext
 void GameSystem::getPlayerNicknames() {
 	std::ifstream namesFile("assets/settings/names.json");
 	if (!namesFile) {
-		std::cerr << "Не вдалося відкрити файл names.json" << std::endl;
+		std::cerr << "пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ names.json" << std::endl;
 	}
 
 	std::stringstream buffer;
 	buffer << namesFile.rdbuf();
 	std::string jsonContent = buffer.str();
 
-	// Парсимо JSON
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ JSON
 	rapidjson::Document document;
 	if (document.Parse(jsonContent.c_str()).HasParseError()) {
-		std::cerr << "Помилка парсингу JSON" << std::endl;
+		std::cerr << "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ JSON" << std::endl;
 	}
 
-	// Перевіряємо, що це масив
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	if (!document.IsArray()) {
-		std::cerr << "JSON не є масивом" << std::endl;
+		std::cerr << "JSON пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ" << std::endl;
 	}
 
-	// Виводимо всі елементи масиву
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
 	for (const auto& item : document.GetArray()) {
 		if (item.IsString() && item.GetStringLength() <= 28) {
@@ -542,7 +541,7 @@ void GameSystem::getPlayerNicknames() {
 
 
 bool GameSystem::newGame() {
-	// Боже, що це за страховисько
+	// пїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	getPlayerNicknames();
 
 	while (true) {
@@ -550,50 +549,50 @@ bool GameSystem::newGame() {
 		srand(static_cast<unsigned>(time(nullptr)));
 
 		nicknameIndex = rand() % nicknames.size();
-		randomNickname = nicknames[nicknameIndex]; // гравцю пропонується рандомне прізвисько на початку гри
+		randomNickname = nicknames[nicknameIndex]; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
 		nameLength = name.length() + randomNickname.length() + 1;
 
 		displayPrompt();
 		if (!nicknamePicked()) return false;
 
 		std::cout << "\n";
-		Services::graphics().print("Ваше ім'я: ", 500);
+		Services::graphics().print("пїЅпїЅпїЅпїЅ пїЅпїЅ'пїЅ: ", 500);
 
-		// якщо ім'я не було введено - використати лиш прізвисько.
+		// пїЅпїЅпїЅпїЅ пїЅпїЅ'пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 		name += (!name.empty() ? " " + randomNickname : randomNickname);
 
 		Services::graphics().print(name, 500);
 
 		std::cout << "\n\n";
-		Services::graphics().print("Підтвердити вибір? ", 100);
+		Services::graphics().print("ПіпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ? ", 100);
 		std::cout << "(Enter/ESC)";
 
-		// Очищаємо буфер
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 		while (_kbhit()) {
 			_getch();
 		}
-		// Очікуємо натискання клавіші
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 		int key = _getch();
 
 		if (key == '\r') { // Enter
 			if (!hasFilesWithExtension("./assets/savings/", ".json", name)) {
 				std::string filename = "./assets/savings/" + name + ".json";
 
-				// Запис даних у файл!!!!!
+				// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ!!!!!
 				writePlayerData(filename, randomNickname, 0, 1, 0, 0);
 				return true;
 			}
 			else {
 				std::cout << "\x1B[2J\x1B[H";
-				printf("Таке збереження вже існує. Щоб спробувати знову натисніть Enter...\n");
+				printf("пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ. пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Enter...\n");
 				_getch();
-				// Перезаписати? подумати чи треба реалізувати
+				// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ? пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 				name.clear();
 			}
 		}
 		else if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { // ESC
 			name.clear();
-			// продовжуємо цикл
+			// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 		}
 	}
 }
@@ -630,15 +629,15 @@ std::vector<std::string> splitByNewline(const std::string& input) {
 	return lines;
 }
 
-// Вивід головного меню
+// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 void GameSystem::printMainMenu() {
-	// Показуємо меню
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 	std::cout << "\x1B[2J\x1B[H";
-	printf("1. Продовжити бавитись\n");
-	printf("2. Нова гра\n");
-	printf("3. Як бавитись?\n");
-	printf("4. Більше контенту\n");
-	printf("0. Покинути бавку\n");
+	printf("1. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ\n");
+	printf("2. пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ\n");
+	printf("3. пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ?\n");
+	printf("4. пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ\n");
+	printf("0. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ\n");
 
 	SetConsoleCP(CP_UTF8);
 	SetConsoleOutputCP(CP_UTF8);
@@ -653,7 +652,7 @@ void GameSystem::printMainMenu() {
 	SetConsoleOutputCP(1251);
 }
 
-// Логіка головного меню
+// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 void GameSystem::mainMenuLogic() {
 	Services::graphics().SetWindowSize(145, 40);
 	printMainMenu();
@@ -665,54 +664,54 @@ void GameSystem::mainMenuLogic() {
 			switch (key) {
 
 			case '\r':
-			case '1':   // клавіша «1»
+			case '1':   // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ1пїЅ
 				if (!hasFilesWithExtension("./assets/savings", ".json"))
 				{
 					std::cout << "\x1B[2J\x1B[H";
-					std::cout << "Збережень не знайдено. Щоб повернутися до головного меню натисніть будь-яку клавішу...\n";
+					std::cout << "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ-пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ...\n";
 					_getch();
 					printMainMenu();
 				}
 
 				else if (savingHasBeenSelected("./assets/savings", ".json"))
-					return; // Вихід після вибору збереження
+					return; // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 				else printMainMenu();
 
 				break;
 
-			case '2':   // клавіша «2»
-				// Вихід з функції, якщо newGame() повернула true
+			case '2':   // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ2пїЅ
+				// пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ newGame() пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ true
 				if (newGame())
 					return;
 				else printMainMenu();
 
 				break;
 
-			case '3':   // клавіша «3»
+			case '3':   // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ3пїЅ
 				std::cout << "\x1B[2J\x1B[H";
-				std::cout << "Розділ знаходиться в розробці...\n";
-				std::cout << "Підтримай розробника кавою =)\n\n";
-				std::cout << "Щоб продовжити натисніть Enter...\n";
+				std::cout << "пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ...\n";
+				std::cout << "ПіпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ =)\n\n";
+				std::cout << "пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Enter...\n";
 				_getch();
 				printMainMenu();
 				break;
 
-			case '4':{   // клавіша «4»
+			case '4':{   // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ4пїЅ
 				std::string cmd = "start \"\" \"assets/settings/See more content webpage/more.html\"";
 				int ret = std::system(cmd.c_str());
 
 				if (ret != 0) {
-					std::cerr << "Не вдалося відкрити документ, код: " << ret << "\n";
+					std::cerr << "пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ: " << ret << "\n";
 					std::exit(1);
 				}
 			}
 				break;
 
-			case '0':   // клавіша «0»
+			case '0':   // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ0пїЅ
 				std::string playThis = "open \"assets/Music/Menu/MyFirstLetterToYou.mp3\" type mpegvideo alias leMusic";
 				mciSendStringA(playThis.c_str(), NULL, 0, NULL);
 				mciSendStringA("play leMusic", NULL, 0, NULL);
-				system("cls");
+				Services::graphics().clearScreen();
 				std::string kiss = R"(
                     .:+!++:::.  .:u+::.
                  !!!X:!X<!!!<!#%?!!~XX!!!!:
@@ -734,7 +733,7 @@ void GameSystem::mainMenuLogic() {
 				)";
 				
 				std::cout << kiss;
-				std::cout << "Au revoir, архітекторе світів!\n";
+				std::cout << "Au revoir, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ!\n";
 
 				Sleep(12000);
 				std::exit(0);
@@ -747,11 +746,11 @@ void GameSystem::mainMenuLogic() {
 }
 
 
-// TODO: Перевірка чи існує шлях чи є в ньому файли
+// TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 std::string GameSystem::getMusicFiles(const std::string& folderPath, const std::string& extension) {
 	std::vector<std::string> arrayOfFiles;
 
-	// Запис знайдених файлів у масив
+	// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
 	for (const auto& entry : fs::directory_iterator(folderPath)) {
 		if (entry.is_regular_file() && entry.path().extension() == extension) {
 			arrayOfFiles.push_back(entry.path().stem().string());
@@ -784,7 +783,7 @@ void loadLevel(const std::string& filename, std::string musicName, Player& _play
 		_level.load("./assets/Levels/" + levelName + ".txt", musicName, _player);
 	}
 	else {
-		printf("Такого збереження не існує або ж ви пройшли усі рівні (Enter щоб продовжити)...\n");
+		printf("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ (Enter пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)...\n");
 		_getch();
 		return;
 	}
@@ -799,37 +798,37 @@ void GameSystem::RunGame() {
 		_level.clear();
 		Services::graphics().SetWindowTitle(TITLE + " | Main menu");
 
-		// Інтерактив з гравцем. Інтерфейс головного меню. Frontend
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ. Frontend
 		mainMenuLogic();
 
 
-		// можна додати різних фраз в файл і ними оперувати на рандом
+		// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 		std::cout << "\x1B[2J\x1B[H";
 
-		// і це Боже, що це за страховисько!
-		Services::graphics().print("Побачимо що ти собою представляєш, ", 0);
+		// пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!
+		Services::graphics().print("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, ", 0);
 		Services::graphics().print(name, 1000);
 		//Services::graphics().print("...", 1500, 3000);
 
-		Services::graphics().unprint("Побачимо що ти собою представляєш, " + name + "...\b", 100);
+		Services::graphics().unprint("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, " + name + "...\b", 100);
 		std::string filename = "./assets/savings/" + name + ".json";
-		printf("%d зафіксованих смертей на це ім'я.", readPlayerDeaths(filename));
+		printf("%d пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅ'пїЅ.", readPlayerDeaths(filename));
 		//Sleep(3000);
 
-		// Завершальна логіка, починаємо вводити ігрові дані безпосередньо у гру. Backend
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ. Backend
 
-		// Відкриття вже існуючого файла (тут суцільна каша)
+		// ВіпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ)
 
-		// Відкриття Settings json, увімкнення музики
+		// ВіпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Settings json, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 		std::ifstream ifs("assets/settings/settings.json");
 		if (!ifs.is_open()) {
-			std::cerr << "Не вдалося відкрити settings.json\n";
+			std::cerr << "пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ settings.json\n";
 		}
 		rapidjson::IStreamWrapper isw(ifs);
 		rapidjson::Document doc;
 		doc.ParseStream(isw);
 		if (doc.HasParseError() || !doc.IsObject()) {
-			std::cerr << "Невірний формат settings.json\n";
+			std::cerr << "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ settings.json\n";
 		}
 		bool canPlayMusic = false;
 		const char* playMusicKey = "playMusic";
@@ -848,7 +847,7 @@ void GameSystem::RunGame() {
 		}
 
 		_level.setPlayerName(name);
-		_player.init(1, 10, 100, 10, readPlayerMoney(filename)); // задання початкових параметрів гравцеві!
+		_player.init(1, 10, 100, 10, readPlayerMoney(filename)); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ!
 
 
 		std::cout << "\x1B[2J\x1B[H";
@@ -866,57 +865,57 @@ void GameSystem::RunGame() {
 		std::thread draw(draw_thread);
 
 
-		// Цей цикл продовжує працювати після смерті ГГ!
+		// пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ!
 		while (!isDone) // isBadEnd?
 		{
 			char key = _level.Move(_getch(), _player);
 
 			if (key == 'r' || key == 'R') {
-				// --- Рестарт рівня ---
+				// --- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ ---
 				PauseTheGame();
 				PauseDrawThread();
 				Services::message().clearMessageList();
 				std::cout << "\x1B[2J\x1B[H";
-				//printf("Перезапуск рівня...\n");
+				//printf("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ...\n");
 				_level.clear();
 				graphics.setCursorPos(0, 0);
 				graphics.init();
 
 				_level.setPlayerName(name);
-				_player.init(1, 10, 100, 10, readPlayerMoney(filename)); // задання початкових параметрів гравцеві!
+				_player.init(1, 10, 100, 10, readPlayerMoney(filename)); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ!
 				loadLevel(filename, musicName, _player);
 				UnPauseDrawThread();
 				UnPauseTheGame();
 				continue;
 			}
 
-			// Затримка для зменшення навантаження на CPU
+			// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ CPU
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
 
-		system("cls");
-		printf("You win!!! Перехід до головного меню (4s)...");
+		Services::graphics().clearScreen();
+		printf("You win!!! пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (4s)...");
 
-		// Запис даних у файл!!!!!
+		// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ!!!!!
 		int playerLevel = readPlayerLevel(filename);
 		writePlayerData(filename, readPlayerName(filename), 0, ++playerLevel, _player.GetAvailableMoney(), readPlayerDeaths(filename));
-		// 0 в кінці що означає "смертей" замінити на справжні смерті.
+		// 0 пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ" пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
 
 		mciSendStringA("close leMusic", NULL, 0, NULL);
 		// 
-		// Очікування завершення потоку з рухом ворогів
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 		missile_thread.join();
 		cannon_thread.join();
 		enemy_thread.join();
 		draw.join();
 
-		// КРИТИЧНО: Встановлюємо прапорці для завершення потоків
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 		isDone = true;
-		isBadEnd = true; // Щоб точно завершилися
+		isBadEnd = true; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 
 
 		Sleep(4000);
-		system("cls");
+		Services::graphics().clearScreen();
 	}
 }

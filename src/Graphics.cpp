@@ -16,11 +16,11 @@ COORD cursor_pos;
 void getScreenBufferInfo() {
 	GetConsoleScreenBufferInfo(console, &bufferInfo);
 }
-short Graphics::GetCurX() {
+short Graphics::GetCurX() const {
 	getScreenBufferInfo();
 	return bufferInfo.dwCursorPosition.X;
 }
-short Graphics::GetCurY() {
+short Graphics::GetCurY() const {
 	getScreenBufferInfo();
 	return bufferInfo.dwCursorPosition.Y;
 }
@@ -39,8 +39,25 @@ void Graphics::SetWindowSize(int width, int height) {
 	SetConsoleWindowInfo(console, TRUE, &rect);
 }
 
-void Graphics::SetWindowTitle(std::string title) {
+void Graphics::SetWindowTitle(const std::string& title) {
 	SetConsoleTitleA(title.c_str());
+}
+
+void Graphics::clearScreen() {
+	COORD topLeft = { 0, 0 };
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO screen;
+	DWORD written;
+
+	GetConsoleScreenBufferInfo(console, &screen);
+	FillConsoleOutputCharacterA(
+		console, ' ', screen.dwSize.X * screen.dwSize.Y, topLeft, &written
+	);
+	FillConsoleOutputAttribute(
+		console, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE,
+		screen.dwSize.X * screen.dwSize.Y, topLeft, &written
+	);
+	SetConsoleCursorPosition(console, topLeft);
 }
 
 void Graphics::init() {
@@ -53,7 +70,7 @@ void Graphics::init() {
 	SetConsoleCursorInfo(console, &cursor_info);
 
 	// Задаємо розмір вікна гри
-	SetWindowSize(180, 63); // change digits to json values
+	SetWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	// Ініціалізуємо фіксований UI
 	setCursorPos(MESSAGES_INIT_POS, 0);
@@ -85,7 +102,7 @@ std::string Graphics::Utf8ToAnsi(const std::string& utf8)
 	return ansi;
 }
 
-void Graphics::addMessage(std::string message) {
+void Graphics::addMessage(const std::string& message) {
 	Services::message().addMessage(message);
 }
 
@@ -124,7 +141,7 @@ void Graphics::unprint(const std::string &str, const unsigned int miliseconds) {
 		for (size_t i = 0; i < word.length(); i++)
 		{
 			std::cout << "\b \b";
-			std::this_thread::sleep_for(std::chrono::milliseconds(80 / word.length()));
+			std::this_thread::sleep_for(std::chrono::milliseconds(DEFAULT_PRINT_SPEED_MS / word.length()));
 		}
 		std::cout << "\b \b";
 	}

@@ -9,13 +9,13 @@ public:
 	int TakeDamage(int damage);
 
 	void SetPosition(int x, int y);
-	void GetPosition(int &x, int &y);
+	void GetPosition(int &x, int &y) const;
 
 	void AddExperience(int xp);
 
 	bool TryCharge(int priceToCharge);
 	void TopUp(int amount) { _money += abs(amount);	}
-	size_t GetAvailableMoney() { return _money; }
+	size_t GetAvailableMoney() const { return _money; }
 
 private:
 	int _level;

@@ -1,32 +1,24 @@
 #include "Enemy.h"
 #include "Graphics.h"
 #include "Services.h"
+#include "constants.h"
 
 #include <string>
 #include <random>
-#include <ctime>
+#include <chrono>
 
 
-Enemy::Enemy(std::string name, std::string line, std::string art, std::string conversation,
-	std::vector <std::string> deathLines,
-	std::string tile, int color, int level, int attack, int health, int experience, int visibleRange,
-	bool isMovable, bool isFriendly, bool fear, bool isUnbeatable) {
-	_name = name;
-	_art = art;
-	_conversation = conversation;
-	_deathLines = deathLines;
-	_tile = tile;
-	_color = color;
-	_line = line;
-	_level = level;
-	_attack = attack;
-	_health = health;
-	_experience = experience;
-	_visibleRange = visibleRange;
-	_isMovable = isMovable;
-	_isFriendly = isFriendly;
-	_fear = fear;
-	_isUnbeatable = isUnbeatable;
+Enemy::Enemy(const std::string& name, const std::string& line, const std::string& art, 
+	const std::string& conversation, const std::vector<std::string>& deathLines,
+	const std::string& tile, int color, int level, int attack, int health, 
+	int experience, int visibleRange, bool isMovable, bool isFriendly, 
+	bool fear, bool isUnbeatable)
+	: _name(name), _line(line), _art(art), _conversation(conversation),
+	  _deathLines(deathLines), _tile(tile), _color(color), _level(level),
+	  _attack(attack), _health(health), _experience(experience),
+	  _visibleRange(visibleRange), _isMovable(isMovable), _isFriendly(isFriendly),
+	  _fear(fear), _isUnbeatable(isUnbeatable), _x(0), _y(0), isSpotted(false)
+{
 }
 
 void Enemy::SetPosition(int x, int y) {
@@ -34,13 +26,15 @@ void Enemy::SetPosition(int x, int y) {
 	_y = y;
 }
 
-void Enemy::GetPosition(int& x, int& y) {
+void Enemy::GetPosition(int& x, int& y) const {
 	x = _x;
 	y = _y;
 }
 
 int Enemy::attack() {
-	static std::default_random_engine randomEngine(time(NULL));
+	static std::default_random_engine randomEngine(
+		static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count())
+	);
 	std::uniform_int_distribution<int> attackRoll(0, _attack);
 
 	return attackRoll(randomEngine);
@@ -55,8 +49,10 @@ int Enemy::TakeDamage(int damage) {
 
 char Enemy::GetMove(int playerX, int playerY) {
 	if (!_isMovable) return ' ';
-	static std::default_random_engine randomEngine(time(NULL));
-	std::uniform_int_distribution<int> moveRoll(0, 6);
+	static std::default_random_engine randomEngine(
+		static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count())
+	);
+	std::uniform_int_distribution<int> moveRoll(RANDOM_MOVE_MIN, RANDOM_MOVE_MAX);
 
 	int dx = _x - playerX;
 	int dy = _y - playerY;
@@ -68,8 +64,8 @@ char Enemy::GetMove(int playerX, int playerY) {
 		if (!_fear) {
 			if (!isSpotted && _line != "") Services::graphics().addMessage(Services::graphics().Utf8ToAnsi(_line));
 			isSpotted = true;
-			// ќриг?нальна лог?ка Ч до гравц¤
-			// наближенн¤ гравц¤ до enemy (така лог?ка залишаЇтьс¤ незм?нною, можна зм?нити лише w,a,s,d)
+			// пїЅпїЅпїЅпїЅ?пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ?пїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+			// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ enemy (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ?пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ?пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ?пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ w,a,s,d)
 			if (adx > ady) {
 				return (dx > 0) ? 'a' : 'd';
 			}
@@ -78,12 +74,12 @@ char Enemy::GetMove(int playerX, int playerY) {
 			}
 		}
 		else {
-			// Ќовий блок Ч в?д гравц¤ (протилежний рух)
+			// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅ?пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ)
 			if (adx > ady) {
-				return (dx > 0) ? 'd' : 'a';  // навпаки
+				return (dx > 0) ? 'd' : 'a';  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			}
 			else {
-				return (dy > 0) ? 's' : 'w';  // навпаки
+				return (dy > 0) ? 's' : 'w';  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			}
 		}
 	}

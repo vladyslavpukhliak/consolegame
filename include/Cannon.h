@@ -4,22 +4,21 @@
 class Cannon
 {
 public:
-	Cannon(std::string tile);
+	Cannon(const std::string& tile);
 	void SetPosition(int x, int y);
 	void SetDirection(int x, int y);
-	void GetPosition(int& x, int& y);
-	void GetDirection(int& x, int& y);
-	std::string GetTile() { return _tile; };
+	void GetPosition(int& x, int& y) const;
+	void GetDirection(int& x, int& y) const;
+	std::string GetTile() const { return _tile; };
 
 
 private:
 	std::string _tile;
-	// int _attackRange;
 
 	int _x;
 	int _y;
-	int directionX;
-	int directionY;
+	int _directionX;
+	int _directionY;
 
 };
 

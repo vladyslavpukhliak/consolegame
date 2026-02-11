@@ -25,10 +25,13 @@ public:
 
 private:
 	Graphics graphicsManager;
-	std::string name, randomNickname, artToPrint = initMainArt("assets/Art/Header.txt"), qrToPrint = initMainArt("assets/Art/qr.txt");
+	std::string name, randomNickname;
+	std::string artToPrint = initMainArt("assets/Art/Header.txt");
+	std::string qrToPrint = initMainArt("assets/Art/qr.txt");
 	std::vector<std::string> nicknames;
 	uint8_t nameLength = 0;
-	int nicknameIndex = 0, savingsIndex = 0;
+	int nicknameIndex = 0;
+	int savingsIndex = 0;
 
 	struct SaveFile {
 		fs::directory_entry entry;

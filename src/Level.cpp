@@ -28,11 +28,11 @@ Level::Level() {
 
 }
 
-unsigned int Level::getEnemiesCount() { return _enemies.size(); }
+unsigned int Level::getEnemiesCount() const { return _enemies.size(); }
 
 
 // Loads the level
-void Level::load(std::string fileName, std::string musicName, Player& player) {
+void Level::load(const std::string& fileName, const std::string& musicName, Player& player) {
 	busy = true;
 
 	std::ifstream file;
@@ -804,7 +804,7 @@ void Level::arrows_thread_func(int cooldown, Player& player)
 			mciSendStringA("close all", NULL, 0, NULL);
 			isBossfightNow = false;
 			isLevelHuge = false;
-			system("cls");
+			Services::graphics().clearScreen();
 			GameSystem::UnPauseDrawThread();
 			GameSystem::UnPauseTheGame();
 			Services::graphics().init();
@@ -997,7 +997,7 @@ void Level::Draw(Player& player) {
 	busy = false;
 }
 
-void Level::setPlayerName(std::string nickname) {
+void Level::setPlayerName(const std::string& nickname) {
 	playerName = nickname;
 }
 
@@ -1036,8 +1036,8 @@ char Level::Move(char input, Player& player) {
 	return input;
 }
 
-std::string Level::GetTile(int x, int y) { return _levelData[y][x]; }
-void Level::SetTile(int x, int y, std::string tile) { _levelData[y][x] = tile; }
+std::string Level::GetTile(int x, int y) const { return _levelData[y][x]; }
+void Level::SetTile(int x, int y, const std::string& tile) { _levelData[y][x] = tile; }
 
 // TODO: Померти якщо наступити на "*"
 void Level::TryGo(Player& player, int targetX, int targetY) {
@@ -1363,7 +1363,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 			if (isInteractive) {
 				GameSystem::PauseTheGame();
 				GameSystem::PauseDrawThread();
-				system("cls");
+				Services::graphics().clearScreen();
 
 				std::ifstream artFile;
 				std::string artToPrint = "", line = "";
@@ -1390,16 +1390,9 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 
 				Services::graphics().setCursorPos(0, 0);
 				conversation.initDialogue(convPath, artToPrint, *this, player, enemyEntry);
-				//conversation.initDialogue(enemyEntry._conversation, artToPrint, player, enemyEntry);
 
-
-				//Sleep(2000);
-				//system("cls");
-				// TODO: vector<string,int> line, index  for legend lines gM.setLegend(). gM.printLegend()
 				Services::graphics().init();
-				// закоментувати?
 				GameSystem::UnPauseDrawThread();
-				//GameSystem::UnPauseTheGame();
 				return;
 			}
 
@@ -1464,7 +1457,7 @@ void Level::CheckPlayerDeath(int attackResult, int playerX, int playerY, Player&
 		gameSys.saveAfterDeath(playerName);
 		GameSystem::BadEnding();
 		Sleep(600);
-		system("CLS");
+		Services::graphics().clearScreen();
 
 		// Loads the art
 		std::ifstream artFile;
