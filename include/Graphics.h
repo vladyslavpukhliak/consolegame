@@ -20,6 +20,7 @@ public:
 
 	void setCursorPos(short x, short y);
 	void addMessage(const std::string& message);
+	void clearScreen();
 	short GetCurX() const;
 	short GetCurY() const;
 

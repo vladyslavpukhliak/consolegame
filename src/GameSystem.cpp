@@ -711,7 +711,7 @@ void GameSystem::mainMenuLogic() {
 				std::string playThis = "open \"assets/Music/Menu/MyFirstLetterToYou.mp3\" type mpegvideo alias leMusic";
 				mciSendStringA(playThis.c_str(), NULL, 0, NULL);
 				mciSendStringA("play leMusic", NULL, 0, NULL);
-				system("cls");
+				Services::graphics().clearScreen();
 				std::string kiss = R"(
                     .:+!++:::.  .:u+::.
                  !!!X:!X<!!!<!#%?!!~XX!!!!:
@@ -893,7 +893,7 @@ void GameSystem::RunGame() {
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
 
-		system("cls");
+		Services::graphics().clearScreen();
 		printf("You win!!! ������� �� ��������� ���� (4s)...");
 
 		// ����� ����� � ����!!!!!
@@ -916,6 +916,6 @@ void GameSystem::RunGame() {
 
 
 		Sleep(4000);
-		system("cls");
+		Services::graphics().clearScreen();
 	}
 }
