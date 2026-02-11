@@ -31,8 +31,10 @@
     <ClInclude Include="include\Level.h" />
     <ClInclude Include="include\Message.h" />
     <ClInclude Include="include\Player.h" />
+    <ClInclude Include="include\Services.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Services.cpp" />
     <ClCompile Include="src\Cannon.cpp" />
     <ClCompile Include="src\DialogueSystem.cpp" />
     <ClCompile Include="src\Enemy.cpp" />

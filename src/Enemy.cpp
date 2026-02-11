@@ -1,10 +1,11 @@
 #include "Enemy.h"
 #include "Graphics.h"
+#include "Services.h"
+
 #include <string>
 #include <random>
 #include <ctime>
 
-Graphics gM;
 
 Enemy::Enemy(std::string name, std::string line, std::string art, std::string conversation,
 	std::vector <std::string> deathLines,
@@ -65,7 +66,7 @@ char Enemy::GetMove(int playerX, int playerY) {
 
 	if (distance <= _visibleRange && !_isFriendly) {
 		if (!_fear) {
-			if (!isSpotted && _line != "") gM.addMessage(gM.Utf8ToAnsi(_line));
+			if (!isSpotted && _line != "") Services::graphics().addMessage(Services::graphics().Utf8ToAnsi(_line));
 			isSpotted = true;
 			// ќриг?нальна лог?ка Ч до гравц¤
 			// наближенн¤ гравц¤ до enemy (така лог?ка залишаЇтьс¤ незм?нною, можна зм?нити лише w,a,s,d)

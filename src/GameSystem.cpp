@@ -16,6 +16,7 @@
 #include "Graphics.h"
 #include "Message.h"
 #include "constants.h"
+#include "Services.h"
 
 
 // RapidJSON
@@ -141,7 +142,6 @@ int readPlayerMoney(const std::string& filename) {
 // TODO: відокремити логіку читання файла в окремий клас шоб не сорити
 
 Level _level;
-Message messageList;
 Player _player;
 bool isDone = false;
 bool isBadEnd = false;
@@ -370,7 +370,7 @@ void GameSystem::printRangeOfSavings(const std::vector<SaveFile>& savingFiles) {
 			<< std::put_time(std::localtime(&saving.time_t), "%Y-%m-%d %H:%M") << std::endl;
 
 		// не парні рядки позначаємо іншим кольором для легкого сприйняття великого потоку інформації
-		std::cout << ((saving.count % 2) ? graphicsManager.colorize(oss.str(), 30, 47) : oss.str());
+		std::cout << ((saving.count % 2) ? Services::graphics().colorize(oss.str(), 30, 47) : oss.str());
 		//std::cout << oss.str();
 	}
 	printf("\n\nОберіть збереження: ");
@@ -557,15 +557,15 @@ bool GameSystem::newGame() {
 		if (!nicknamePicked()) return false;
 
 		std::cout << "\n";
-		graphicsManager.print("Ваше ім'я: ", 500);
+		Services::graphics().print("Ваше ім'я: ", 500);
 
 		// якщо ім'я не було введено - використати лиш прізвисько.
 		name += (!name.empty() ? " " + randomNickname : randomNickname);
 
-		graphicsManager.print(name, 500);
+		Services::graphics().print(name, 500);
 
 		std::cout << "\n\n";
-		graphicsManager.print("Підтвердити вибір? ", 100);
+		Services::graphics().print("Підтвердити вибір? ", 100);
 		std::cout << "(Enter/ESC)";
 
 		// Очищаємо буфер
@@ -618,23 +618,6 @@ std::string GameSystem::initMainArt(const std::string& path) {
 	return lines;
 }
 //std::string GameSystem::initMainArt(const std::filesystem::path& path) {
-//	std::ifstream artFile;
-//
-//	artFile.open(path);
-//	if (artFile.fail()) {
-//		std::cout << "\x1B[2J\x1B[H";
-//		std::cerr<< "No such file: \""+ path +"\"\n";
-//		Sleep(600);
-//		exit(1);
-//	}
-//	
-//	std::string lines, line;
-//	while (getline(artFile, line))
-//	{
-//		lines += line + '\n';
-//	}
-//	artFile.close();
-//	return lines;
 //}
 
 std::vector<std::string> splitByNewline(const std::string& input) {
@@ -663,7 +646,7 @@ void GameSystem::printMainMenu() {
 	std::vector<std::string> lines = splitByNewline(qrToPrint);
 	for (size_t i = 0; i < lines.size(); i++)
 	{
-		graphicsManager.setCursorPos(75, i);
+		Services::graphics().setCursorPos(75, i);
 		printf(lines[i].c_str());
 	}
 	SetConsoleCP(1251);
@@ -672,7 +655,7 @@ void GameSystem::printMainMenu() {
 
 // Логіка головного меню
 void GameSystem::mainMenuLogic() {
-	graphicsManager.SetWindowSize(145, 40);
+	Services::graphics().SetWindowSize(145, 40);
 	printMainMenu();
 
 	while (true) {
@@ -814,7 +797,7 @@ void GameSystem::RunGame() {
 		isBadEnd = false;
 		name = "";
 		_level.clear();
-		graphicsManager.SetWindowTitle(TITLE + " | Main menu");
+		Services::graphics().SetWindowTitle(TITLE + " | Main menu");
 
 		// Інтерактив з гравцем. Інтерфейс головного меню. Frontend
 		mainMenuLogic();
@@ -824,11 +807,11 @@ void GameSystem::RunGame() {
 		std::cout << "\x1B[2J\x1B[H";
 
 		// і це Боже, що це за страховисько!
-		graphicsManager.print("Побачимо що ти собою представляєш, ", 0);
-		graphicsManager.print(name, 1000);
-		//graphicsManager.print("...", 1500, 3000);
+		Services::graphics().print("Побачимо що ти собою представляєш, ", 0);
+		Services::graphics().print(name, 1000);
+		//Services::graphics().print("...", 1500, 3000);
 
-		graphicsManager.unprint("Побачимо що ти собою представляєш, " + name + "...\b", 100);
+		Services::graphics().unprint("Побачимо що ти собою представляєш, " + name + "...\b", 100);
 		std::string filename = "./assets/savings/" + name + ".json";
 		printf("%d зафіксованих смертей на це ім'я.", readPlayerDeaths(filename));
 		//Sleep(3000);
@@ -892,7 +875,7 @@ void GameSystem::RunGame() {
 				// --- Рестарт рівня ---
 				PauseTheGame();
 				PauseDrawThread();
-				messageList.clearMessageList();
+				Services::message().clearMessageList();
 				std::cout << "\x1B[2J\x1B[H";
 				//printf("Перезапуск рівня...\n");
 				_level.clear();

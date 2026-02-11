@@ -1,13 +1,14 @@
 ﻿#include "Graphics.h"
 #include "Message.h"
 #include "constants.h"
+#include "Services.h"
+
 #include <thread>
 #include <chrono>
 #include <iostream>
 #include <sstream>
 #include <windows.h>
 
-Message messageListManager;
 HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 COORD cursor_pos;
@@ -85,7 +86,7 @@ std::string Graphics::Utf8ToAnsi(const std::string& utf8)
 }
 
 void Graphics::addMessage(std::string message) {
-	messageListManager.addMessage(message);
+	Services::message().addMessage(message);
 }
 
 std::vector<std::string> splitString(const std::string& str) {

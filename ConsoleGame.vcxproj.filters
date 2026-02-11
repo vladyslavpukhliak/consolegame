@@ -52,6 +52,7 @@
     <ClInclude Include="include\constants.h" />
     <ClInclude Include="include\Cannon.h" />
     <ClInclude Include="include\Arrow.h" />
+    <ClInclude Include="include\Services.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
@@ -78,5 +79,6 @@
     </ClCompile>
     <ClCompile Include="src\DialogueSystem.cpp" />
     <ClCompile Include="src\Cannon.cpp" />
+    <ClCompile Include="src\Services.cpp" />
   </ItemGroup>
 </Project>

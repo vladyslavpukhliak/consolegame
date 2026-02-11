@@ -4,9 +4,10 @@
 #include <chrono>
 #include "Player.h"
 #include "Graphics.h"
+#include "Services.h"
+
 #include <windows.h>
 
-Graphics graphicManager;
 
 Player::Player() {
 	_x = 0;
@@ -48,7 +49,7 @@ void Player::AddExperience(int xp) {
 		_health += 1;
 		_experience -= 50;
 
-		graphicManager.addMessage("Leveled up! Your Level: " + std::to_string(_level));
+		Services::graphics().addMessage("Leveled up! Your Level: " + std::to_string(_level));
 	}
 }
 

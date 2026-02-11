@@ -3,9 +3,10 @@
 #include "Graphics.h"
 #include "GameSystem.h"
 #include "constants.h"
+#include "Services.h"
+
 #include <iostream>
 
-Graphics graphics;
 std::queue<Message> messageQueue;
 bool s_busy = false;
 size_t currentMessagePos = 0;
@@ -74,9 +75,9 @@ void Message::clearRow() {
 		messageLength = tempQueue.front().text.size();
 		std::string spaces(messageLength, ' ');
 
-		graphics.setCursorPos(MESSAGES_INIT_POS, i);
+		Services::graphics().setCursorPos(MESSAGES_INIT_POS, i);
 		printf(spaces.c_str());
-		graphics.setCursorPos(0, 0);
+		Services::graphics().setCursorPos(0, 0);
 		tempQueue.pop();
 		i++;
 	}
@@ -93,10 +94,10 @@ void Message::printmessageList() {
 
 	while (!tempQueue.empty()) {
 		frontMessage = tempQueue.front().text;
-		graphics.setCursorPos(MESSAGES_INIT_POS, i);
+		Services::graphics().setCursorPos(MESSAGES_INIT_POS, i);
 		std::cout << frontMessage;
 		//printf(frontMessage.c_str());
-		graphics.setCursorPos(0, 0);
+		Services::graphics().setCursorPos(0, 0);
 		tempQueue.pop();
 		i++;
 	}

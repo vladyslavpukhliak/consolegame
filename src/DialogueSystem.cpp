@@ -1,5 +1,7 @@
 #include "DialogueSystem.h"
 #include "Graphics.h"
+#include "Services.h"
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -8,7 +10,6 @@
 #include <chrono>
 #include <thread>
 
-Graphics gMngr;
 
 using namespace rapidjson;
 
@@ -27,7 +28,7 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, L
 
     std::cout << "\x1B[2J\x1B[H";
     printf(art.c_str());
-    printf("\n%s:\n", gMngr.colorize(gMngr.Utf8ToAnsi(enemyEntry._name), enemyEntry._color).c_str());
+    printf("\n%s:\n", Services::graphics().colorize(Services::graphics().Utf8ToAnsi(enemyEntry._name), enemyEntry._color).c_str());
 
 #pragma region HandleBufs
 
@@ -59,14 +60,14 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, L
         std::string lineToSay(bufs_json.HasMember("line") && bufs_json["line"].IsString() ?
             bufs_json["line"].GetString() : "Розмову закінчено.");
 
-        gMngr.print("\n"+lineToSay+"\n", 1000);
+        Services::graphics().print("\n"+lineToSay+"\n", 1000);
 
         // Чи буде босфайт?
         fightArt = "",fightMusic="";
         std::string desc = "";
         if (bufs_json.HasMember("bossfight") && bufs_json["bossfight"].IsString()
             && bufs_json["bossfight"].GetStringLength() > 0) {
-            desc = gMngr.Utf8ToAnsi(bufs_json["bossfight"].GetString());
+            desc = Services::graphics().Utf8ToAnsi(bufs_json["bossfight"].GetString());
             // fallback to raw UTF-8 if conversion produced empty
             if (desc.empty()) desc = bufs_json["bossfight"].GetString();
         }
@@ -88,7 +89,7 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, L
     }
 #pragma endregion
 
-    gMngr.print(firstLine, 1000);
+    Services::graphics().print(firstLine, 1000);
 
 
     const Value& responses = npcLine->value;
@@ -132,11 +133,11 @@ void DialogueSystem::processDialogue(const Value& mainNode, const Value& node, L
             // Відобразити текст на що ГГ відповідає.
             std::cout << "\x1B[2J\x1B[H";
             printf(art.c_str());
-            printf("\n%s:\n", gMngr.colorize(gMngr.Utf8ToAnsi(enemyEntry._name), enemyEntry._color).c_str());
+            printf("\n%s:\n", Services::graphics().colorize(Services::graphics().Utf8ToAnsi(enemyEntry._name), enemyEntry._color).c_str());
             printf("%s\n", firstLine.c_str());
 
             // Анімована відповідь:
-            gMngr.print("Ви: " + selected, 1000);
+            Services::graphics().print("Ви: " + selected, 1000);
             std::cout << "\nДіалог завершено.";
             //processDialogue(mainNode, mainNode, player, enemyEntry, art, "");
             return;
@@ -168,7 +169,7 @@ void DialogueSystem::initDialogue(const std::filesystem::path& path, const std::
     }
     else {
         GameSystem::UnPauseTheGame();
-        gMngr.init();
+        Services::graphics().init();
     }
 
     isEndOfConversation = false;

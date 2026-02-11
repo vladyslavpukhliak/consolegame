@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <conio.h>
+
 #include "Level.h"
 #include "Enemy.h"
 #include "Cannon.h"
@@ -10,7 +11,9 @@
 #include "FileSystem.h"
 #include "GameSystem.h"
 #include "DialogueSystem.h"
+#include "Services.h"
 #include "entities.h"
+
 #include <windows.h>
 #include <filesystem> 
 #include <thread>
@@ -18,8 +21,6 @@
 
 
 //Message messageList;
-Graphics graphicsManager;
-Message message;
 GameSystem gameSys;
 bool busy = false;
 
@@ -49,10 +50,10 @@ void Level::load(std::string fileName, std::string musicName, Player& player) {
 
 	// Вивести назву рівня
 	getline(file, line);
-	graphicsManager.setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
-	std::cout << "Рівень: " << graphicsManager.Utf8ToAnsi(line);
+	Services::graphics().setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
+	std::cout << "Рівень: " << Services::graphics().Utf8ToAnsi(line);
 	// Вивід назви музики
-	graphicsManager.setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
+	Services::graphics().setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
 	printf("Зараз грає: %s", musicName.c_str());
 
 	// Ініціалізація рівня
@@ -170,8 +171,8 @@ void Level::load(std::string fileName, std::string musicName, Player& player) {
 
 	isLevelHuge = (_levelData.size() > MESSAGES_INIT_POS || _levelData[0].size() > MESSAGES_INIT_POS);
 
-	graphicsManager.setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
-	std::cout << graphicsManager.colorize("@ - це гравець", 33);
+	Services::graphics().setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
+	std::cout << Services::graphics().colorize("@ - це гравець", 33);
 
 	// УВАЖНО: це для виводу тайлів ворогів і гармат 
 	SetConsoleCP(CP_UTF8);
@@ -206,7 +207,7 @@ void Level::load(std::string fileName, std::string musicName, Player& player) {
 		std::string desc = "";
 		if (enemy_json.HasMember("description") && enemy_json["description"].IsString() 
 			&& enemy_json["description"].GetStringLength() > 0) {
-			desc = graphicsManager.Utf8ToAnsi(enemy_json["description"].GetString());
+			desc = Services::graphics().Utf8ToAnsi(enemy_json["description"].GetString());
 			// fallback to raw UTF-8 if conversion produced empty
 			if (desc.empty()) desc = enemy_json["description"].GetString();
 		}
@@ -266,12 +267,12 @@ void Level::load(std::string fileName, std::string musicName, Player& player) {
 		// TODO: перенести абзац на безпосереднє завантаження рівня?
 		//else if (cannonTemplates.count(tile)) {
 		//	const CannonTemplate& tmpl = cannonTemplates.at(tile);
-		//	levelMask.back().push_back(graphicsManager.colorize(tile, tmpl.color));
+		//	levelMask.back().push_back(Services::graphics().colorize(tile, tmpl.color));
 		//}
 		SetConsoleCP(CP_UTF8);
 		SetConsoleOutputCP(CP_UTF8);
-		graphicsManager.setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
-		std::cout << graphicsManager.colorize(tileChar + " - ", tmpl.color);
+		Services::graphics().setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
+		std::cout << Services::graphics().colorize(tileChar + " - ", tmpl.color);
 		characterDescription = tmpl.description;
 		SetConsoleCP(1251);
 		SetConsoleOutputCP(1251);
@@ -286,13 +287,13 @@ void Level::load(std::string fileName, std::string musicName, Player& player) {
 				std::string segment = characterDescription.substr(currentMessagePos, MAX_LEGEND_LENGTH);
 				currentMessagePos += MAX_LEGEND_LENGTH;
 
-				std::cout << graphicsManager.colorize(segment, tmpl.color);
+				std::cout << Services::graphics().colorize(segment, tmpl.color);
 				if (currentMessagePos < characterDescription.length())
-					graphicsManager.setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
+					Services::graphics().setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
 			}
 		}
 		else {
-			std::cout << graphicsManager.colorize(characterDescription, tmpl.color);
+			std::cout << Services::graphics().colorize(characterDescription, tmpl.color);
 		}
 	}
 
@@ -319,7 +320,7 @@ void Level::load(std::string fileName, std::string musicName, Player& player) {
 		std::string desc = "";
 		if (cannon_json.HasMember("description") && cannon_json["description"].IsString()
 			&& cannon_json["description"].GetStringLength() > 0) {
-			desc = graphicsManager.Utf8ToAnsi(cannon_json["description"].GetString());
+			desc = Services::graphics().Utf8ToAnsi(cannon_json["description"].GetString());
 			// fallback to raw UTF-8 if conversion produced empty
 			if (desc.empty()) desc = cannon_json["description"].GetString();
 		}
@@ -373,8 +374,8 @@ void Level::load(std::string fileName, std::string musicName, Player& player) {
 		// Тобто якби УСІ рядки виводилися з Json, не було б цього гімна.
 		SetConsoleCP(CP_UTF8);
 		SetConsoleOutputCP(CP_UTF8);
-		graphicsManager.setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
-		std::cout << graphicsManager.colorize(tmpl.tile.front() + " - ", tmpl.color);
+		Services::graphics().setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
+		std::cout << Services::graphics().colorize(tmpl.tile.front() + " - ", tmpl.color);
 		characterDescription = tmpl.description;
 		SetConsoleCP(1251);
 		SetConsoleOutputCP(1251);
@@ -389,13 +390,13 @@ void Level::load(std::string fileName, std::string musicName, Player& player) {
 				std::string segment = characterDescription.substr(currentMessagePos, MAX_LEGEND_LENGTH);
 				currentMessagePos += MAX_LEGEND_LENGTH;
 
-				std::cout << graphicsManager.colorize(segment, tmpl.color);
+				std::cout << Services::graphics().colorize(segment, tmpl.color);
 				if (currentMessagePos < characterDescription.length())
-					graphicsManager.setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
+					Services::graphics().setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
 			}
 		}
 		else {
-			std::cout << graphicsManager.colorize(characterDescription, tmpl.color);
+			std::cout << Services::graphics().colorize(characterDescription, tmpl.color);
 		}
 
 	}
@@ -467,8 +468,8 @@ void Level::load(std::string fileName, std::string musicName, Player& player) {
 	}
 
 	if (buttonPlatesWereHere) {
-		graphicsManager.setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
-		std::cout << graphicsManager.colorize("X - це плита", 35);
+		Services::graphics().setCursorPos(LEGEND_INIT_POS, ++legendLineNumber);
+		std::cout << Services::graphics().colorize("X - це плита", 35);
 	}
 	busy = false;
 }
@@ -654,7 +655,7 @@ void Level::loadBossfight(const std::filesystem::path& path, const std::string& 
 		std::string desc = "";
 		if (cannon_json.HasMember("description") && cannon_json["description"].IsString()
 			&& cannon_json["description"].GetStringLength() > 0) {
-			desc = graphicsManager.Utf8ToAnsi(cannon_json["description"].GetString());
+			desc = Services::graphics().Utf8ToAnsi(cannon_json["description"].GetString());
 			// fallback to raw UTF-8 if conversion produced empty
 			if (desc.empty()) desc = cannon_json["description"].GetString();
 		}
@@ -806,7 +807,7 @@ void Level::arrows_thread_func(int cooldown, Player& player)
 			system("cls");
 			GameSystem::UnPauseDrawThread();
 			GameSystem::UnPauseTheGame();
-			graphicsManager.init();
+			Services::graphics().init();
 			break; // Вихід з циклу, якщо немає стріл
 		}
 	}
@@ -829,7 +830,7 @@ void Level::Draw(Player& player) {
 	levelMask.reserve(_levelData.size());
 
 	// move cursor to top-left so we overwrite previous frame
-	graphicsManager.setCursorPos(0, 0);
+	Services::graphics().setCursorPos(0, 0);
 	if(isBossfightNow && !GameSystem::isGameOver())
 		std::cout << bossArt;
 	std::cout.flush();
@@ -845,26 +846,26 @@ void Level::Draw(Player& player) {
 				tile = _levelData[i][j];
 
 				if (tile == "@")
-					levelMask.back().push_back(graphicsManager.colorize(tile, 33));
+					levelMask.back().push_back(Services::graphics().colorize(tile, 33));
 				else if (tile == "B")
-					levelMask.back().push_back(graphicsManager.colorize(tile, 33));
+					levelMask.back().push_back(Services::graphics().colorize(tile, 33));
 				else if (tile == "$")
-					levelMask.back().push_back(graphicsManager.colorize(tile, 32));
+					levelMask.back().push_back(Services::graphics().colorize(tile, 32));
 				else if (tile == "X")
-					levelMask.back().push_back(graphicsManager.colorize(tile, 35));
+					levelMask.back().push_back(Services::graphics().colorize(tile, 35));
 				else if (enemyTemplates.count(tile)) {
 					const EnemyTemplate& tmpl = enemyTemplates.at(tile);
-					levelMask.back().push_back(graphicsManager.colorize(tile, tmpl.color));
+					levelMask.back().push_back(Services::graphics().colorize(tile, tmpl.color));
 				}
 				else if (arrowsTemplates.empty() && cannonTemplates.count(tile)) {
 					const CannonTemplate& tmpl = cannonTemplates.at(tile);
-					levelMask.back().push_back(graphicsManager.colorize(tile, tmpl.color));
+					levelMask.back().push_back(Services::graphics().colorize(tile, tmpl.color));
 
 					// TODO: Зроби тут вивід легенди?
 				}
 				else if (!arrowsTemplates.empty() && arrowsTemplates.count(tile)) {
 					const CannonTemplate& tmpl = arrowsTemplates.at(tile);
-					levelMask.back().push_back(graphicsManager.colorize(tile, tmpl.color));
+					levelMask.back().push_back(Services::graphics().colorize(tile, tmpl.color));
 				}
 				else
 					levelMask.back().push_back(tile);
@@ -951,24 +952,24 @@ void Level::Draw(Player& player) {
 				tile = _levelData[i][j];
 
 				if (tile == "@")
-					line += graphicsManager.colorize(tile, 33);
+					line += Services::graphics().colorize(tile, 33);
 
 				else if (tile == "B") // Box
-					line += graphicsManager.colorize(tile, 33);
+					line += Services::graphics().colorize(tile, 33);
 
 				else if (tile == "$") // Money
-					line += graphicsManager.colorize(tile, 32);
+					line += Services::graphics().colorize(tile, 32);
 
 				else if (tile == "X") // Moveable box
-					line += graphicsManager.colorize(tile, 35);
+					line += Services::graphics().colorize(tile, 35);
 
 				else if (enemyTemplates.count(tile)) {
 					const EnemyTemplate& tmpl = enemyTemplates.at(tile);
-					line += graphicsManager.colorize(tile, tmpl.color);
+					line += Services::graphics().colorize(tile, tmpl.color);
 				}
 				else if (cannonTemplates.count(tile)) {
 					const CannonTemplate& tmpl = cannonTemplates.at(tile);
-					line += graphicsManager.colorize(tile, tmpl.color);
+					line += Services::graphics().colorize(tile, tmpl.color);
 				}
 
 				else
@@ -989,8 +990,8 @@ void Level::Draw(Player& player) {
 	if (!GameSystem::isGameOver()) {
 		if(!isBossfightNow)
 			std::cout << "\nКількість плит: " << buttonPlate;
-		message.checkExpiredmessageList();
-		message.printmessageList();
+		Services::message().checkExpiredmessageList();
+		Services::message().printmessageList();
 
 	}
 	busy = false;
@@ -1029,7 +1030,7 @@ char Level::Move(char input, Player& player) {
 		break;
 
 	default:
-		graphicsManager.addMessage("Invalid input!");
+		Services::graphics().addMessage("Invalid input!");
 		break;
 	}
 	return input;
@@ -1054,7 +1055,7 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 		targetX >= _levelData[targetY].size() - 1 ||
 		targetY >= _levelData.size() - 1) {
 
-		graphicsManager.addMessage("You ran into the wall!");
+		Services::graphics().addMessage("You ran into the wall!");
 		return;
 	}
 
@@ -1064,7 +1065,7 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 	std::string nextTile = GetTile(targetX, targetY);
 
 	if (nextTile == "#") { // Internal walls
-		graphicsManager.addMessage("You ran into the wall!");
+		Services::graphics().addMessage("You ran into the wall!");
 	}
 	// Допоміжний предикат: чи є кнопкова плита в координатах (x,y)
 	auto isButtonAt = [&](int x, int y) -> bool {
@@ -1127,7 +1128,7 @@ void Level::TryGo(Player& player, int targetX, int targetY) {
 		SetTile(playerX, playerY, " ");
 		SetTile(targetX, targetY, "@");
 
-		graphicsManager.addMessage("+600 UAH");
+		Services::graphics().addMessage("+600 UAH");
 		player.TopUp(600);
 	}
 	else BattleEnemy(player, targetX, targetY);
@@ -1230,7 +1231,7 @@ void Level::TryMissileGo(Player& player, int index, int targetX, int targetY) {
 		SetTile(missileX, missileY, " ");
 		SetTile(targetX, targetY, "~");
 
-		//graphicsManager.addMessage("Missile exploded!");
+		//Services::graphics().addMessage("Missile exploded!");
 		bool attackResult = player.TakeDamage(999);
 		CheckPlayerDeath(attackResult, playerX, playerY, player);
 		return;
@@ -1251,7 +1252,7 @@ void Level::TryMissileGo(Player& player, int index, int targetX, int targetY) {
 	else {
 		_missiles.erase(_missiles.begin() + index);
 		SetTile(missileX, missileY, " ");
-		//graphicsManager.addMessage("Missile exploded!");
+		//Services::graphics().addMessage("Missile exploded!");
 	}
 }
 
@@ -1387,7 +1388,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				}
 				artFile.close();
 
-				graphicsManager.setCursorPos(0, 0);
+				Services::graphics().setCursorPos(0, 0);
 				conversation.initDialogue(convPath, artToPrint, *this, player, enemyEntry);
 				//conversation.initDialogue(enemyEntry._conversation, artToPrint, player, enemyEntry);
 
@@ -1395,7 +1396,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				//Sleep(2000);
 				//system("cls");
 				// TODO: vector<string,int> line, index  for legend lines gM.setLegend(). gM.printLegend()
-				graphicsManager.init();
+				Services::graphics().init();
 				// закоментувати?
 				GameSystem::UnPauseDrawThread();
 				//GameSystem::UnPauseTheGame();
@@ -1405,7 +1406,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 
 			// Оце будь ласка тільки після діалогу.
 			// Battle !
-			enemyName = graphicsManager.Utf8ToAnsi(enemyEntry.GetName());
+			enemyName = Services::graphics().Utf8ToAnsi(enemyEntry.GetName());
 			if (!enemyEntry._isUnbeatable) {
 				enemyEntry._isFriendly = false;
 				attackRoll = player.attack();
@@ -1413,7 +1414,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 				attackInfo = playerName + " атакував " + enemyName + " з ймовірністю: "
 					+ std::to_string(attackRoll);
 
-				graphicsManager.addMessage(attackInfo);
+				Services::graphics().addMessage(attackInfo);
 
 				attackResult = enemyEntry.TakeDamage(attackRoll);
 				if (attackResult != 0) {
@@ -1424,8 +1425,8 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 					// TODO: deathLines rand string
 
 					size_t randomDeathLine = rand() % enemyEntry._deathLines.size();
-					graphicsManager.addMessage(graphicsManager.Utf8ToAnsi(enemyEntry._deathLines[randomDeathLine]));
-					//graphicsManager.addMessage("Enemy трупік!\n");
+					Services::graphics().addMessage(Services::graphics().Utf8ToAnsi(enemyEntry._deathLines[randomDeathLine]));
+					//Services::graphics().addMessage("Enemy трупік!\n");
 
 					// TODO: ЦЕ НОРМАЛЬНО ЩО ВИДАЛЯЄТЬСЯ ОСТАННІЙ ЕНЕМІ А НЕ КОНКРЕТНИЙ?
 					// Removing the enemy
@@ -1443,7 +1444,7 @@ void Level::BattleEnemy(Player& player, int targetX, int targetY) {
 			attackRoll = enemyEntry.attack();
 
 			attackInfo = enemyName + " атакував Тебе з ймовірністю: " + std::to_string(attackRoll);
-			graphicsManager.addMessage(attackInfo);
+			Services::graphics().addMessage(attackInfo);
 			attackResult = player.TakeDamage(attackRoll);
 
 			// Гравець - мрець.
@@ -1458,7 +1459,7 @@ void Level::CheckPlayerDeath(int attackResult, int playerX, int playerY, Player&
 	if (attackResult != 0) {
 		SetTile(playerX, playerY, "~");
 		// Sound of Player death
-		graphicsManager.addMessage("Ви трупік!");
+		Services::graphics().addMessage("Ви трупік!");
 		//Draw();
 		gameSys.saveAfterDeath(playerName);
 		GameSystem::BadEnding();
@@ -1528,9 +1529,9 @@ void Level::CheckPlayerDeath(int attackResult, int playerX, int playerY, Player&
 		}
 		artFile.close();
 		Draw(player);
-		graphicsManager.setCursorPos(replaceX, replaceY);
+		Services::graphics().setCursorPos(replaceX, replaceY);
 		printf(playerName.c_str());
-		graphicsManager.setCursorPos(0, lineY);
+		Services::graphics().setCursorPos(0, lineY);
 		Sleep(3000);
 		_getch();
 		/*std::cin.ignore();
